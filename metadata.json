@@ -1,0 +1,10 @@
+{
+  "name": "EcoCitoyen Lomé",
+  "description": "Plateforme intelligente de signalement et de gestion des déchets urbains à Lomé (Togo) assistée par IA",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
