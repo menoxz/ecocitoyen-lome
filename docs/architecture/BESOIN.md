@@ -49,7 +49,7 @@ Chaque arbitrage est pris avec l'information disponible, daté, et réversible (
 ### Z-01 — Prototype de hackathon ou produit pilote réel ?
 **Arbitré : produit pilote réel, avec un mode démonstration explicite.**
 Le CDC décrit une recette, des données personnelles réelles, une loi togolaise (RG31), une sauvegarde (ENF05) : ce n'est pas un exercice. Mais la démonstration doit rester possible sans infrastructure : `MODE_DEMO=true` charge le jeu fictif, affiche un bandeau et ouvre la bascule de profil. Hors de ce mode, aucune bascule de rôle n'existe.
-*Réversible si* : le commanditaire confirme un usage strictement démonstratif → on garde le mode démo seul et on retire l'authentification (ADR-003 à réviser).
+**Ratifié le 14/11/2026 par le commanditaire** : produit pilote réel, mode démonstration conservé. Une demande inverse rouvrirait ADR-003.
 
 ### Z-02 — Comment un citoyen s'authentifie-t-il ?
 **Arbitré : identifiant (e-mail ou téléphone) + mot de passe, session serveur en base, cookie `httpOnly`. Pas d'OTP SMS.**
@@ -65,7 +65,7 @@ Le volume réel du CDC est 10 000 signalements (ENF03) sur une seule commune : u
 **Arbitré : après l'envoi, en asynchrone serveur.**
 Le CDC est explicite (§8.2 : « appelé de façon asynchrone ») et l'objectif est « 3 écrans, 60 secondes ». Attendre un modèle de vision sur un téléphone en 4G casse cet objectif et le mode dégradé. Le citoyen choisit donc sa catégorie — il est le seul à voir le tas d'ordures — et l'IA propose ensuite, dans des champs séparés (`id_categorie_ia`, `score_ia`), que le superviseur utilise ou ignore.
 Conséquence assumée : l'IA ne pré-sélectionne plus la catégorie dans le formulaire. C'est une perte de « waouh » en démonstration, gagnée en robustesse et en conformité.
-*Réversible si* : on veut la pré-sélection → appeler `/ia/classifications` en aperçu côté client, sans jamais bloquer l'envoi.
+**Ratifié le 14/11/2026 par le commanditaire** : la perte de pré-sélection est acceptée. Un aperçu facultatif reste possible sans revenir sur la décision.
 
 ### Z-05 — Qui garantit les chiffres du tableau de bord ?
 **Arbitré : le module `indicateurs`, à partir de l'historique, avec les formules du CDC écrites une seule fois.**

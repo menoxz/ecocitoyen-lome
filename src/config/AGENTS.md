@@ -1,7 +1,7 @@
 # AGENTS.md — src/config
 
 ## Rôle
-Lire l''environnement, le valider, échouer au démarrage. Rien d''autre.
+Lire l'environnement, le valider, échouer au démarrage. Rien d'autre.
 
 ## Règles
 - Un seul fichier exporté par préoccupation : `environnement.ts`. Tout accès à `process.env` du dépôt passe par lui (sauf `infrastructure/` pour un chemin technique local).

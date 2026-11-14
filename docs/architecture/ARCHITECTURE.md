@@ -223,7 +223,7 @@ ecocitoyen-lomé/
 | Taille | fichier ≤ 150 lignes utiles, fonction ≤ 30 lignes, paramètres ≤ 4 (au-delà : objet). Au-delà, c'est deux responsabilités. |
 | Exports | nommés uniquement. `export default` interdit (renommage et recherche cassés). |
 | Types | un type par fichier de type ; pas de `any` ; `unknown` + validation zod aux frontières. |
-| Erreurs | jamais `throw new Error('message libre')` dans le domaine : `ErreurMetier(code, details)` avec un code de `contrats/erreurs.ts`. La couche `interface` est la seule à choisir un statut HTTP. |
+| Erreurs | jamais `throw new Error('message libre')` dans le domaine : `ErreurMetier(code, details)` avec un code de `domaine/erreurs.ts`. La couche `interface` est la seule à choisir un statut HTTP. |
 | Temps et hasard | jamais `Date.now()` / `new Date()` / `Math.random()` dans le domaine ou l'application : `Horloge` et `Identifiants` injectés. Sinon les tests de délais ne sont pas reproductibles. |
 | Commentaires | expliquer un *pourquoi* non évident ; pas de commentaire de narration, pas de code mort commenté. |
 | Tests | colocalisés `*.test.ts` dans le domaine, dans `tests/api` pour HTTP, dans `tests/recette` pour CR1-CR14. Aucun test ne dépend de l'ordre d'exécution. |

@@ -59,6 +59,9 @@ const EXTERNES = {
 
 const BUILTINS_AUTORISES = ['infrastructure', 'interface', 'config'];
 
+/** Import autorisé dans toutes les couches : l'exécuteur de tests. */
+const EXTERNES_TOUJOURS_AUTORISEES = ['bun:test'];
+
 /** Interdits textuels : [couche(s) concernée(s) ou 'toutes', motif, message]. */
 const INTERDITS_TEXTUELS = [
   ['toutes', /export\s+default\b/, 'export default interdit : export nommé uniquement'],
@@ -192,6 +195,7 @@ function verifierFichier(fichier) {
     }
 
     if (classe.type === 'externe') {
+      if (EXTERNES_TOUJOURS_AUTORISEES.includes(classe.valeur)) continue;
       const autorisees = EXTERNES[couche] ?? [];
       if (!autorisees.includes(classe.valeur)) {
         ajouter(fichier, ligne, 'externe', `${couche} ne peut pas dépendre de « ${classe.valeur} »`);

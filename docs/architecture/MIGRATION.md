@@ -8,7 +8,7 @@ Version 1.0 — 14/11/2026. Compagnon de `ARCHITECTURE.md`.
 
 Trois règles de conduite pendant toute la migration :
 
-1. **Une phase = un commit vérifié** (`npm run verif:arch`, `npm run test`, `npm run typecheck` verts).
+1. **Une phase = un commit vérifié** (`bun run verif:arch`, `bun run test`, `bun run typecheck` verts).
 2. **Aucun fichier legacy n'est modifié pour « faire propre ».** On le remplace, on ne le rafistole pas. Exception : un bug bloquant pour la démonstration.
 3. **Le contrat `/api/v1` est figé avant P3.** Le front bascule ensuite sans renégocier.
 
@@ -33,7 +33,8 @@ Chaque porte est une **preuve exécutable**, pas une déclaration.
 ### P0 — Socle technique (0,5 j)
 **But** : un projet où l'on peut écrire du code testé sans dépendre du legacy.
 **Livrables** : alias TypeScript (`@domaine/*`, `@contrats/*`, `@application/*`, `@ports/*`, `@infra/*`, `@interface/*`, `@web/*`), `scripts/verifier-architecture.mjs`, `src/config/environnement.ts`, `src/contrats/erreurs.ts`, vitest, scripts npm `test` / `typecheck` / `verif:arch`.
-**Porte** : `npm run typecheck` exit 0 ; `npm run test` exit 0 avec au moins 1 test ; `npm run verif:arch` exit 0 ; violation d'import volontaire ⇒ exit 1 (prouvé en la créant puis la retirant).
+**Porte** : `bun run typecheck` exit 0 ; `bun run test` exit 0 avec au moins 1 test ; `bun run verif:arch` exit 0 ; violation d'import volontaire ⇒ exit 1 (prouvé en la créant puis la retirant).
+**Atteinte le 14/11/2026** : typecheck exit 0 (0 erreur), `bun test` 11 tests / 51 assertions au vert, `verif:arch` exit 0 sur 6 fichiers, violation volontaire (domaine important express + `Date.now`) exit 1 avec 2 violations nommées.
 
 ### P1 — Domaine pur (1 j)
 **But** : toutes les décisions du CDC hors base et hors HTTP.
@@ -73,7 +74,7 @@ Chaque porte est une **preuve exécutable**, pas une déclaration.
 ### P8 — Retrait du legacy (0,5 j)
 **But** : une seule façon de faire dans le dépôt.
 **Livrables** : suppression de `server.ts`, `src/App.tsx`, `src/components/*`, `src/types/index.ts`, `src/utils/helpers.ts`, `src/data/initialData.ts` ; `index.html` et `vite.config.ts` pointent sur `src/web/principal.tsx`.
-**Porte** : `npm run build` exit 0 ; `npm run dev` sert l'application ; `npm run verif:arch` scanne désormais **tout** `src/` (plus d'exception legacy) et sort 0.
+**Porte** : `bun run build` exit 0 ; `bun run dev` sert l'application ; `bun run verif:arch` scanne désormais **tout** `src/` (plus d'exception legacy) et sort 0.
 
 ## 4. Ordre imposé par les dépendances
 
@@ -89,20 +90,20 @@ P1 et P2 sont parallélisables ; P7 ne démarre pas avant que `/api/v1` ne répo
 
 | Risque | Parade |
 |---|---|
-| Deux applications qui tournent en parallèle et divergent | Une seule racine d'exécution : `npm run dev` sert la nouvelle interface dès P3 ; le legacy reste accessible par `--legacy` jusqu'à P8 |
+| Deux applications qui tournent en parallèle et divergent | Une seule racine d'exécution : `bun run dev` sert la nouvelle interface dès P3 ; le legacy reste accessible par `--legacy` jusqu'à P8 |
 | Le front casse des écrans attendus en démonstration | Porte P7 : chaque vue listée doit répondre, sinon la phase n'est pas finie |
 | Régression silencieuse de règle métier | P1 fige les règles par tests **avant** toute réécriture d'interface |
 | Perte du jeu de démonstration | `seed.ts` reprend les 22 signalements actuels et reste activable par `MODE_DEMO` |
 | Dérive de style pendant la migration | `verifier-architecture.mjs` + revue de phase ; pas de nouvelle règle sans test |
 | Pression de délai (démonstration) | Chaque phase est démontrable seule ; P0-P4 + seed suffisent à rejouer le scénario nominal |
 
-## 6. Definition of Done global de l''architecture
+## 6. Definition of Done global de l'architecture
 
-L''architecture est en place quand, simultanément :
+L'architecture est en place quand, simultanément :
 
-1. `npm run verif:arch` sort 0 sur l''intégralité de `src/` (legacy supprimé).
-2. Aucune règle métier n''existe hors de `src/domaine` (vérifié par revue + script sur les imports interdits).
+1. `bun run verif:arch` sort 0 sur l'intégralité de `src/` (legacy supprimé).
+2. Aucune règle métier n'existe hors de `src/domaine` (vérifié par revue + script sur les imports interdits).
 3. `tests/recette` couvre CR1-CR14, un test nommé par critère, tous verts.
 4. Les indicateurs sont calculés et un test les compare à un calcul manuel.
 5. Un serveur redémarré retrouve ses données, et une sauvegarde se restaure.
-6. Chaque `AGENTS.md` de l''arborescence décrit encore une règle réellement appliquée (revue trimestrielle).
+6. Chaque `AGENTS.md` de l'arborescence décrit encore une règle réellement appliquée (revue trimestrielle).
