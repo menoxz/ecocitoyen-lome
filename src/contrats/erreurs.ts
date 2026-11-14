@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { CODES_ERREUR, type CodeErreur, type DetailsErreur } from '@domaine/erreurs.ts';
 
-/** Forme unique de toute réponse d'erreur de l'API. */
+/** Forme unique de toute réponse d’erreur de l’API. */
 export const reponseErreurSchema = z.object({
   code: z.enum(CODES_ERREUR),
   message: z.string().min(1),

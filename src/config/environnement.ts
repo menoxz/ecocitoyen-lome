@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 /**
- * Lecture et validation de l'environnement.
+ * Lecture et validation de l’environnement.
  *
  * Aucun accès direct à `process.env` hors de ce module. Une valeur absente ou invalide
  * échoue au démarrage avec le nom de la variable : un défaut silencieux sur un secret
@@ -13,7 +13,7 @@ const schemaSource = z.object({
   PORT: z.coerce.number().int().min(1).max(65535).default(3000),
   APP_URL: z.string().min(1).default('http://localhost:3000'),
   MODE_DEMO: z.enum(['true', 'false']).default('false'),
-  /** Absente ou vide ⇒ mode simulation déclaré, jamais une clé vide passée à l'API. */
+  /** Absente ou vide ⇒ mode simulation déclaré, jamais une clé vide passée à l’API. */
   GEMINI_API_KEY: z.string().min(10, 'clé trop courte ou vide').optional(),
 });
 
@@ -37,7 +37,7 @@ export class ErreurConfiguration extends Error {
   }
 }
 
-/** Chargement pur : ne lit que la source fournie, ne touche à rien d'autre. */
+/** Chargement pur : ne lit que la source fournie, ne touche à rien d’autre. */
 export function chargerEnvironnement(source: Record<string, string | undefined>): Environnement {
   const resultat = schemaSource.safeParse(source);
 
@@ -75,7 +75,7 @@ export function chargerEnvironnement(source: Record<string, string | undefined>)
 
 let cache: Environnement | undefined;
 
-/** Accès unique, mémoïsé : le démarrage échoue tôt si l'environnement est invalide. */
+/** Accès unique, mémoïsé : le démarrage échoue tôt si l’environnement est invalide. */
 export function environnement(): Environnement {
   if (!cache) {
     cache = chargerEnvironnement(process.env);

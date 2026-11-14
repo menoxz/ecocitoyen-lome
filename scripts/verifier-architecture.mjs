@@ -9,7 +9,7 @@
  *   - un interdit textuel (export default, any, Date.now dans le domaine, base64, état global).
  *
  * Périmètre : les 8 couches cibles de src/. Le legacy (src/components, src/types,
- * src/utils, src/data, src/App.tsx, src/main.tsx) est ignoré jusqu'à la phase P8.
+ * src/utils, src/data, src/App.tsx, src/main.tsx) est ignoré jusqu’à la phase P8.
  *
  * Sortie : exit 0 si aucune violation, exit 1 sinon (avec fichier:ligne).
  */
@@ -30,7 +30,7 @@ const COUCHES = [
   'web',
 ];
 
-/** Couches qu'une couche a le droit d'importer (matrice unique, cf. src/AGENTS.md). */
+/** Couches qu’une couche a le droit d’importer (matrice unique, cf. src/AGENTS.md). */
 const MATRICE = {
   config: [],
   contrats: ['domaine'],
@@ -42,7 +42,7 @@ const MATRICE = {
   web: ['contrats'],
 };
 
-/** Seul fichier autorisé à câbler l'infrastructure (composition root). */
+/** Seul fichier autorisé à câbler l’infrastructure (composition root). */
 const COMPOSITION_ROOT = join('interface', 'http', 'serveur.ts');
 
 /** Dépendances externes autorisées, par couche. Les modules node: ne sont autorisés que côté infra/interface. */
@@ -59,7 +59,7 @@ const EXTERNES = {
 
 const BUILTINS_AUTORISES = ['infrastructure', 'interface', 'config'];
 
-/** Import autorisé dans toutes les couches : l'exécuteur de tests. */
+/** Import autorisé dans toutes les couches : l’exécuteur de tests. */
 const EXTERNES_TOUJOURS_AUTORISEES = ['bun:test'];
 
 /** Interdits textuels : [couche(s) concernée(s) ou 'toutes', motif, message]. */
@@ -109,7 +109,7 @@ function fichiersDe(dossier) {
   return sortie;
 }
 
-/** Associe un spécifieur d'import à une couche interne, ou à un paquet externe. */
+/** Associe un spécifieur d’import à une couche interne, ou à un paquet externe. */
 function classer(specifieur, fichierSource) {
   if (specifieur.startsWith('.')) {
     const cible = resolve(dirname(fichierSource), specifieur);

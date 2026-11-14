@@ -2,7 +2,7 @@
  * Vocabulaire des refus métier.
  *
  * Le domaine nomme le refus ; il ne décide ni du statut HTTP (rôle de src/interface),
- * ni du texte montré à l'utilisateur (rôle de src/web/i18n).
+ * ni du texte montré à l’utilisateur (rôle de src/web/i18n).
  */
 export const CODES_ERREUR = [
   'CONTRAT_INVALIDE',
@@ -31,7 +31,7 @@ export const CODES_ERREUR = [
 
 export type CodeErreur = (typeof CODES_ERREUR)[number];
 
-/** Contexte joint au refus : uniquement des valeurs sérialisables, jamais d'objet métier. */
+/** Contexte joint au refus : uniquement des valeurs sérialisables, jamais d’objet métier. */
 export type DetailsErreur = Readonly<Record<string, string | number | boolean | null>>;
 
 const MESSAGES: Readonly<Record<CodeErreur, string>> = {
@@ -39,15 +39,15 @@ const MESSAGES: Readonly<Record<CodeErreur, string>> = {
   NON_AUTHENTIFIE: "Une session valide est requise.",
   DROIT_REFUSE: "Votre rôle ne permet pas cette action.",
   COMPTE_INACTIF: "Ce compte est désactivé.",
-  COMPTE_VERROUILLE: "Trop d'échecs de connexion : compte temporairement bloqué.",
-  DEBIT_DEPASSE: "Limite d'envois atteinte pour cette période.",
-  RESSOURCE_INTROUVABLE: "La ressource demandée n'existe pas.",
-  TRANSITION_INTERDITE: "Cette transition de statut n'est pas autorisée.",
+  COMPTE_VERROUILLE: "Trop d’échecs de connexion : compte temporairement bloqué.",
+  DEBIT_DEPASSE: "Limite d’envois atteinte pour cette période.",
+  RESSOURCE_INTROUVABLE: "La ressource demandée n’existe pas.",
+  TRANSITION_INTERDITE: "Cette transition de statut n’est pas autorisée.",
   STATUT_INCOMPATIBLE: "Le statut actuel du signalement ne permet pas cette action.",
   HORS_ZONE: "La position est hors de la zone couverte (Grand Lomé).",
   DESCRIPTION_INVALIDE: "La description doit comporter entre 10 et 500 caractères.",
   PHOTO_MANQUANTE: "Une photographie est obligatoire pour cette action.",
-  PHOTO_INVALIDE: "Le fichier fourni n'est pas une image acceptée (JPEG, PNG, WebP ; 5 Mo maximum).",
+  PHOTO_INVALIDE: "Le fichier fourni n’est pas une image acceptée (JPEG, PNG, WebP ; 5 Mo maximum).",
   MOTIF_REQUIS: "Un motif est obligatoire.",
   COMMENTAIRE_REQUIS: "Un commentaire justificatif est obligatoire.",
   DOUBLON_CONFIRMATION: "Vous avez déjà confirmé ce signalement.",
@@ -66,7 +66,7 @@ export function messageParCode(code: CodeErreur): string {
 /**
  * Refus porteur de sens métier.
  *
- * Leveur unique : une règle du domaine, un cas d'usage. Jamais une couche d'infrastructure
+ * Leveur unique : une règle du domaine, un cas d’usage. Jamais une couche d’infrastructure
  * (elle traduit ses pannes en `null` ou en erreur typée de son port).
  */
 export class ErreurMetier extends Error {
