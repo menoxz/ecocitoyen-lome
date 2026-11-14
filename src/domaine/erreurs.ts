@@ -26,6 +26,8 @@ export const CODES_ERREUR = [
   'INTERVENTION_AUCUNE',
   'DELAI_CONTESTATION_DEPASSE',
   'PRIORITE_ABAISSEE_SANS_MOTIF',
+  'IDENTIFIANTS_INVALIDES',
+  'MOT_DE_PASSE_FAIBLE',
   'ERREUR_INTERNE',
 ] as const;
 
@@ -56,6 +58,8 @@ const MESSAGES: Readonly<Record<CodeErreur, string>> = {
   INTERVENTION_AUCUNE: "Aucune intervention active à traiter.",
   DELAI_CONTESTATION_DEPASSE: "Le délai de contestation de 7 jours est dépassé.",
   PRIORITE_ABAISSEE_SANS_MOTIF: "Abaisser une priorité exige un commentaire justificatif.",
+  IDENTIFIANTS_INVALIDES: "Identifiant ou mot de passe incorrect.",
+  MOT_DE_PASSE_FAIBLE: "Le mot de passe ne respecte pas la politique de sécurité.",
   ERREUR_INTERNE: "Une erreur interne est survenue.",
 };
 
