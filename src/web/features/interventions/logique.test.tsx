@@ -50,6 +50,11 @@ function clientFactice(): ClientApi {
     dossier: jamais,
     demarrer: jamais,
     resoudre: jamais,
+    listerDossiers: jamais,
+    priorites: jamais,
+    motifsRejet: jamais,
+    valider: jamais,
+    rejeter: jamais,
   };
 }
 

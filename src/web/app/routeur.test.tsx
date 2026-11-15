@@ -21,14 +21,21 @@ describe("résolution de route", () => {
   test("les liens sont stables", () => {
     expect(lien("accueil")).toBe("#/");
     expect(lien("signaler")).toBe("#/signaler");
+    expect(lien("supervision")).toBe("#/supervision");
   });
 });
 
 describe("Routeur", () => {
-  const renduDesRoutes = { accueil: <p>Accueil</p>, signaler: <p>Signaler</p>, interventions: <p>Interventions</p> };
+  const renduDesRoutes = {
+    accueil: <p>Accueil</p>,
+    signaler: <p>Signaler</p>,
+    interventions: <p>Interventions</p>,
+    supervision: <p>Supervision</p>,
+  };
 
   test("rend la vue correspondant au fragment", () => {
     expect(rendu(<Routeur fragment="#/signaler" rendu={renduDesRoutes} />)).toContain("Signaler");
     expect(rendu(<Routeur fragment="" rendu={renduDesRoutes} />)).toContain("Accueil");
+    expect(rendu(<Routeur fragment="#/supervision" rendu={renduDesRoutes} />)).toContain("Supervision");
   });
 });

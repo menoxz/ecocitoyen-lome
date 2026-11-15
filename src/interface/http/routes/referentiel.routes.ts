@@ -1,5 +1,6 @@
 import { Router } from "express";
 import type { Dependances } from "@application/dependances.type.ts";
+import { MOTIFS_REJET, PRIORITES } from "@domaine/signalement/signalement.type.ts";
 
 /** Référentiels lisibles par tous : ils alimentent les listes du formulaire de signalement. */
 export function routesReferentiel(deps: Dependances): Router {
@@ -35,6 +36,18 @@ export function routesReferentiel(deps: Dependances): Router {
         zone: equipe.zone,
       })),
     );
+  });
+
+  /**
+   * Valeurs de décision du superviseur. Elles viennent du domaine : une liste recopiée dans
+   * l'interface finirait par proposer une priorité ou un motif que le serveur refuse.
+   */
+  routeur.get("/priorites", (_req, res) => {
+    res.json(PRIORITES);
+  });
+
+  routeur.get("/motifs-rejet", (_req, res) => {
+    res.json(MOTIFS_REJET);
   });
 
   return routeur;

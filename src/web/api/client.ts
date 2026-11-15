@@ -48,6 +48,12 @@ export interface SignalementApi {
   readonly date_signalement: string;
   readonly sans_photo: boolean;
   readonly nb_confirmations: number;
+  /** Champs de détail : absents d'une projection de liste, présents sur un dossier ouvert. */
+  readonly id_categorie?: string;
+  readonly description?: string;
+  readonly quartier_nom?: string;
+  readonly categorie_nom?: string;
+  readonly motif_rejet?: string | null;
 }
 
 export interface DoublonApi {
@@ -78,6 +84,19 @@ export interface ClientApi {
   resoudre(
     idSignalement: string,
     entree: { commentaire: string; photo: { chemin: string; mime: string; taille_octets: number } },
+  ): Promise<Resultat<SignalementApi>>;
+  /** File de tri du superviseur : dossiers visibles par l'acteur, éventuellement d'un seul statut. */
+  listerDossiers(statut?: string): Promise<Resultat<readonly SignalementApi[]>>;
+  /** Valeurs de décision, servies par le domaine (jamais recopiées dans l'interface). */
+  priorites(): Promise<Resultat<readonly string[]>>;
+  motifsRejet(): Promise<Resultat<readonly string[]>>;
+  valider(
+    idSignalement: string,
+    entree: { id_categorie?: string; niveau_priorite?: string; commentaire?: string },
+  ): Promise<Resultat<SignalementApi>>;
+  rejeter(
+    idSignalement: string,
+    entree: { motif_rejet: string; commentaire?: string },
   ): Promise<Resultat<SignalementApi>>;
 }
 
@@ -146,6 +165,16 @@ export function creerClient(base: string): ClientApi {
     demarrer: (idSignalement) => appeler<{ demarre: boolean; statut: string }>(`/signalements/${idSignalement}/demarrer`, { method: "POST" }),
     resoudre: (idSignalement, entree) =>
       appeler<SignalementApi>(`/signalements/${idSignalement}/resoudre`, json("POST", entree)),
+    listerDossiers: (statut) =>
+      appeler<readonly SignalementApi[]>(
+        statut ? `/signalements?statut=${encodeURIComponent(statut)}&limite=100` : "/signalements?limite=100",
+      ),
+    priorites: () => appeler<readonly string[]>("/referentiels/priorites"),
+    motifsRejet: () => appeler<readonly string[]>("/referentiels/motifs-rejet"),
+    valider: (idSignalement, entree) =>
+      appeler<SignalementApi>(`/signalements/${idSignalement}/valider`, json("POST", entree)),
+    rejeter: (idSignalement, entree) =>
+      appeler<SignalementApi>(`/signalements/${idSignalement}/rejeter`, json("POST", entree)),
     envoyerPhoto: (idSignalement, octets, typeMime) =>
       appeler<{ media: { chemin: string } }>(`/signalements/${idSignalement}/photos`, {
         method: "POST",
