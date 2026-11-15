@@ -61,6 +61,14 @@ export interface DoublonApi {
   readonly distanceMetres: number;
 }
 
+/** Une étape du dossier : la décision, sa date et son motif. L'auteur de la décision n'est pas exposé. */
+export interface EtapeHistoriqueApi {
+  readonly ancien_statut: string | null;
+  readonly nouveau_statut: string;
+  readonly date_changement: string;
+  readonly commentaire: string | null;
+}
+
 export interface CompteApi {
   readonly id_utilisateur: string;
   readonly email: string;
@@ -90,6 +98,8 @@ export interface ClientApi {
   /** Valeurs de décision, servies par le domaine (jamais recopiées dans l'interface). */
   priorites(): Promise<Resultat<readonly string[]>>;
   motifsRejet(): Promise<Resultat<readonly string[]>>;
+  /** Étapes du dossier, telles que le serveur les a enregistrées. */
+  historique(idSignalement: string): Promise<Resultat<readonly EtapeHistoriqueApi[]>>;
   valider(
     idSignalement: string,
     entree: { id_categorie?: string; niveau_priorite?: string; commentaire?: string },
@@ -171,6 +181,7 @@ export function creerClient(base: string): ClientApi {
       ),
     priorites: () => appeler<readonly string[]>("/referentiels/priorites"),
     motifsRejet: () => appeler<readonly string[]>("/referentiels/motifs-rejet"),
+    historique: (idSignalement) => appeler<readonly EtapeHistoriqueApi[]>(`/signalements/${idSignalement}/historique`),
     valider: (idSignalement, entree) =>
       appeler<SignalementApi>(`/signalements/${idSignalement}/valider`, json("POST", entree)),
     rejeter: (idSignalement, entree) =>

@@ -1,4 +1,5 @@
 import type { Signalement } from "@domaine/signalement/signalement.type.ts";
+import type { EntreeHistorique } from "@ports/depot-signalements.port.ts";
 import { peutVoirIdentiteAuteur } from "@domaine/signalement/visibilite.regle.ts";
 import type { Role } from "@domaine/compte/role.type.ts";
 
@@ -67,4 +68,21 @@ export function projeter(
   };
 
   return avecNoms;
+}
+
+/** Forme exposée d'une étape d'historique : la décision et son motif, jamais qui l'a prise (RG28). */
+export interface HistoriqueExpose {
+  readonly ancien_statut: string | null;
+  readonly nouveau_statut: string;
+  readonly date_changement: string;
+  readonly commentaire: string | null;
+}
+
+export function projeterHistorique(entrees: readonly EntreeHistorique[]): readonly HistoriqueExpose[] {
+  return entrees.map((entree) => ({
+    ancien_statut: entree.ancienStatut,
+    nouveau_statut: entree.nouveauStatut,
+    date_changement: entree.dateChangement,
+    commentaire: entree.commentaire,
+  }));
 }

@@ -2,8 +2,9 @@ import { Router, raw, type Request } from "express";
 import { rbac } from "../middlewares/rbac.ts";
 import { attraper } from "../middlewares/erreurs.ts";
 import { exigerSession, type RequeteActeur } from "../middlewares/session.ts";
-import { projeter } from "../presentation/vers-signalement.ts";
+import { projeter, projeterHistorique } from "../presentation/vers-signalement.ts";
 import { consulter, lister, type FiltresLecture } from "@application/signalement/lister.cas.ts";
+import { historique } from "@application/signalement/historique.cas.ts";
 import { creer, type CommandeCreation } from "@application/signalement/creer.cas.ts";
 import { valider } from "@application/signalement/valider.cas.ts";
 import { rejeter } from "@application/signalement/rejeter.cas.ts";
@@ -46,6 +47,12 @@ export function routesSignalements(deps: Dependances): Router {
     const acteur = acteurDe(req);
     const dossier = consulter(req.params.id, acteur, deps);
     res.json(projeter(dossier, acteur.role, noms(dossier)));
+  });
+
+  /** Ce que le citoyen suit : les décisions prises sur son dossier, dans l'ordre. */
+  routeur.get("/:id/historique", (req, res) => {
+    const acteur = acteurDe(req);
+    res.json(projeterHistorique(historique(req.params.id, acteur, deps)));
   });
 
   routeur.post(

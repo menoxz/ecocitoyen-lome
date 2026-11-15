@@ -5,6 +5,8 @@ import { EcranSignaler, positionDuNavigateur } from "./features/signaler/EcranSi
 import { EcranInterventions } from "./features/interventions/EcranInterventions.tsx";
 import { EcranSupervision } from "./features/supervision/EcranSupervision.tsx";
 import { EcranRecette } from "./features/recette/EcranRecette.tsx";
+import { EcranSuivi } from "./features/suivi/EcranSuivi.tsx";
+import { idDuFragment } from "./features/suivi/logique.ts";
 import { creerClient } from "./api/client.ts";
 import { COULEURS, ESPACEMENT, TAILLE_TEXTE } from "./ui/jetons.ts";
 import "./ui/ui.css";
@@ -111,10 +113,25 @@ function Application(): React.ReactNode {
               </a>
             </section>
           ),
-          signaler: <EcranSignaler client={client} positionInitiale={position} />,
+          signaler: (
+            <EcranSignaler
+              client={client}
+              positionInitiale={position}
+              onOuvrirDossier={(idSignalement) => {
+                window.location.hash = `#/dossier/${idSignalement}`;
+              }}
+            />
+          ),
           interventions: <EcranInterventions client={client} maintenantIso={new Date().toISOString()} />,
           supervision: <EcranSupervision client={client} maintenantIso={new Date().toISOString()} />,
           recette: <EcranRecette />,
+          dossier: (
+            <EcranSuivi
+              client={client}
+              idSignalement={idDuFragment(fragment)}
+              maintenantIso={new Date().toISOString()}
+            />
+          ),
         }}
       />
     </main>

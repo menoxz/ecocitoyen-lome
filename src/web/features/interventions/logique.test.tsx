@@ -53,6 +53,7 @@ function clientFactice(): ClientApi {
     listerDossiers: jamais,
     priorites: jamais,
     motifsRejet: jamais,
+    historique: jamais,
     valider: jamais,
     rejeter: jamais,
   };
