@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
 import { ClipboardCheck, ListChecks } from "lucide-react";
 import { EnTeteVue } from "../../ui/EnTeteVue.tsx";
-import { ESPACEMENT, RAYON, TAILLE_TEXTE } from "../../ui/jetons.ts";
+import { ESPACEMENT } from "../../ui/jetons.ts";
 import { PREUVES_RECETTE } from "../../recette/preuves.ts";
+import { ListeRecette } from "./ListeRecette.tsx";
 
 /**
  * Recette affichable, sans verdict inventé.
@@ -12,6 +13,10 @@ import { PREUVES_RECETTE } from "../../recette/preuves.ts";
  * `tests/recette/preuves.test.ts` qui vérifie que ce fichier existe, et `bun test` qui dit si le
  * test passe. Cet écran ne peut pas connaître le résultat d'une exécution : il n'affiche donc
  * ni pourcentage ni statut.
+ *
+ * Les critères sont une collection : ils suivent donc la même hiérarchie de découverte que les
+ * autres pages — donnée globale (nombre de critères), liste cherchable, filtrable et triable,
+ * état en puces, preuve détaillée au clic.
  */
 export function EcranRecette(): ReactNode {
   return (
@@ -30,35 +35,7 @@ export function EcranRecette(): ReactNode {
         ]}
       />
 
-      <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: ESPACEMENT.e2 }}>
-        {PREUVES_RECETTE.map((preuve) => (
-          <li
-            key={preuve.code}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: ESPACEMENT.e1,
-              padding: ESPACEMENT.e3,
-              border: "1px solid var(--ui-bordure)",
-              borderRadius: RAYON.md,
-              backgroundColor: "var(--ui-surface)",
-            }}
-          >
-            <div style={{ display: "flex", gap: ESPACEMENT.e2, alignItems: "baseline", flexWrap: "wrap" }}>
-              <span style={{ fontFamily: "monospace", fontWeight: 700, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-primaire)" }}>
-                {preuve.code}
-              </span>
-              <span style={{ fontSize: TAILLE_TEXTE.md, color: "inherit" }}>{preuve.critere}</span>
-            </div>
-            <p style={{ margin: 0, fontSize: TAILLE_TEXTE.xs, color: "var(--ui-texte-attenue)" }}>
-              {preuve.preuve}
-            </p>
-            <p style={{ margin: 0, fontSize: TAILLE_TEXTE.xs, color: "var(--ui-texte-attenue)", fontFamily: "monospace" }}>
-              {preuve.fichier} — « {preuve.test} »
-            </p>
-          </li>
-        ))}
-      </ul>
+      <ListeRecette />
     </section>
   );
 }
