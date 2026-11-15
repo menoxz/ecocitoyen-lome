@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { Bouton } from "../../ui/Bouton.tsx";
 import { ChampZoneTexte } from "../../ui/ChampZoneTexte.tsx";
+import { GrillePhotos } from "../../ui/GrillePhotos.tsx";
 import { ESPACEMENT, TAILLE_TEXTE } from "../../ui/jetons.ts";
 import type { ClientApi, ErreurApi, SignalementApi } from "../../api/client.ts";
 import { construireEntreeCloture, peutCloturer, type PhotoPreuve } from "./logique.ts";
@@ -25,10 +26,28 @@ export interface ProprietesClotureIntervention {
 
 export function ClotureIntervention(proprietes: ProprietesClotureIntervention): ReactNode {
   const [commentaire, setCommentaire] = useState("");
-  const [photo, setPhoto] = useState<PhotoPreuve | null>(null);
+  /** La preuve est un fichier + son aperçu : même présentation que la page de signalement. */
+  const [photo, setPhoto] = useState<(PhotoPreuve & { urlApercu?: string }) | null>(null);
   const [erreur, setErreur] = useState<ErreurApi | null>(null);
   const [envoi, setEnvoi] = useState(false);
   const decision = peutCloturer(commentaire, photo);
+
+  const prendrePhoto = (fichier: File | null): void => {
+    if (photo?.urlApercu && typeof URL !== "undefined" && "revokeObjectURL" in URL) {
+      URL.revokeObjectURL(photo.urlApercu);
+    }
+    setPhoto(
+      fichier
+        ? {
+            octets: fichier,
+            nom: fichier.name,
+            typeMime: fichier.type || "image/jpeg",
+            urlApercu:
+              typeof URL !== "undefined" && "createObjectURL" in URL ? URL.createObjectURL(fichier) : undefined,
+          }
+        : null,
+    );
+  };
 
   const cloturer = async (): Promise<void> => {
     if (!photo) {
@@ -80,18 +99,14 @@ export function ClotureIntervention(proprietes: ProprietesClotureIntervention): 
         requis
       />
 
-      <label htmlFor={`photo-preuve-${proprietes.dossier.id_signalement}`} className="ui-cloture-libelle">
-        Photographie du site nettoyé (obligatoire)
-      </label>
-      <input
-        id={`photo-preuve-${proprietes.dossier.id_signalement}`}
-        type="file"
-        className="ui-cloture-fichier"
-        accept="image/jpeg,image/png,image/webp"
-        onChange={(evenement) => {
-          const fichier = evenement.currentTarget.files?.[0];
-          setPhoto(fichier ? { octets: fichier, nom: fichier.name, typeMime: fichier.type || "image/jpeg" } : null);
-        }}
+      {/* Même composant de dépôt que la page de signalement : emplacement dessiné, aperçu, retrait. */}
+      <p className="ui-cloture-libelle">Photographie du site nettoyé (obligatoire)</p>
+      <GrillePhotos
+        photos={photo ? [{ id: "preuve", nom: photo.nom, urlApercu: photo.urlApercu }] : []}
+        maximum={1}
+        desactive={envoi}
+        onFichiers={(fichiers) => prendrePhoto(fichiers[0] ?? null)}
+        onRetirer={() => prendrePhoto(null)}
       />
       {photo ? (
         <p className="ui-cloture-detail">
@@ -113,10 +128,11 @@ export function ClotureIntervention(proprietes: ProprietesClotureIntervention): 
         <Bouton variante="primaire" enChargement={envoi} desactive={!decision.ok} onClick={() => void cloturer()}>
           Clôturer avec preuve
         </Bouton>
-        <Bouton variante="texte" desactive={envoi} onClick={proprietes.onFermer}>
-          Annuler
-        </Bouton>
+
       </div>
     </div>
   );
 }
+
+
+

@@ -1814,14 +1814,11 @@ a:focus-visible {
 /* ——— Clôture dépliée dans une carte ———
    Le formulaire de fin d intervention vit sous la carte concernée : plus d écran intermédiaire qui
    ne montrait rien de neuf. */
+/* La clôture vit dans une modale : pas de cadre ni de fond propres, ils feraient doublon. */
 .ui-cloture {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 14px;
-  border: 1px solid var(--ui-bordure);
-  border-radius: var(--ui-rayon-sm);
-  background: var(--ui-surface-douce);
+  gap: 12px;
 }
 
 .ui-cloture-libelle {
@@ -1830,11 +1827,7 @@ a:focus-visible {
   color: var(--ui-texte);
 }
 
-.ui-cloture-fichier {
-  min-height: 44px;
-  font-size: 14px;
-  color: var(--ui-texte);
-}
+
 
 .ui-cloture-detail {
   margin: 0;
@@ -1845,33 +1838,39 @@ a:focus-visible {
 /* ——— Panneau de dossier : dimensions bornées et responsives ———
    L écran ouvert depuis « Ouvrir le dossier » ne doit pas s étirer sur 1920 px : la largeur est
    plafonnée, centrée, et le panneau garde les mêmes marges sur mobile. */
+/* ——— Dossier : tout tient dans la modale, sans défilement ———
+   La fiche occupe la largeur (elle est courte), et les DEUX décisions se placent côte à côte :
+   c est cette paire qui divise la hauteur par deux. Empilées, elles faisaient 825 px à elles
+   seules — plus haut que la modale, donc défilement garanti. */
 .ui-panneau-dossier {
   width: 100%;
-  max-width: 720px;
   margin-inline: auto;
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  padding: 22px;
-  border: 1px solid var(--ui-bordure-douce);
-  border-radius: var(--ui-rayon);
-  background: var(--ui-surface);
-  box-shadow: var(--ui-ombre-douce);
+  gap: 14px;
 }
 
-@media (max-width: 520px) {
-  .ui-panneau-dossier {
-    padding: 14px;
-    gap: 14px;
+.ui-decision {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .ui-decision {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Toute note de bas de panneau traverse les deux colonnes : sans cela elle crée une 3e piste,
+     les blocs se retrouvent à 230 px de large et s enroulent sur 700 px de haut. */
+  .ui-decision > p {
+    grid-column: 1 / -1;
   }
 }
 
 /* ——— Décision du superviseur : champs alignés, actions calibrées ——— */
-.ui-decision {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
+
 
 .ui-decision-bloc {
   display: flex;
@@ -1905,11 +1904,7 @@ a:focus-visible {
   gap: 14px;
 }
 
-@media (min-width: 620px) {
-  .ui-decision-champs {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
+
 
 .ui-decision-champ-large {
   grid-column: 1 / -1;
@@ -1943,9 +1938,12 @@ a:focus-visible {
   inset: 0;
   z-index: 40;
   display: flex;
-  align-items: center;
+  /* La modale démarre SOUS l en-tête de navigation, jamais collée à lui : la zone utile commence
+     après la barre, et la hauteur disponible en tient compte. */
+  align-items: flex-start;
   justify-content: center;
-  padding: 16px;
+  padding: 108px 16px 24px;
+  overflow-y: auto;
   background: rgba(17, 24, 39, 0.45);
   backdrop-filter: blur(2px);
 }
@@ -1954,7 +1952,8 @@ a:focus-visible {
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-height: min(760px, 88vh);
+  /* 90vh et 840 px : de quoi tenir un dossier + ses deux décisions côte à côte sans défilement. */
+  max-height: min(840px, calc(100vh - 126px));
   background: var(--ui-surface);
   border-radius: var(--ui-rayon);
   box-shadow: var(--ui-ombre-douce);
@@ -2037,3 +2036,52 @@ a:focus-visible {
     padding-inline: 14px;
   }
 }
+
+
+/* Compactage de la fiche pour qu elle tienne dans une colonne : moins d air, plus d information. */
+.ui-panneau-dossier .ui-puce {
+  font-size: 12px;
+  padding: 3px 9px 3px 7px;
+}
+
+.ui-panneau-dossier .ui-carte {
+  box-shadow: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.ui-decision-bloc {
+  padding: 14px;
+  gap: 10px;
+}
+
+.ui-decision-titre {
+  font-size: 15px;
+}
+
+.ui-decision-note {
+  font-size: 12px;
+}
+
+.ui-decision-actions .ui-bouton {
+  min-width: 0;
+  width: 100%;
+}
+
+/* Fiche compactée : l aperçu photo passe en vignette, la description reste lisible. */
+.ui-panneau-dossier .ui-carte img {
+  height: 64px;
+}
+
+.ui-panneau-dossier .ui-carte p {
+  font-size: 14px;
+}
+
+
+
+
+
+
+
+

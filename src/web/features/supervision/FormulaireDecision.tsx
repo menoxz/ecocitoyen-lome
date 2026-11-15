@@ -60,7 +60,7 @@ export function FormulaireDecision(proprietes: ProprietesFormulaireDecision): Re
               valeur={commentaire}
               onChange={setCommentaire}
               minimum={0}
-              lignes={3}
+              lignes={2}
               aide="Ce commentaire est visible du citoyen dans l historique de son dossier."
             />
           </div>
@@ -111,4 +111,5 @@ export function FormulaireDecision(proprietes: ProprietesFormulaireDecision): Re
     </section>
   );
 }
+
 

@@ -3,6 +3,7 @@ import { BarreListe } from "../../ui/BarreListe.tsx";
 import { CarteSignalement } from "../../ui/CarteSignalement.tsx";
 import { EtatVide } from "../../ui/EtatVide.tsx";
 import { Facettes, type Facette } from "../../ui/Facettes.tsx";
+import { Modale } from "../../ui/Modale.tsx";
 import { ESPACEMENT } from "../../ui/jetons.ts";
 import { compterPar, filtrerParTexte, trierPar } from "../../ui/liste.ts";
 import type { ClientApi, SignalementApi } from "../../api/client.ts";
@@ -119,13 +120,21 @@ export function ListeInterventions(proprietes: ProprietesListeInterventions): Re
               />
 
               {clotureId === dossier.id_signalement ? (
-                <ClotureIntervention
-                  dossier={dossier}
-                  client={proprietes.client}
-                  onMessage={proprietes.onMessage}
+                <Modale
+                  ouverte
+                  taille="standard"
+                  titre="Clôturer l intervention"
+                  libelleFermeture="Fermer la clôture"
                   onFermer={() => setClotureId(null)}
-                  onRecharge={proprietes.onRecharge}
-                />
+                >
+                  <ClotureIntervention
+                    dossier={dossier}
+                    client={proprietes.client}
+                    onMessage={proprietes.onMessage}
+                    onFermer={() => setClotureId(null)}
+                    onRecharge={proprietes.onRecharge}
+                  />
+                </Modale>
               ) : null}
             </li>
           ))}
@@ -134,5 +143,6 @@ export function ListeInterventions(proprietes: ProprietesListeInterventions): Re
     </section>
   );
 }
+
 
 

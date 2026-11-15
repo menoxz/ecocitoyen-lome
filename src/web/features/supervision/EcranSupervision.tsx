@@ -186,10 +186,15 @@ export function EcranSupervision(proprietes: ProprietesEcranSupervision): ReactN
       {dossierOuvert ? (
         <Modale
           ouverte
-          taille="standard"
+          taille="large"
           titre={`Décider du dossier ${dossierOuvert.id_signalement}`}
           libelleFermeture="Fermer la décision"
           onFermer={() => setOuvert(null)}
+          actions={
+            <Bouton variante="texte" onClick={() => setOuvert(null)}>
+              Revenir à la file
+            </Bouton>
+          }
         >
           <div className="ui-panneau-dossier">
           <CarteSignalement
@@ -216,9 +221,7 @@ export function EcranSupervision(proprietes: ProprietesEcranSupervision): ReactN
             onValider={(priorite, commentaire) => void decider(dossierOuvert, priorite, commentaire, true)}
             onRejeter={(motif, commentaire) => void decider(dossierOuvert, motif, commentaire, false)}
           />
-          <Bouton variante="texte" onClick={() => setOuvert(null)}>
-            Revenir à la file
-          </Bouton>
+
           </div>
         </Modale>
       ) : (
@@ -227,5 +230,7 @@ export function EcranSupervision(proprietes: ProprietesEcranSupervision): ReactN
     </section>
   );
 }
+
+
 
 
