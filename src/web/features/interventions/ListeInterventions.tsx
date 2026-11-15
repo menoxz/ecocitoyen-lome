@@ -18,6 +18,8 @@ export interface ProprietesListeInterventions {
   readonly dossiers: readonly SignalementApi[];
   readonly maintenantIso: string;
   readonly onOuvrir: (id: string) => void;
+  readonly onDemarrer: (id: string) => void;
+  readonly demarrageEnCours: string | null;
 }
 
 const TOUTES = "TOUTES";
@@ -87,7 +89,7 @@ export function ListeInterventions(proprietes: ProprietesListeInterventions): Re
           }}
         />
       ) : (
-        <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: ESPACEMENT.e2 }}>
+        <ul className="ui-grille-cartes">
           {visibles.map((dossier) => (
             <li key={dossier.id_signalement}>
               <CarteSignalement
@@ -102,6 +104,8 @@ export function ListeInterventions(proprietes: ProprietesListeInterventions): Re
                 nbConfirmations={dossier.nb_confirmations}
                 sansPhoto={dossier.sans_photo}
                 onOuvrir={proprietes.onOuvrir}
+                onDemarrer={proprietes.onDemarrer}
+                demarrageEnCours={proprietes.demarrageEnCours === dossier.id_signalement}
               />
             </li>
           ))}
@@ -110,3 +114,4 @@ export function ListeInterventions(proprietes: ProprietesListeInterventions): Re
     </section>
   );
 }
+

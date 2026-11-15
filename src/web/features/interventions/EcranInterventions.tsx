@@ -36,6 +36,7 @@ export function EcranInterventions(proprietes: ProprietesEcranInterventions): Re
   const [erreur, setErreur] = useState<ErreurApi | null>(null);
   const [ouvert, setOuvert] = useState<string | null>(proprietes.idInitial ?? null);
   const [message, setMessage] = useState<string | null>(null);
+  const [demarrage, setDemarrage] = useState<string | null>(null);
 
   useEffect(() => {
     void (async () => {
@@ -59,6 +60,27 @@ export function EcranInterventions(proprietes: ProprietesEcranInterventions): Re
       void charger();
     }
   }, [session, charger]);
+
+  /**
+   * Démarrage depuis la carte : l action principale de la file. Le serveur décide (statut, rôle,
+   * affectation) ; la liste est rechargée ensuite pour afficher l état réel, jamais un état supposé.
+   */
+  const demarrerDossier = useCallback(
+    async (id: string): Promise<void> => {
+      setDemarrage(id);
+      setErreur(null);
+      setMessage(null);
+      const resultat = await proprietes.client.demarrer(id);
+      setDemarrage(null);
+      if (!resultat.ok) {
+        setErreur(resultat.erreur);
+        return;
+      }
+      setMessage("Intervention démarrée. Pensez à la photo de preuve avant de clôturer.");
+      await charger();
+    },
+    [proprietes.client, charger],
+  );
 
   if (session === "inconnu") {
     return <EtatChargement lignes={3} libelle="Vérification de votre session" />;
@@ -174,9 +196,12 @@ export function EcranInterventions(proprietes: ProprietesEcranInterventions): Re
             setOuvert(id);
             setMessage(null);
           }}
+          onDemarrer={(id) => void demarrerDossier(id)}
+          demarrageEnCours={demarrage}
         />
       )}
     </section>
   );
 }
+
 

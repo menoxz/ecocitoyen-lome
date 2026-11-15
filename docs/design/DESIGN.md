@@ -174,7 +174,8 @@ puis détail. Ce chapitre fixe comment la liste s''occupe l''écran.
 
 | Objet | Disposition | Seuil |
 |---|---|---|
-| Carte riche (photo, description, puces, action) | une colonne, pleine largeur | toujours |
+| Carte riche (photo, description, puces, action) | une colonne, pleine largeur | < 900 px |
+| Carte riche de la file de service (espace agent) | grille de 2 colonnes | ≥ 900 px |
 | Objet court (intitulé + valeur + état) | une colonne | < 1100 px |
 | Objet court | grille de 2 colonnes | ≥ 1100 px |
 
@@ -233,4 +234,5 @@ Un composant ajouté après coup repasse par ce document : pas de style « local
 | Nouveau composant | ligne dans la matrice §3 avec ses huit états, ou il n'entre pas |
 | Modification d'une couleur | relancer `verifier-contrastes.mjs`, ratio consigné dans le tableau |
 | Contrainte non tenable | nouvel ADR ; ce document n'est pas amendé en silence |
+
 

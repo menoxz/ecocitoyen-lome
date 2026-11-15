@@ -1791,3 +1791,22 @@ a:focus-visible {
 
 
 
+
+/* ——— File de l agent : deux colonnes ———
+   Les cartes de service portent photo, puces et description : deux colonnes tiennent à partir de
+   900 px sur un poste de travail, une seule en dessous pour garder la largeur de lecture. */
+.ui-grille-cartes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+
+@media (min-width: 900px) {
+  .ui-grille-cartes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+}
