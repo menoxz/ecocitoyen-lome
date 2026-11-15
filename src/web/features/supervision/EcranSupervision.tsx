@@ -186,7 +186,7 @@ export function EcranSupervision(proprietes: ProprietesEcranSupervision): ReactN
       {dossierOuvert ? (
         <Modale
           ouverte
-          pleineLargeur
+          taille="standard"
           titre={`Décider du dossier ${dossierOuvert.id_signalement}`}
           libelleFermeture="Fermer la décision"
           onFermer={() => setOuvert(null)}
@@ -227,4 +227,5 @@ export function EcranSupervision(proprietes: ProprietesEcranSupervision): ReactN
     </section>
   );
 }
+
 

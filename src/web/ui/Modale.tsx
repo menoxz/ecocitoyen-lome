@@ -1,27 +1,36 @@
 "use client";
 import { useEffect, type ReactNode } from "react";
 import { Bouton } from "./Bouton.tsx";
-import { ESPACEMENT, RAYON, TAILLE_TEXTE } from "./jetons.ts";
+import { CLASSES } from "./jetons.ts";
 
 /**
- * Fenêtre modale — états couverts : repos, focus piégé, fermeture par Échap, fermeture par
- * action, contenu en chargement, contenu en erreur (portés par les enfants).
+ * Fenêtre modale — états couverts : repos, fermeture par Échap, fermeture par action, contenu en
+ * chargement, contenu en erreur (portés par les enfants), taille explicite.
  *
- * Deux garanties d''accessibilité (DESIGN.md §3.1) :
- * - `role="dialog"` + `aria-modal` + titre relié ;
- * - Échap ferme, et le focus revient à l''élément ouvreur à la fermeture.
+ * Trois zones, et une seule défile :
+ *   - l'en-tête (titre + fermeture) reste en place ;
+ *   - le corps défile quand le contenu dépasse la hauteur disponible ;
+ *   - le pied, s'il y en a un, reste visible sous le corps.
  *
- * Le piège de focus et Échap reposent sur un effet client : le rendu serveur prouve la structure
- * ARIA, la revue au clavier prouve le comportement. Les deux sont nécessaires, aucun ne remplace
- * l''autre.
+ * La largeur est bornée par une **taille nommée**, pas par la largeur de l'écran : une modale qui
+ * s'étire sur 1920 px redevient une page, et un formulaire en une colonne y flotte au milieu du
+ * vide. `pleineLargeur` reste accepté pour les rares contenus réellement larges (tableau).
+ *
+ * Accessibilité (DESIGN.md §3.1) : `role="dialog"`, `aria-modal`, titre relié, Échap ferme.
  */
+export type TailleModale = "etroite" | "standard" | "large";
+
 export interface ProprietesModale {
   readonly ouverte: boolean;
   readonly titre: string;
   readonly children: ReactNode;
   readonly libelleFermeture?: string;
   readonly onFermer?: () => void;
+  /** Réservé aux contenus larges (tableau, aperçu) ; par défaut, la largeur est bornée. */
   readonly pleineLargeur?: boolean;
+  readonly taille?: TailleModale;
+  /** Actions du pied : elles restent visibles pendant que le corps défile. */
+  readonly actions?: ReactNode;
 }
 
 export function Modale(proprietes: ProprietesModale): ReactNode {
@@ -42,44 +51,33 @@ export function Modale(proprietes: ProprietesModale): ReactNode {
     return null;
   }
 
+  const taille = proprietes.pleineLargeur === true ? "pleine" : (proprietes.taille ?? "standard");
+
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        backgroundColor: "rgba(17, 24, 39, .45)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: ESPACEMENT.e4,
-        zIndex: 40,
-      }}
-    >
+    <div className="ui-modale-voile">
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="ui-modale-titre"
-        style={{
-          width: proprietes.pleineLargeur ? "100%" : "min(560px, 100%)",
-          maxHeight: "90vh",
-          overflowY: "auto",
-          backgroundColor: "var(--ui-surface)",
-          borderRadius: RAYON.md,
-          padding: ESPACEMENT.e4,
-          display: "flex",
-          flexDirection: "column",
-          gap: ESPACEMENT.e3,
-        }}
+        className={`ui-modale ui-modale--${taille}`}
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: ESPACEMENT.e2 }}>
-          <h2 id="ui-modale-titre" style={{ margin: 0, fontSize: TAILLE_TEXTE.lg, color: "inherit" }}>
+        <div className="ui-modale-entete">
+          <h2 id="ui-modale-titre" className="ui-modale-titre">
             {proprietes.titre}
           </h2>
-          <Bouton variante="texte" taille="sm" libelleAccessible={proprietes.libelleFermeture ?? "Fermer"} onClick={proprietes.onFermer}>
+          <Bouton
+            variante="texte"
+            taille="sm"
+            libelleAccessible={proprietes.libelleFermeture ?? "Fermer"}
+            onClick={proprietes.onFermer}
+          >
             Fermer
           </Bouton>
         </div>
-        {proprietes.children}
+
+        <div className={`ui-modale-corps ${CLASSES.focusable}`}>{proprietes.children}</div>
+
+        {proprietes.actions ? <div className="ui-modale-pied">{proprietes.actions}</div> : null}
       </div>
     </div>
   );

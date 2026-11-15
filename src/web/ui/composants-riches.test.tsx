@@ -185,6 +185,33 @@ describe("Modale", () => {
     expect(html).toContain('aria-label="Fermer le détail"');
     expect(html).toContain("corps");
   });
+
+  test("taille standard par défaut, en-tête et corps séparés, aucun pied sans action", () => {
+    const html = rendu(<Modale ouverte titre="Décider du dossier">champs</Modale>);
+
+    expect(html).toContain("ui-modale--standard");
+    expect(html).toContain("ui-modale-entete");
+    expect(html).toContain("ui-modale-corps");
+    expect(html).not.toContain("ui-modale-pied");
+    expect(html).not.toContain("ui-modale--pleine");
+  });
+
+  test("la taille demandée passe par une classe, jamais par la largeur de l'écran", () => {
+    expect(rendu(<Modale ouverte taille="etroite" titre="t">c</Modale>)).toContain("ui-modale--etroite");
+    expect(rendu(<Modale ouverte taille="large" titre="t">c</Modale>)).toContain("ui-modale--large");
+    expect(rendu(<Modale ouverte pleineLargeur titre="t">c</Modale>)).toContain("ui-modale--pleine");
+  });
+
+  test("un pied n'existe que si des actions sont fournies", () => {
+    const html = rendu(
+      <Modale ouverte titre="t" actions={<button type="button">Valider</button>}>
+        c
+      </Modale>,
+    );
+
+    expect(html).toContain("ui-modale-pied");
+    expect(html).toContain("Valider");
+  });
 });
 
 describe("FilParcours", () => {
