@@ -854,7 +854,6 @@ a:hover {
 
 .ui-pied-liste a:hover {
   color: var(--ui-primaire);
-  text-decoration: underline;
 }
 
 .ui-pied-bas {
@@ -1605,7 +1604,11 @@ a:hover {
   margin-top: 6px;
   width: 100%;
   max-height: 320px;
-  overflow-y: auto;
+  /* Le panneau ne défile pas lui-même : seul la liste d'options défile, l'en-tête de recherche
+     reste figé en haut. Deux zones, deux comportements. */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   padding: 6px;
   border: 1px solid var(--ui-bordure);
   border-radius: var(--ui-rayon-sm);
@@ -1619,11 +1622,17 @@ a:hover {
 }
 
 .ui-select-recherche {
+  /* En-tête figé : ne rétrécit pas, ne défile pas, fond opaque pour ne rien laisser passer. */
+  flex: 0 0 auto;
+  position: sticky;
+  top: 0;
+  z-index: 1;
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 0 10px;
   margin-bottom: 4px;
+  background: var(--ui-fond);
   border: 1px solid var(--ui-bordure);
   border-radius: 9999px;
   background: var(--ui-fond);
@@ -1646,6 +1655,12 @@ a:hover {
 }
 
 .ui-select-options {
+  /* Seule zone qui défile. `min-height: 0` est indispensable : sans lui, un enfant flex refuse
+     de rétrécir et la liste déborde au lieu de défiler. */
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -1699,3 +1714,19 @@ a:hover {
 }
 
 
+
+
+/* Aucun lien de l'application n'est souligné : l'affordance vient de la couleur et du survol. */
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+a:focus-visible {
+  outline: 2px solid var(--ui-focus);
+  outline-offset: 2px;
+  border-radius: var(--ui-rayon-sm);
+}

@@ -79,8 +79,6 @@
 
 .ui-bouton--texte:hover:not(:disabled) {
   background-color: var(--ui-primaire-voile, rgba(15, 118, 110, 0.08));
-  text-decoration: underline;
-  text-underline-offset: 3px;
 }
 
 .ui-bouton:active:not(:disabled) {
@@ -234,3 +232,4 @@
     transform: none;
   }
 }
+
