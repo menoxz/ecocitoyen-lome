@@ -18,8 +18,8 @@ const serveurs: { fermer: () => Promise<void> }[] = [];
 function dossierBuild(): string {
   const dossier = mkdtempSync(join(tmpdir(), "eco-dist-"));
   dossiers.push(dossier);
-  writeFileSync(join(dossier, "signaler.html"), '<!doctype html><html><body><div id="racine"></div></body></html>');
-  writeFileSync(join(dossier, "index.html"), "<!doctype html><html><body>legacy</body></html>");
+  writeFileSync(join(dossier, "index.html"), '<!doctype html><html><body><div id="racine"></div></body></html>');
+  writeFileSync(join(dossier, "signaler.html"), "<!doctype html><html><body>ancienne page retiree en P8</body></html>");
   return dossier;
 }
 
@@ -46,11 +46,11 @@ afterEach(async () => {
 });
 
 describe("interface servie sur le port de l'API", () => {
-  test("sert la page du parcours et laisse /api/v1 en JSON", async () => {
+  test("sert l index du front et laisse /api/v1 en JSON", async () => {
     const banc = await demarrerBanc({ avecSeed: false });
     const racine = await servirAvecStatique(banc, dossierBuild());
 
-    const page = await fetch(`${racine}/signaler.html`);
+    const page = await fetch(`${racine}/`);
     const sante = await fetch(`${racine}/api/v1/sante`);
     const corpsSante = (await sante.json()) as { statut?: string };
 
@@ -61,7 +61,7 @@ describe("interface servie sur le port de l'API", () => {
     await banc.fermer();
   });
 
-  test("replie toute route inconnue sur la page du parcours, jamais sur le legacy", async () => {
+  test("replie toute route inconnue sur l index du front, jamais sur l ancienne page", async () => {
     const banc = await demarrerBanc({ avecSeed: false });
     const racine = await servirAvecStatique(banc, dossierBuild());
 
@@ -70,7 +70,7 @@ describe("interface servie sur le port de l'API", () => {
 
     expect(repli.status).toBe(200);
     expect(contenu).toContain('id="racine"');
-    expect(contenu).not.toContain("legacy");
+    expect(contenu).not.toContain("ancienne page");
     await banc.fermer();
   });
 

@@ -59,7 +59,7 @@ export function creerApp(
     const dossier = options.dossierStatique;
     app.use(express.static(dossier, { index: false }));
     app.get(/^(?!\/api\/).*/, (_req, res, suivant) => {
-      res.sendFile("signaler.html", { root: dossier }, (erreur) => {
+      res.sendFile("index.html", { root: dossier }, (erreur) => {
         if (erreur) {
           suivant();
         }

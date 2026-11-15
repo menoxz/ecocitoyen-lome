@@ -20,12 +20,10 @@ export default defineConfig(() => {
       },
     },
     build: {
-      // Deux entrees : le prototype (index.html) et le nouveau parcours (signaler.html).
-      // La bascule finale consistera a supprimer l'ancienne, pas a reecrire celle-ci.
+      // Une seule entrée : le front cible. Le prototype a été retiré en P8.
       rollupOptions: {
         input: {
           main: path.resolve(__dirname, 'index.html'),
-          signaler: path.resolve(__dirname, 'signaler.html'),
         },
       },
     },

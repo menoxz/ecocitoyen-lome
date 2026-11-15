@@ -127,13 +127,11 @@ function classer(specifieur, fichierSource) {
   return { type: 'externe', valeur: specifieur.startsWith('@') ? specifieur.split('/').slice(0, 2).join('/') : specifieur.split('/')[0] };
 }
 
-function estFichierLegacy(cheminAbsolu) {
-  const rel = relative(SRC, cheminAbsolu).split(sep);
-  const legacyDossiers = ['components', 'types', 'utils', 'data'];
-  const legacyFichiers = ['App.tsx', 'main.tsx', 'index.css', 'vite-env.d.ts'];
-  if (legacyFichiers.includes(rel[0])) return true;
-  return legacyDossiers.includes(rel[0]);
-}
+/**
+ * Fichiers admis à la racine de src/ : des déclarations d'ambiance, pas du code de couche.
+ * Depuis P8, tout le reste doit appartenir à l'une des huit couches — il n'y a plus d'exception.
+ */
+const RACINE_ADMISE = ['vite-env.d.ts'];
 
 function verifierFichier(fichier) {
   const couche = coucheDe(fichier);
@@ -215,26 +213,22 @@ function main() {
       continue; // couche pas encore créée : rien à vérifier
     }
     for (const f of fichiers) {
-      if (estFichierLegacy(f)) continue;
       verifierFichier(f);
       examines += 1;
     }
   }
 
-  const fichiersLegacy = ['App.tsx', 'main.tsx'].filter((f) => {
-    try {
-      statSync(join(SRC, f));
-      return true;
-    } catch {
-      return false;
-    }
-  });
+  // P8 : plus rien hors couches. Un fichier posé directement sous src/ (ou dans un dossier
+  // inconnu) échappe à la matrice et redeviendrait une zone franche.
+  for (const f of fichiersDe(SRC)) {
+    if (coucheDe(f)) continue;
+    const premier = relative(SRC, f).split(sep)[0];
+    if (RACINE_ADMISE.includes(premier)) continue;
+    ajouter(f, 1, 'perimetre', `fichier hors couches : src/${relative(SRC, f).split(sep).join('/')}`);
+  }
 
   if (violations.length === 0) {
-    console.log(`verif:arch OK — ${examines} fichier(s) examiné(s), 0 violation.`);
-    if (fichiersLegacy.length) {
-      console.log(`legacy ignoré : src/${fichiersLegacy.join(', src/')} + src/{components,types,utils,data} (retrait en P8).`);
-    }
+    console.log(`verif:arch OK — ${examines} fichier(s) examiné(s) dans 8 couches, 0 violation.`);
     process.exit(0);
   }
 
