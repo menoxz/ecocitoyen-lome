@@ -65,6 +65,7 @@ export function session(deps: Dependances) {
     (req as RequeteActeur).acteur = {
       idUtilisateur: compte.idUtilisateur,
       role: compte.role,
+      idEquipe: compte.idEquipe,
       adresseIp: req.ip ?? null,
     };
     suivant();

@@ -69,6 +69,7 @@ Chaque porte est une **preuve exécutable**, pas une déclaration.
 ### P7 — Front découpé (2 j)
 **But** : le front ne contient plus aucune règle, et reste utilisable en démonstration.
 **Livrables** : `web/app`, `web/api` (client typé sur les contrats), `web/features/{carte,signalements,dossier,tableau-de-bord,administration,recette}`, `web/ui`, `web/i18n/fr.ts`. `ReportDetailModal` éclaté en : en-tête, preuves photo, actions disponibles (calculées par le serveur), historique.
+**Prérequis obligatoire (ADR-011)** : `docs/design/DESIGN.md` (jetons + un style par composant avec tous ses états) et `docs/design/PARCOURS.md` (parcours métier par profil, coût en gestes, écrans) validés **avant** la première ligne d'écran. Sans ces deux fichiers, P7 ne démarre pas.
 **Porte** : les six vues fonctionnent sur `/api/v1` ; aucun import de `domaine`/`application` dans `web` (script) ; bundle initial < 1 Mo (ENF02) mesuré ; la recette affiche l'état réel de `tests/recette`, plus de `PASSED` en dur.
 
 ### P8 — Retrait du legacy (0,5 j)

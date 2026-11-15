@@ -63,7 +63,12 @@ export async function connecter(commande: CommandeConnexion, deps: Dependances):
     creeLe: maintenant,
   });
 
-  const acteur: Acteur = { idUtilisateur: compte.idUtilisateur, role: compte.role, adresseIp: commande.adresseIp };
+  const acteur: Acteur = {
+    idUtilisateur: compte.idUtilisateur,
+    role: compte.role,
+    idEquipe: compte.idEquipe,
+    adresseIp: commande.adresseIp,
+  };
   journaliser(deps, acteur, "compte.connexion", compte.idUtilisateur);
 
   const projection: Compte = {

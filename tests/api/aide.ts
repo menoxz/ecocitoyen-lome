@@ -4,6 +4,7 @@ import { creerDepotComptes } from "@infrastructure/sqlite/depot-comptes.sqlite.t
 import { creerDepotReferentiel } from "@infrastructure/sqlite/depot-referentiel.sqlite.ts";
 import { creerDepotSessions } from "@infrastructure/sqlite/depot-sessions.sqlite.ts";
 import { creerJournalSqlite } from "@infrastructure/journal/journal-sqlite.ts";
+import { creerNotificateurSqlite } from "@infrastructure/notifications/notificateur-sqlite.ts";
 import { creerLimiteDebitSqlite } from "@infrastructure/limite-debit/limite-sqlite.ts";
 import { creerHachageArgon2, creerEmpreinteJeton } from "@infrastructure/hachage/argon2.ts";
 import { creerHorlogeFixe } from "@infrastructure/horloge/horloge-fixe.ts";
@@ -48,6 +49,7 @@ export async function demarrerBanc(options: { readonly avecSeed?: boolean } = {}
     sessions: creerDepotSessions(base),
     journal: creerJournalSqlite(base),
     debit: creerLimiteDebitSqlite(base),
+    notifications: creerNotificateurSqlite(base),
     hachage: creerHachageArgon2(),
     jetons: creerEmpreinteJeton(),
     identifiants: creerIdentifiantsUuid(),

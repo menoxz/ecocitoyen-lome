@@ -7,6 +7,7 @@ import type { Horloge } from "@ports/horloge.port.ts";
 import type { Identifiants } from "@ports/identifiants.port.ts";
 import type { Journal } from "@ports/journal.port.ts";
 import type { LimiteDebit } from "@ports/limite-debit.port.ts";
+import type { Notificateur } from "@ports/notificateur.port.ts";
 
 /**
  * Tout ce dont un cas d''usage a besoin, fourni par la composition root.
@@ -21,6 +22,7 @@ export interface Dependances {
   readonly sessions: DepotSessions;
   readonly journal: Journal;
   readonly debit: LimiteDebit;
+  readonly notifications: Notificateur;
   readonly hachage: Hachage;
   readonly jetons: EmpreinteJeton;
   readonly identifiants: Identifiants;
@@ -31,5 +33,6 @@ export interface Dependances {
 export interface Acteur {
   readonly idUtilisateur: string;
   readonly role: import("@domaine/compte/role.type.ts").Role;
+  readonly idEquipe: string | null;
   readonly adresseIp: string | null;
 }

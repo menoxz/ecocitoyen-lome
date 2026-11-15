@@ -40,3 +40,12 @@ export function verifierClotureParAgent(intervention: Intervention | null, idEqu
     throw new ErreurMetier('DROIT_REFUSE', { raison: 'equipe_differente' });
   }
 }
+/** Un agent ne démarre qu'une intervention de son équipe (§3.3, note b). */
+export function verifierAppartenanceEquipe(intervention: Intervention | null, idEquipeAgent: string | null): void {
+  if (!intervention) {
+    throw new ErreurMetier("INTERVENTION_AUCUNE");
+  }
+  if (intervention.idEquipe !== idEquipeAgent) {
+    throw new ErreurMetier("DROIT_REFUSE", { raison: "equipe_differente" });
+  }
+}

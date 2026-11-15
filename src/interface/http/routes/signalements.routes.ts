@@ -10,7 +10,7 @@ import { rejeter } from "@application/signalement/rejeter.cas.ts";
 import type { Acteur, Dependances } from "@application/dependances.type.ts";
 import type { MotifRejet, Priorite, Statut } from "@domaine/signalement/signalement.type.ts";
 
-const VISITEUR: Acteur = { idUtilisateur: "visiteur", role: "VISITEUR", adresseIp: null };
+const VISITEUR: Acteur = { idUtilisateur: "visiteur", role: "VISITEUR", idEquipe: null, adresseIp: null };
 
 /** Un visiteur non connecté lit, mais ne crée rien : le RBAC des écritures le refuse ensuite. */
 function acteurDe(req: Request): Acteur {

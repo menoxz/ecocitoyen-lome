@@ -4,38 +4,32 @@ import type { ContexteActeur, Signalement } from "@domaine/signalement/signaleme
 /**
  * Traduit un acteur authentifié et un dossier en contexte de décision du domaine.
  *
- * Point unique de cette traduction : si la definition de « agent de l''équipe affectée » change,
+ * Point unique de cette traduction : si la définition de « agent de l''équipe affectée » change,
  * elle change ici et pas dans cinq cas d''usage.
+ *
+ * `estDeLEquipeAffectee` est fourni par l''appelant qui, seul, connaît l''intervention active.
+ * Le défaut est `false` : ne pas savoir n''autorise rien.
  */
 export function contexteDe(
   acteur: Acteur,
   dossier: Signalement | null,
   options: {
     readonly estDeLEquipeAffectee?: boolean;
-    readonly idEquipeDeLActeur?: string | null;
+    readonly maintenantIso?: string;
   } = {},
 ): ContexteActeur {
-  const idEquipeActeur = options.idEquipeDeLActeur ?? null;
-  const estAgentDeLEquipeAffectee =
-    options.estDeLEquipeAffectee ?? (dossier !== null && idEquipeActeur !== null ? false : false);
-
   return {
     role: acteur.role,
     idUtilisateur: acteur.idUtilisateur,
     estAuteur: dossier !== null && dossier.idAuteur === acteur.idUtilisateur,
-    estAgentDeLEquipeAffectee,
-    joursDepuisResolution: joursDepuis(dossier?.dateResolution ?? null),
+    estAgentDeLEquipeAffectee: options.estDeLEquipeAffectee === true,
+    joursDepuisResolution: options.maintenantIso
+      ? joursEntre(dossier?.dateResolution ?? null, options.maintenantIso)
+      : null,
   };
 }
 
-/** Fenêtre de contestation : nombre de jours écoulés depuis la résolution, ou null. */
-function joursDepuis(dateIso: string | null): number | null {
-  if (!dateIso) {
-    return null;
-  }
-  return null;
-}
-
+/** Nombre de jours entre deux instants ISO, ou null si l'un des deux est inexploitable. */
 export function joursEntre(depuisIso: string | null, maintenantIso: string): number | null {
   if (!depuisIso) {
     return null;
