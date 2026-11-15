@@ -28,7 +28,12 @@ export interface ProprietesBouton {
   readonly onClick?: () => void;
 }
 
-const HAUTEUR: Readonly<Record<TailleBouton, number>> = { sm: 36, md: CIBLE_TACTILE, lg: 52 };
+/**
+ * La taille `sm` ne réduit que le libellé, jamais la cible tactile : 36 px de haut tenait dans la
+ * fiche mais sortait de la règle « 44 px au pouce » et rendait les actions de liste difficiles à
+ * viser sur un téléphone. Les trois tailles partent donc de `CIBLE_TACTILE`.
+ */
+const HAUTEUR: Readonly<Record<TailleBouton, number>> = { sm: CIBLE_TACTILE, md: CIBLE_TACTILE, lg: 52 };
 const TAILLE_POLICE: Readonly<Record<TailleBouton, number>> = {
   sm: TAILLE_TEXTE.sm,
   md: TAILLE_TEXTE.md,

@@ -291,6 +291,7 @@ a:hover {
 .ui-marque {
   display: inline-flex;
   align-items: center;
+  min-height: 44px;
   gap: 12px;
   font-size: 19px;
   font-weight: 800;
@@ -314,7 +315,7 @@ a:hover {
   display: inline-flex;
   align-items: center;
   gap: 9px;
-  min-height: 40px;
+  min-height: 44px;
   padding: 0 14px;
   border-radius: 9999px;
   font-size: 15px;
@@ -844,6 +845,7 @@ a:hover {
 .ui-pied-liste a {
   display: inline-flex;
   align-items: center;
+  min-height: 44px;
   gap: 9px;
   color: var(--ui-texte);
   text-decoration: none;
@@ -914,3 +916,4 @@ a:hover {
     transform: none;
   }
 }
+

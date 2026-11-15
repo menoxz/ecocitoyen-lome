@@ -51,9 +51,11 @@ describe("Bouton (6 états)", () => {
     expect(html).toContain("disabled");
   });
 
-  test("taille lg pour une action de parcours, sm pour une action secondaire", () => {
+  test("taille lg pour une action de parcours, sm ne réduit que le libellé", () => {
     expect(rendu(<Bouton taille="lg">Signaler</Bouton>)).toContain("min-height:52px");
-    expect(rendu(<Bouton taille="sm">Filtrer</Bouton>)).toContain("min-height:36px");
+    // `sm` garde la cible tactile : 36 px sortaient de la règle « 44 px au pouce » et rendaient
+    // les actions de liste difficiles à viser sur un téléphone.
+    expect(rendu(<Bouton taille="sm">Filtrer</Bouton>)).toContain("min-height:48px");
   });
 
   test("icône seule : libellé accessible obligatoire", () => {

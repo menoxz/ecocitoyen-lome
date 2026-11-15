@@ -67,11 +67,26 @@ export function EcranIndicateurs(proprietes: ProprietesEcranIndicateurs): ReactN
   }
 
   if (erreur) {
-    return <EtatErreur message={erreur.message} code={erreur.code} libelleReprise="Réessayer" onReprise={() => void charger()} />;
+    return (
+      <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e4 }}>
+        <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: "inherit" }}>Indicateurs de pilotage</h1>
+        <EtatErreur
+          message={erreur.message}
+          code={erreur.code}
+          libelleReprise="Réessayer"
+          onReprise={() => void charger()}
+        />
+      </section>
+    );
   }
 
   if (!synthese) {
-    return <EtatChargement lignes={4} libelle="Calcul des indicateurs" />;
+    return (
+      <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e4 }}>
+        <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: "inherit" }}>Indicateurs de pilotage</h1>
+        <EtatChargement lignes={4} libelle="Calcul des indicateurs" />
+      </section>
+    );
   }
 
   const lignes = lignesPilotage(synthese);
