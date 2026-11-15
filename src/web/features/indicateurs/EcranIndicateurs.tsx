@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { ChartColumn } from "lucide-react";
 import { FormulaireSession } from "../compte/FormulaireSession.tsx";
 import { Bouton } from "../../ui/Bouton.tsx";
+import { EnTeteVue } from "../../ui/EnTeteVue.tsx";
 import { EtatChargement } from "../../ui/EtatChargement.tsx";
 import { EtatErreur } from "../../ui/EtatErreur.tsx";
 import { ESPACEMENT, RAYON, TAILLE_TEXTE } from "../../ui/jetons.ts";
@@ -55,7 +57,11 @@ export function EcranIndicateurs(proprietes: ProprietesEcranIndicateurs): ReactN
   if (session === "absent") {
     return (
       <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e4 }}>
-        <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: "inherit" }}>Indicateurs de pilotage</h1>
+        <EnTeteVue
+          icone={ChartColumn}
+          titre="Indicateurs de pilotage"
+          explication={`Délais, qualité et volumes du service, calculés par le serveur. Un indicateur non calculable est marqué « ${NON_MESURABLE} » : il n'est jamais remplacé par une valeur de repli.`}
+        />
         <FormulaireSession
           client={proprietes.client}
           onSession={() => setSession("present")}
@@ -69,7 +75,11 @@ export function EcranIndicateurs(proprietes: ProprietesEcranIndicateurs): ReactN
   if (erreur) {
     return (
       <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e4 }}>
-        <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: "inherit" }}>Indicateurs de pilotage</h1>
+        <EnTeteVue
+          icone={ChartColumn}
+          titre="Indicateurs de pilotage"
+          explication={`Délais, qualité et volumes du service, calculés par le serveur. Un indicateur non calculable est marqué « ${NON_MESURABLE} » : il n'est jamais remplacé par une valeur de repli.`}
+        />
         <EtatErreur
           message={erreur.message}
           code={erreur.code}
@@ -83,7 +93,11 @@ export function EcranIndicateurs(proprietes: ProprietesEcranIndicateurs): ReactN
   if (!synthese) {
     return (
       <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e4 }}>
-        <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: "inherit" }}>Indicateurs de pilotage</h1>
+        <EnTeteVue
+          icone={ChartColumn}
+          titre="Indicateurs de pilotage"
+          explication={`Délais, qualité et volumes du service, calculés par le serveur. Un indicateur non calculable est marqué « ${NON_MESURABLE} » : il n'est jamais remplacé par une valeur de repli.`}
+        />
         <EtatChargement lignes={4} libelle="Calcul des indicateurs" />
       </section>
     );
@@ -94,11 +108,19 @@ export function EcranIndicateurs(proprietes: ProprietesEcranIndicateurs): ReactN
 
   return (
     <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
-      <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: "inherit" }}>Indicateurs de pilotage</h1>
-      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>
-        {synthese.total} dossier(s) sur la période. Un indicateur non calculable est marqué «{" "}
-        {NON_MESURABLE} » : il n'est jamais remplacé par une valeur de repli.
-      </p>
+      <EnTeteVue
+        icone={ChartColumn}
+        titre="Indicateurs de pilotage"
+        explication={`Délais, qualité et volumes du service, calculés par le serveur. Un indicateur non calculable est marqué « ${NON_MESURABLE} » : il n'est jamais remplacé par une valeur de repli.`}
+        chiffres={[
+          {
+            icone: ChartColumn,
+            valeur: String(synthese.total),
+            libelle: "dossier(s) sur la période",
+            aide: "Volume total des dossiers pris en compte pour ces indicateurs.",
+          },
+        ]}
+      />
 
       <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: ESPACEMENT.e2 }}>
         {lignes.map((ligne) => (

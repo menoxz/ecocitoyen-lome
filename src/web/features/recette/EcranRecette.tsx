@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import { ClipboardCheck, ListChecks } from "lucide-react";
+import { EnTeteVue } from "../../ui/EnTeteVue.tsx";
 import { ESPACEMENT, RAYON, TAILLE_TEXTE } from "../../ui/jetons.ts";
 import { PREUVES_RECETTE } from "../../recette/preuves.ts";
 
@@ -14,11 +16,19 @@ import { PREUVES_RECETTE } from "../../recette/preuves.ts";
 export function EcranRecette(): ReactNode {
   return (
     <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
-      <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: "inherit" }}>Recette vérifiable</h1>
-      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>
-        Les {PREUVES_RECETTE.length} critères de recette ne sont pas déclarés ici. Chacun renvoie au
-        test qui le porte : le résultat se lit en lançant <code>bun test</code>, pas sur cette page.
-      </p>
+      <EnTeteVue
+        icone={ClipboardCheck}
+        titre="Recette vérifiable"
+        explication="Les critères ne sont pas déclarés ici : chacun renvoie au test qui le porte. Le résultat se lit en lançant bun test, pas sur cette page."
+        chiffres={[
+          {
+            icone: ListChecks,
+            valeur: String(PREUVES_RECETTE.length),
+            libelle: "critère(s) rattaché(s) à un test",
+            aide: "Chaque critère porte le nom du test qui le vérifie, exécuté par bun test.",
+          },
+        ]}
+      />
 
       <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: ESPACEMENT.e2 }}>
         {PREUVES_RECETTE.map((preuve) => (

@@ -1,27 +1,33 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { CheckCircle2, ShieldCheck, UserCog, Users } from "lucide-react";
 import { FormulaireSession } from "../compte/FormulaireSession.tsx";
-import { Bouton } from "../../ui/Bouton.tsx";
-import { ChampSelect } from "../../ui/ChampSelect.tsx";
+import { EnTeteVue } from "../../ui/EnTeteVue.tsx";
 import { EtatChargement } from "../../ui/EtatChargement.tsx";
 import { EtatErreur } from "../../ui/EtatErreur.tsx";
-import { ESPACEMENT, RAYON, TAILLE_TEXTE } from "../../ui/jetons.ts";
+import { ESPACEMENT, TAILLE_TEXTE } from "../../ui/jetons.ts";
 import type { ClientApi, CompteApi, ErreurApi } from "../../api/client.ts";
-import { basculerActivation, comptesTries, libelleRole, nomAffichable } from "./logique.ts";
+import { ListeComptes } from "./ListeComptes.tsx";
+import { comptesTries } from "./logique.ts";
 
 /**
- * Parcours 7 : administration des comptes (PARCOURS.md §8).
+ * Parcours 7 : administration des comptes (PARCOURS.md §8), monté selon la hiérarchie de
+ * découverte :
+ *   1. la donnée globale — combien de comptes, combien d'administrateurs, combien d'actifs ;
+ *   2. la liste, cherchable, filtrable par rôle et triable (`ListeComptes`) ;
+ *   3. l'état de chaque compte, en icône + couleur + infobulle ;
+ *   4. les gestes — rôle, activation — repliés, ouverts au clic.
  *
  * L'écran propose, le serveur décide. Chaque modification renvoie le compte tel qu'il a été
- * enregistré : la ligne affichée est celle du serveur, pas une supposition locale. Un refus
- * — notamment « dernier administrateur actif » — remonte avec son code et s'affiche tel quel.
+ * enregistré : la ligne affichée est celle du serveur, pas une supposition locale.
  */
-const ROLES_PROPOSES = ["CITOYEN", "AGENT", "SUPERVISEUR", "ADMIN"] as const;
-
 export interface ProprietesEcranAdministration {
   readonly client: ClientApi;
 }
 
 type Session = "inconnu" | "absent" | "present";
+
+const EXPLICATION =
+  "Les comptes du service et leurs droits. Le dernier administrateur actif ne peut être ni rétrogradé ni désactivé.";
 
 export function EcranAdministration(proprietes: ProprietesEcranAdministration): ReactNode {
   const [session, setSession] = useState<Session>("inconnu");
@@ -65,7 +71,9 @@ export function EcranAdministration(proprietes: ProprietesEcranAdministration): 
         return;
       }
       const maj = resultat.valeur;
-      setComptes((liste) => (liste ?? []).map((compte) => (compte.id_utilisateur === maj.id_utilisateur ? { ...compte, ...maj } : compte)));
+      setComptes((liste) =>
+        (liste ?? []).map((compte) => (compte.id_utilisateur === maj.id_utilisateur ? { ...compte, ...maj } : compte)),
+      );
       setMessage(libelle);
     },
     [proprietes.client],
@@ -78,7 +86,7 @@ export function EcranAdministration(proprietes: ProprietesEcranAdministration): 
   if (session === "absent") {
     return (
       <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e4 }}>
-        <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: "inherit" }}>Administration des comptes</h1>
+        <EnTeteVue icone={ShieldCheck} titre="Administration des comptes" explication={EXPLICATION} />
         <FormulaireSession
           client={proprietes.client}
           onSession={() => setSession("present")}
@@ -90,22 +98,63 @@ export function EcranAdministration(proprietes: ProprietesEcranAdministration): 
   }
 
   if (erreur && !comptes) {
-    return <EtatErreur message={erreur.message} code={erreur.code} libelleReprise="Réessayer" onReprise={() => void charger()} />;
+    return (
+      <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e4 }}>
+        <EnTeteVue icone={ShieldCheck} titre="Administration des comptes" explication={EXPLICATION} />
+        <EtatErreur
+          message={erreur.message}
+          code={erreur.code}
+          libelleReprise="Réessayer"
+          onReprise={() => void charger()}
+        />
+      </section>
+    );
   }
 
   if (!comptes) {
-    return <EtatChargement lignes={4} libelle="Chargement des comptes" />;
+    return (
+      <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e4 }}>
+        <EnTeteVue icone={ShieldCheck} titre="Administration des comptes" explication={EXPLICATION} />
+        <EtatChargement lignes={4} libelle="Chargement des comptes" />
+      </section>
+    );
   }
+
+  const administrateurs = comptes.filter((compte) => compte.role === "ADMIN").length;
+  const actifs = comptes.filter((compte) => compte.actif !== false).length;
 
   return (
     <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
-      <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: "inherit" }}>Administration des comptes</h1>
-      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>
-        {comptes.length} compte(s). Le dernier administrateur actif ne peut être ni rétrogradé ni désactivé.
-      </p>
+      <EnTeteVue
+        icone={ShieldCheck}
+        titre="Administration des comptes"
+        explication={EXPLICATION}
+        chiffres={[
+          {
+            icone: Users,
+            valeur: String(comptes.length),
+            libelle: "compte(s)",
+            aide: "Comptes enregistrés, servis par le serveur.",
+          },
+          {
+            icone: UserCog,
+            valeur: String(administrateurs),
+            libelle: "administrateur(s)",
+            aide: "Comptes au rôle ADMIN. Le dernier actif est protégé par le serveur.",
+          },
+          {
+            icone: CheckCircle2,
+            valeur: String(actifs),
+            libelle: "actif(s)",
+            aide: "Comptes autorisés à se connecter.",
+          },
+        ]}
+      />
 
       {message ? (
-        <p role="status" style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-succes)" }}>{message}</p>
+        <p role="status" style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-succes)" }}>
+          {message}
+        </p>
       ) : null}
 
       {erreur ? (
@@ -114,57 +163,7 @@ export function EcranAdministration(proprietes: ProprietesEcranAdministration): 
         </p>
       ) : null}
 
-      <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: ESPACEMENT.e2 }}>
-        {comptes.map((compte) => (
-          <li
-            key={compte.id_utilisateur}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: ESPACEMENT.e2,
-              padding: ESPACEMENT.e3,
-              border: "1px solid var(--ui-bordure)",
-              borderRadius: RAYON.md,
-              backgroundColor: compte.actif === false ? "var(--ui-surface-douce)" : "var(--ui-surface)",
-            }}
-          >
-            <span style={{ fontSize: TAILLE_TEXTE.md, color: "inherit", fontWeight: 600 }}>
-              {nomAffichable(compte)}
-            </span>
-            <span style={{ fontSize: TAILLE_TEXTE.xs, color: "var(--ui-texte-attenue)" }}>
-              {compte.email} · {compte.actif === false ? "désactivé" : "actif"}
-            </span>
-
-            <ChampSelect
-              id={`role-${compte.id_utilisateur}`}
-              libelle="Rôle"
-              valeur={compte.role}
-              options={ROLES_PROPOSES.map((role) => ({ valeur: role, libelle: libelleRole(role) }))}
-              onChange={(role) => {
-                if (role !== compte.role) {
-                  void modifier(compte.id_utilisateur, { role }, `Rôle de ${compte.email} modifié : ${libelleRole(role)}.`);
-                }
-              }}
-              desactive={enCours === compte.id_utilisateur}
-            />
-
-            <Bouton
-              variante="texte"
-              taille="sm"
-              desactive={enCours === compte.id_utilisateur}
-              onClick={() =>
-                void modifier(
-                  compte.id_utilisateur,
-                  basculerActivation(compte),
-                  `${compte.email} ${compte.actif === false ? "réactivé" : "désactivé"}.`,
-                )
-              }
-            >
-              {compte.actif === false ? "Réactiver ce compte" : "Désactiver ce compte"}
-            </Bouton>
-          </li>
-        ))}
-      </ul>
+      <ListeComptes comptes={comptes} enCours={enCours} onModifier={(id, entree, libelle) => void modifier(id, entree, libelle)} />
     </section>
   );
 }

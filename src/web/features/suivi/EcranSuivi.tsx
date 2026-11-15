@@ -1,19 +1,27 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { BadgeStatut } from "../../ui/BadgeStatut.tsx";
+import { AlertTriangle, CalendarClock, CircleDot, FileSearch, MapPin, Users } from "lucide-react";
 import { Bouton } from "../../ui/Bouton.tsx";
+import { EnTeteVue } from "../../ui/EnTeteVue.tsx";
 import { EtatChargement } from "../../ui/EtatChargement.tsx";
 import { EtatErreur } from "../../ui/EtatErreur.tsx";
 import { EtatVide } from "../../ui/EtatVide.tsx";
+import { PucesEtat, type PuceEtat } from "../../ui/PucesEtat.tsx";
+import { ageRelatif } from "../../ui/CarteSignalement.tsx";
 import { ESPACEMENT, RAYON, TAILLE_TEXTE } from "../../ui/jetons.ts";
 import type { ClientApi, ErreurApi, EtapeHistoriqueApi, SignalementApi } from "../../api/client.ts";
 import { etapesLisibles, libelleStatut } from "./logique.ts";
 import { BoutonConfirmer } from "./BoutonConfirmer.tsx";
 
 /**
- * Parcours 2 : le citoyen suit son dossier (PARCOURS.md §2).
+ * Parcours 2 : le citoyen suit son dossier (PARCOURS.md §2), selon la même hiérarchie de
+ * découverte que les autres pages :
+ *   1. la donnée globale — le dossier, son numéro, son état et son ancienneté ;
+ *   2. la liste — ici il n'y a qu'un objet, la place revient à ses étapes ;
+ *   3. l'état du dossier, en puces icône + couleur + infobulle ;
+ *   4. le détail — l'historique des décisions et la confirmation citoyenne.
  *
  * Le statut et l'historique viennent du serveur : l'écran ne calcule rien et ne promet aucun délai.
- * L'identité de qui a décidé n'est pas exposée (RG28) — la projection serveur ne l'envoie pas.
+ * L'identité de qui a décidé n'est pas exposée (RG28).
  */
 export interface ProprietesEcranSuivi {
   readonly client: ClientApi;
@@ -52,10 +60,18 @@ export function EcranSuivi(proprietes: ProprietesEcranSuivi): ReactNode {
     })();
   }, [proprietes.client, id]);
 
+  const tete = (
+    <EnTeteVue
+      icone={FileSearch}
+      titre="Suivi du dossier"
+      explication="L état de votre signalement et chaque décision du service, dans l ordre où elles ont été prises."
+    />
+  );
+
   if (!id) {
     return (
       <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
-        <h1 className="ui-titre-page">Suivi du dossier</h1>
+        {tete}
         <EtatVide
           titre="Aucun dossier désigné"
           explication="Cette adresse ne correspond à aucun dossier. Reprenez le numéro affiché sur votre reçu."
@@ -69,51 +85,114 @@ export function EcranSuivi(proprietes: ProprietesEcranSuivi): ReactNode {
   }
 
   if (chargement) {
-    return <EtatChargement lignes={3} libelle="Chargement de votre dossier" />;
+    return (
+      <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
+        {tete}
+        <EtatChargement lignes={3} libelle="Chargement de votre dossier" />
+      </section>
+    );
   }
 
   if (erreur) {
     return (
-      <EtatErreur
-        message={erreur.message}
-        code={erreur.code}
-        libelleReprise="Réessayer"
-        onReprise={() => {
-          window.location.reload();
-        }}
-      />
+      <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
+        {tete}
+        <EtatErreur
+          message={erreur.message}
+          code={erreur.code}
+          libelleReprise="Réessayer"
+          onReprise={() => {
+            window.location.reload();
+          }}
+        />
+      </section>
     );
   }
 
   if (!dossier) {
-    return <EtatVide titre="Dossier introuvable" explication="Ce dossier n'existe pas ou ne vous est pas accessible." />;
+    return (
+      <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
+        {tete}
+        <EtatVide titre="Dossier introuvable" explication="Ce dossier n'existe pas ou ne vous est pas accessible." />
+      </section>
+    );
   }
 
   const lisibles = etapesLisibles(etapes ?? []);
+  const puces: PuceEtat[] = [
+    {
+      icone: CircleDot,
+      libelle: libelleStatut(dossier.statut),
+      ton: "statut",
+      aide: "Statut du dossier : il décide des actions possibles, il ne les indique pas.",
+    },
+    {
+      icone: AlertTriangle,
+      libelle: `Priorité ${String(dossier.niveau_priorite).toLowerCase()}`,
+      ton: dossier.niveau_priorite === "URGENTE" || dossier.niveau_priorite === "HAUTE" ? "erreur" : "priorite",
+      aide: "Priorité calculée par le service à partir de la catégorie et des confirmations.",
+    },
+    {
+      icone: MapPin,
+      libelle: dossier.quartier_nom ?? dossier.id_quartier,
+      ton: "neutre",
+      aide: "Quartier déclaré au signalement.",
+    },
+    {
+      icone: CalendarClock,
+      libelle: ageRelatif(dossier.date_signalement, proprietes.maintenantIso),
+      ton: "neutre",
+      aide: "Ancienneté depuis la date de signalement.",
+    },
+    ...(dossier.nb_confirmations > 0
+      ? [
+          {
+            icone: Users,
+            libelle: `${dossier.nb_confirmations} confirmation(s)`,
+            ton: "info" as const,
+            aide: "Nombre de citoyens ayant confirmé le même problème.",
+          },
+        ]
+      : []),
+  ];
 
   return (
     <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
-      <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: "inherit" }}>Suivi du dossier</h1>
+      <EnTeteVue
+        icone={FileSearch}
+        titre="Suivi du dossier"
+        explication="L état de votre signalement et chaque décision du service, dans l ordre où elles ont été prises."
+        chiffres={[
+          {
+            icone: CircleDot,
+            valeur: libelleStatut(dossier.statut),
+            libelle: "état actuel",
+            aide: "Statut renvoyé par le service pour ce dossier.",
+          },
+          {
+            icone: CalendarClock,
+            valeur: String(lisibles.length),
+            libelle: "étape(s) enregistrée(s)",
+            aide: "Chaque changement de statut est conservé dans l historique.",
+          },
+        ]}
+      />
 
       <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>
         Numéro : <strong>{dossier.id_signalement}</strong>
       </p>
 
-      <div style={{ display: "flex", gap: ESPACEMENT.e2, alignItems: "center", flexWrap: "wrap" }}>
-        <BadgeStatut statut={dossier.statut} />
-        <span style={{ fontSize: TAILLE_TEXTE.sm, color: "inherit" }}>
-          Priorité : {libelleStatut(dossier.niveau_priorite)}
-        </span>
-      </div>
+      <PucesEtat puces={puces} etiquette="État du dossier" />
 
       {dossier.description ? (
         <p style={{ margin: 0, fontSize: TAILLE_TEXTE.md, color: "inherit" }}>{dossier.description}</p>
       ) : null}
 
-      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.xs, color: "var(--ui-texte-attenue)" }}>
-        {dossier.quartier_nom ?? dossier.id_quartier} · signalé le {dossier.date_signalement}
-        {dossier.motif_rejet ? ` · motif : ${dossier.motif_rejet}` : ""}
-      </p>
+      {dossier.motif_rejet ? (
+        <p role="alert" style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-erreur)" }}>
+          Motif du rejet : {dossier.motif_rejet}
+        </p>
+      ) : null}
 
       <BoutonConfirmer
         client={proprietes.client}
@@ -126,7 +205,7 @@ export function EcranSuivi(proprietes: ProprietesEcranSuivi): ReactNode {
 
       {lisibles.length === 0 ? (
         <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>
-          Aucune étape enregistrée pour l'instant.
+          Aucune étape enregistrée pour l instant.
         </p>
       ) : (
         <ol style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: ESPACEMENT.e2 }}>
@@ -153,7 +232,12 @@ export function EcranSuivi(proprietes: ProprietesEcranSuivi): ReactNode {
         </ol>
       )}
 
-      <Bouton variante="texte" onClick={() => { window.location.hash = "#/signaler"; }}>
+      <Bouton
+        variante="texte"
+        onClick={() => {
+          window.location.hash = "#/signaler";
+        }}
+      >
         Signaler un autre problème
       </Bouton>
     </section>

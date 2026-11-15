@@ -1,11 +1,12 @@
 import { useEffect, useState, type ReactNode } from "react";
+import { Megaphone } from "lucide-react";
 import { AssistantSignalement } from "./AssistantSignalement.tsx";
+import { EnTeteVue } from "../../ui/EnTeteVue.tsx";
 import { EtatChargement } from "../../ui/EtatChargement.tsx";
 import { EtatErreur } from "../../ui/EtatErreur.tsx";
 import { FormulaireSession } from "../compte/FormulaireSession.tsx";
-import { ESPACEMENT, TAILLE_TEXTE } from "../../ui/jetons.ts";
+import { ESPACEMENT } from "../../ui/jetons.ts";
 import type { CategorieApi, ClientApi, ErreurApi, QuartierApi } from "../../api/client.ts";
-import { construireDemande } from "./etapes.ts";
 
 /**
  * Écran conteneur du parcours 1.
@@ -110,7 +111,11 @@ export function EcranSignaler(proprietes: ProprietesEcranSignaler): ReactNode {
   if (session === "inconnu") {
     return (
       <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
-        <h1 className="ui-titre-page ui-titre-page--centre">Signaler un problème</h1>
+        <EnTeteVue
+          icone={Megaphone}
+          titre="Signaler un problème"
+          explication="Photo, lieu, description : votre signalement entre dans une file de décision municipale et vous recevez un numéro de suivi."
+        />
         <EtatChargement lignes={2} libelle="Vérification de votre session" />
       </section>
     );
@@ -119,7 +124,11 @@ export function EcranSignaler(proprietes: ProprietesEcranSignaler): ReactNode {
   if (session === "absent") {
     return (
       <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e4 }}>
-        <h1 className="ui-titre-page ui-titre-page--centre">Signaler un problème</h1>
+        <EnTeteVue
+          icone={Megaphone}
+          titre="Signaler un problème"
+          explication="Photo, lieu, description : votre signalement entre dans une file de décision municipale et vous recevez un numéro de suivi."
+        />
         <FormulaireSession client={proprietes.client} onSession={() => setSession("present")} />
       </section>
     );
@@ -128,7 +137,11 @@ export function EcranSignaler(proprietes: ProprietesEcranSignaler): ReactNode {
   if (etat.etape === "chargement") {
     return (
       <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
-        <h1 className="ui-titre-page ui-titre-page--centre">Signaler un problème</h1>
+        <EnTeteVue
+          icone={Megaphone}
+          titre="Signaler un problème"
+          explication="Photo, lieu, description : votre signalement entre dans une file de décision municipale et vous recevez un numéro de suivi."
+        />
         <EtatChargement lignes={3} libelle="Chargement des catégories et des quartiers" />
       </section>
     );
@@ -137,7 +150,11 @@ export function EcranSignaler(proprietes: ProprietesEcranSignaler): ReactNode {
   if (etat.etape === "erreur") {
     return (
       <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
-        <h1 className="ui-titre-page ui-titre-page--centre">Signaler un problème</h1>
+        <EnTeteVue
+          icone={Megaphone}
+          titre="Signaler un problème"
+          explication="Photo, lieu, description : votre signalement entre dans une file de décision municipale et vous recevez un numéro de suivi."
+        />
         <EtatErreur
           message={etat.erreur.message}
           code={etat.erreur.code}
@@ -150,7 +167,11 @@ export function EcranSignaler(proprietes: ProprietesEcranSignaler): ReactNode {
 
   return (
     <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e4 }}>
-      <h1 className="ui-titre-page ui-titre-page--centre">Signaler un problème</h1>
+        <EnTeteVue
+          icone={Megaphone}
+          titre="Signaler un problème"
+          explication="Photo, lieu, description : votre signalement entre dans une file de décision municipale et vous recevez un numéro de suivi."
+        />
 
       <AssistantSignalement
         categories={etat.categories}

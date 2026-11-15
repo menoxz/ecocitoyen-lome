@@ -1,21 +1,26 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { AlertTriangle, CameraOff, Filter, ListChecks } from "lucide-react";
 import { FormulaireSession } from "../compte/FormulaireSession.tsx";
 import { Bouton } from "../../ui/Bouton.tsx";
 import { CarteSignalement } from "../../ui/CarteSignalement.tsx";
+import { EnTeteVue } from "../../ui/EnTeteVue.tsx";
 import { EtatChargement } from "../../ui/EtatChargement.tsx";
 import { EtatErreur } from "../../ui/EtatErreur.tsx";
-import { EtatVide } from "../../ui/EtatVide.tsx";
 import { ESPACEMENT, TAILLE_TEXTE } from "../../ui/jetons.ts";
 import type { ClientApi, ErreurApi, SignalementApi } from "../../api/client.ts";
 import { FormulaireDecision } from "./FormulaireDecision.tsx";
+import { ListeSupervision } from "./ListeSupervision.tsx";
 import { construireRejet, construireValidation, dossiersATrier, libellePriorite } from "./logique.ts";
 
 /**
- * Parcours superviseur (PARCOURS.md §5) : une file de tri, une décision par dossier.
+ * Parcours superviseur (PARCOURS.md §5), monté selon la hiérarchie de découverte :
+ *   1. la donnée globale — combien de signalements attendent une décision, combien sont urgents ;
+ *   2. la file, cherchable, filtrable par priorité et triable (`ListeSupervision`) ;
+ *   3. l'état de chaque signalement, en icône + couleur + infobulle (`CarteSignalement`) ;
+ *   4. la décision, au clic, dans `FormulaireDecision`.
  *
- * Trois gestes : ouvrir un dossier, choisir la priorité, valider. Le rejet demande un motif, parce
- * qu'un rejet muet ne dit pas au citoyen ce qu'il doit corriger. Les valeurs de décision
- * (priorités, motifs) sont servies par le serveur : l'écran n'en invente aucune.
+ * Les valeurs de décision (priorités, motifs) sont servies par le serveur : l'écran n'en invente
+ * aucune. Le rejet exige un motif, parce qu'un rejet muet ne dit pas au citoyen quoi corriger.
  */
 export interface ProprietesEcranSupervision {
   readonly client: ClientApi;
@@ -23,6 +28,8 @@ export interface ProprietesEcranSupervision {
 }
 
 type Session = "inconnu" | "absent" | "present";
+
+const EXPLICATION = "Les signalements en attente de décision, les plus urgents et les plus anciens d abord.";
 
 export function EcranSupervision(proprietes: ProprietesEcranSupervision): ReactNode {
   const [session, setSession] = useState<Session>("inconnu");
@@ -97,7 +104,7 @@ export function EcranSupervision(proprietes: ProprietesEcranSupervision): ReactN
   if (session === "absent") {
     return (
       <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e4 }}>
-        <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: "inherit" }}>File de tri</h1>
+        <EnTeteVue icone={ListChecks} titre="File de tri" explication={EXPLICATION} />
         <FormulaireSession
           client={proprietes.client}
           onSession={() => setSession("present")}
@@ -108,22 +115,60 @@ export function EcranSupervision(proprietes: ProprietesEcranSupervision): ReactN
     );
   }
 
-  if (erreur) {
-    return <EtatErreur message={erreur.message} code={erreur.code} libelleReprise="Réessayer" onReprise={() => void charger()} />;
+  if (erreur && !file) {
+    return (
+      <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e4 }}>
+        <EnTeteVue icone={ListChecks} titre="File de tri" explication={EXPLICATION} />
+        <EtatErreur
+          message={erreur.message}
+          code={erreur.code}
+          libelleReprise="Réessayer"
+          onReprise={() => void charger()}
+        />
+      </section>
+    );
   }
 
   if (!file) {
-    return <EtatChargement lignes={3} libelle="Chargement de la file de tri" />;
+    return (
+      <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e4 }}>
+        <EnTeteVue icone={ListChecks} titre="File de tri" explication={EXPLICATION} />
+        <EtatChargement lignes={3} libelle="Chargement de la file de tri" />
+      </section>
+    );
   }
 
   const dossierOuvert = file.find((dossier) => dossier.id_signalement === ouvert) ?? null;
+  const urgents = file.filter((dossier) => dossier.niveau_priorite === "URGENTE").length;
+  const sansPhoto = file.filter((dossier) => dossier.sans_photo).length;
 
   return (
     <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
-      <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: "inherit" }}>File de tri</h1>
-      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>
-        {file.length} signalement(s) en attente de décision, les plus urgents et les plus anciens d'abord.
-      </p>
+      <EnTeteVue
+        icone={ListChecks}
+        titre="File de tri"
+        explication={EXPLICATION}
+        chiffres={[
+          {
+            icone: Filter,
+            valeur: String(file.length),
+            libelle: "en attente de décision",
+            aide: "Signalements au statut NOUVEAU, servis par le serveur.",
+          },
+          {
+            icone: AlertTriangle,
+            valeur: String(urgents),
+            libelle: "urgent(s)",
+            aide: "Signalements dont la priorité calculée par le service est URGENTE.",
+          },
+          {
+            icone: CameraOff,
+            valeur: String(sansPhoto),
+            libelle: "sans photo",
+            aide: "Signalements déclarés en mode dégradé : aucune photo jointe.",
+          },
+        ]}
+      />
 
       {message ? (
         <p role="status" style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-succes)" }}>
@@ -131,14 +176,29 @@ export function EcranSupervision(proprietes: ProprietesEcranSupervision): ReactN
         </p>
       ) : null}
 
+      {erreur ? (
+        <p role="alert" style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-erreur)" }}>
+          {erreur.message}
+        </p>
+      ) : null}
+
       {dossierOuvert ? (
         <article style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
-          <p style={{ margin: 0, fontSize: TAILLE_TEXTE.md, color: "inherit" }}>
-            {dossierOuvert.description ?? `Dossier ${dossierOuvert.id_signalement}`}
-          </p>
+          <CarteSignalement
+            id={dossierOuvert.id_signalement}
+            statut={dossierOuvert.statut}
+            priorite={dossierOuvert.niveau_priorite}
+            scorePriorite={dossierOuvert.score_priorite}
+            description={dossierOuvert.description ?? `Dossier ${dossierOuvert.id_signalement}`}
+            quartier={dossierOuvert.quartier_nom ?? dossierOuvert.id_quartier}
+            dateSignalement={dossierOuvert.date_signalement}
+            maintenantIso={proprietes.maintenantIso}
+            nbConfirmations={dossierOuvert.nb_confirmations}
+            sansPhoto={dossierOuvert.sans_photo}
+            selectionnee
+          />
           <p style={{ margin: 0, fontSize: TAILLE_TEXTE.xs, color: "var(--ui-texte-attenue)" }}>
-            {dossierOuvert.quartier_nom ?? dossierOuvert.id_quartier} · priorité proposée :{" "}
-            {libellePriorite(dossierOuvert.niveau_priorite)}
+            Priorité proposée par le service : {libellePriorite(dossierOuvert.niveau_priorite)}.
           </p>
           <FormulaireDecision
             dossier={dossierOuvert}
@@ -152,34 +212,8 @@ export function EcranSupervision(proprietes: ProprietesEcranSupervision): ReactN
             Revenir à la file
           </Bouton>
         </article>
-      ) : file.length === 0 ? (
-        <EtatVide
-          titre="Aucun signalement à trier"
-          explication="La file est vide : les nouveaux signalements apparaîtront ici."
-          libelleAction="Actualiser"
-          onAction={() => void charger()}
-        />
       ) : (
-        <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: ESPACEMENT.e2 }}>
-          {file.map((dossier) => (
-            <li key={dossier.id_signalement}>
-              <CarteSignalement
-                id={dossier.id_signalement}
-                statut={dossier.statut}
-                priorite={dossier.niveau_priorite}
-                scorePriorite={dossier.score_priorite}
-                description={dossier.description ?? `Dossier ${dossier.id_signalement.slice(0, 12)}…`}
-                quartier={dossier.quartier_nom ?? dossier.id_quartier}
-                dateSignalement={dossier.date_signalement}
-                maintenantIso={proprietes.maintenantIso}
-                nbConfirmations={dossier.nb_confirmations}
-                sansPhoto={dossier.sans_photo}
-                selectionnee={ouvert === dossier.id_signalement}
-                onOuvrir={setOuvert}
-              />
-            </li>
-          ))}
-        </ul>
+        <ListeSupervision file={file} maintenantIso={proprietes.maintenantIso} onOuvrir={setOuvert} />
       )}
     </section>
   );

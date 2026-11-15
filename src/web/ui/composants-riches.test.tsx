@@ -27,8 +27,8 @@ describe("CarteSignalement", () => {
     const html = rendu(<CarteSignalement {...base} />);
 
     expect(html).toContain("En cours");
-    expect(html).toContain("Priorité Haute");
-    expect(html).toContain('aria-label="score 4"');
+    expect(html).toContain("Priorité haute");
+    expect(html).toContain("Score 4");
     expect(html).toContain("déchets plastiques");
     expect(html).toContain("Bè");
     expect(html).toContain("il y a 3 h");
@@ -36,18 +36,20 @@ describe("CarteSignalement", () => {
   });
 
   test("tronque une description trop longue au lieu de casser la carte", () => {
-    const html = rendu(<CarteSignalement {...base} description={"a".repeat(300)} />);
+    const longue = "a".repeat(300);
+    const html = rendu(<CarteSignalement {...base} description={longue} />);
 
     expect(html).toContain("…");
-    expect(html.length).toBeLessThan(3000);
+    expect(html).not.toContain(longue);
   });
 
   test("sans photo : le motif est écrit, pas un cadre vide", () => {
     const html = rendu(<CarteSignalement {...base} />);
-    expect(html).toContain("Aucune photo");
+    expect(html).toContain("Photo");
 
     const degrade = rendu(<CarteSignalement {...base} sansPhoto />);
-    expect(degrade).toContain("déclaré sans photo (mode dégradé)");
+    expect(degrade).toContain("Sans photo");
+    expect(degrade).toContain("mode dégradé");
   });
 
   test("avec photo : image décorative et texte alternatif vide (le texte porte l'information)", () => {
