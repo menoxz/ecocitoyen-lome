@@ -1731,31 +1731,14 @@ a:focus-visible {
   border-radius: var(--ui-rayon-sm);
 }
 
-/* ——— Case photo vide : l'input natif couvre la case ———
-   Le contenu visuel ne capte jamais le clic : il est traversé (`pointer-events: none`), donc
-   n'importe quel point de la case — icône, texte, bord — atteint le champ fichier natif.
-   C'est ce qui manquait quand le clic tombait sur le libellé au lieu du contrôle. */
+/* ——— Case photo vide ———
+   Aucun bouton n est dessiné : le champ fichier couvre la case en transparence, la case est la
+   seule cible visuelle. Le contenu ne capte pas le clic, l input superposé le reçoit. */
 .ui-photo-case--vide {
   border-style: dashed;
   background: var(--ui-fond);
   font: inherit;
-  padding: 0;
-}
-
-.ui-photo-case--vide[data-desactive="true"] {
-  opacity: 0.55;
-}
-
-.ui-photo-visuel {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  width: 100%;
-  height: 100%;
   padding: 10px;
-  pointer-events: none;
 }
 
 .ui-photo-case--vide:hover {
@@ -1767,77 +1750,40 @@ a:focus-visible {
   color: var(--ui-primaire);
 }
 
-/* ——— Contrôle fichier natif, visible et stylé ———
-   Il n est plus masqué : c est lui que l usager voit et clique, donc c est le navigateur qui ouvre
-   son sélecteur, sans script intermédiaire. Seul le bouton interne est habillé au thème. */
-.ui-photo-input {
-  width: 100%;
-  max-width: 100%;
-  margin-top: 4px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--ui-texte-attenue);
-  font: inherit;
-  font-size: 11px;
-  cursor: pointer;
-}
-
-.ui-photo-input::file-selector-button {
-  appearance: none;
-  min-height: 34px;
-  padding: 0 12px;
-  margin-right: 8px;
-  border: 1px solid var(--ui-primaire);
-  border-radius: 9999px;
-  background: var(--ui-primaire);
-  color: var(--ui-sur-primaire);
-  font: inherit;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background-color var(--ui-duree-rapide) var(--ui-courbe);
-}
-
-.ui-photo-input::file-selector-button:hover {
-  background: var(--ui-primaire-fonce, var(--ui-primaire));
-}
-
-.ui-photo-input:disabled,
-.ui-photo-input:disabled::file-selector-button {
-  cursor: not-allowed;
+.ui-photo-case--vide[data-desactive="true"] {
   opacity: 0.55;
+  cursor: not-allowed;
 }
 
-.ui-grille-photos-alerte {
-  grid-column: 1 / -1;
-  margin: 0;
-  padding: 8px 10px;
-  border-radius: var(--ui-rayon-sm);
-  background: var(--ui-statut-encours-fond);
-  border: 1px solid var(--ui-statut-encours-bordure);
-  color: var(--ui-statut-encours-texte);
-  font-size: 12px;
-  line-height: 1.5;
-}
-
-/* Le focus est visible sur la case, pas sur le champ transparent. */
 .ui-photo-case--vide:focus-within {
   outline: 2px solid var(--ui-focus);
   outline-offset: 2px;
   border-color: var(--ui-primaire);
 }
 
-.ui-photo-case--vide[data-desactive="true"] {
-  opacity: 0.55;
+.ui-photo-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  cursor: pointer;
+  font-size: 0;
+}
+
+.ui-photo-input:disabled {
   cursor: not-allowed;
 }
 
-/* Le contour de focus doit rester visible sur la case, pas sur l'input transparent. */
-.ui-photo-case--vide:focus-within {
-  outline: 2px solid var(--ui-focus);
-  outline-offset: 2px;
-}
+
+
+
+
+
+
 
 
 
