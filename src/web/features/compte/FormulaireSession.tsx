@@ -18,6 +18,12 @@ import type { ClientApi } from "../../api/client.ts";
 export interface ProprietesFormulaireSession {
   readonly client: ClientApi;
   readonly onSession: (compte: { readonly id_utilisateur: string }) => void;
+  /**
+   * Ce que la session permet de faire. Un agent qui ouvre sa file de tri lisait « Se connecter
+   * pour signaler » : le titre doit dire l'action de l'écran, pas celle du parcours citoyen.
+   */
+  readonly titre?: string;
+  readonly explication?: string;
 }
 
 export function FormulaireSession(proprietes: ProprietesFormulaireSession): ReactNode {
@@ -65,10 +71,12 @@ export function FormulaireSession(proprietes: ProprietesFormulaireSession): Reac
   return (
     <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
       <h2 style={{ margin: 0, fontSize: TAILLE_TEXTE.lg, color: COULEURS.texte }}>
-        {mode === "connexion" ? "Se connecter pour signaler" : "Créer un compte citoyen"}
+        {mode === "inscription"
+          ? "Créer un compte citoyen"
+          : (proprietes.titre ?? "Se connecter pour signaler")}
       </h2>
       <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: COULEURS.texteAttenue }}>
-        Votre compte sert à vous notifier chaque décision du service. Aucune donnée n'est publiée.
+        {proprietes.explication ?? "Votre compte sert à vous notifier chaque décision du service. Aucune donnée n'est publiée."}
       </p>
 
       <ChampTexte

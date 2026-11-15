@@ -74,7 +74,12 @@ export function EcranInterventions(proprietes: ProprietesEcranInterventions): Re
     return (
       <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e4 }}>
         <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: COULEURS.texte }}>Mes interventions</h1>
-        <FormulaireSession client={proprietes.client} onSession={() => setSession("present")} />
+        <FormulaireSession
+          client={proprietes.client}
+          onSession={() => setSession("present")}
+          titre="Se connecter pour intervenir"
+          explication="Vos interventions sont celles affectées à votre équipe : la session détermine la file que vous voyez."
+        />
       </section>
     );
   }

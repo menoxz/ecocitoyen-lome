@@ -98,7 +98,12 @@ export function EcranSupervision(proprietes: ProprietesEcranSupervision): ReactN
     return (
       <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e4 }}>
         <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: COULEURS.texte }}>File de tri</h1>
-        <FormulaireSession client={proprietes.client} onSession={() => setSession("present")} />
+        <FormulaireSession
+          client={proprietes.client}
+          onSession={() => setSession("present")}
+          titre="Se connecter pour décider"
+          explication="La file de tri est réservée aux superviseurs : votre session détermine les dossiers que vous pouvez valider ou rejeter."
+        />
       </section>
     );
   }
