@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import { ChartColumn, Megaphone, Search, ShieldCheck, Wrench } from "lucide-react";
+import { Icone } from "../../ui/Icone.tsx";
 
 /**
  * Page d'accueil : dire ce que fait le service, puis laisser choisir son rôle.
@@ -18,21 +20,25 @@ const ACCES_SERVICE = [
     href: "#/interventions",
     titre: "Espace agent",
     detail: "Interventions affectées à votre équipe, preuve de terrain et clôture.",
+    icone: Wrench,
   },
   {
     href: "#/supervision",
     titre: "Supervision",
     detail: "File de tri : valider un signalement ou le rejeter avec son motif.",
+    icone: ShieldCheck,
   },
   {
     href: "#/indicateurs",
     titre: "Indicateurs de pilotage",
     detail: "Délais, taux de résolution et couverture, sans valeur inventée.",
+    icone: ChartColumn,
   },
   {
     href: "#/administration",
     titre: "Administration",
     detail: "Comptes, rôles et activation, sous protection du dernier administrateur.",
+    icone: ShieldCheck,
   },
 ] as const;
 
@@ -47,9 +53,11 @@ export function EcranAccueil(): ReactNode {
         </p>
         <div className="ui-actions-principales">
           <a href="#/signaler" className="ui-lien-bouton">
+            <Icone icone={Megaphone} taille={18} />
             Signaler un problème
           </a>
           <a href="#/dossier" className="ui-lien-bouton ui-lien-bouton--secondaire">
+            <Icone icone={Search} taille={18} />
             Suivre un dossier
           </a>
         </div>
@@ -69,6 +77,7 @@ export function EcranAccueil(): ReactNode {
         <div className="ui-grille-acces">
           {ACCES_SERVICE.map((acces) => (
             <a key={acces.href} href={acces.href} className="ui-acces">
+              <Icone icone={acces.icone} taille={22} />
               <span className="ui-acces-titre">{acces.titre}</span>
               <span className="ui-acces-detail">{acces.detail}</span>
             </a>
@@ -79,7 +88,7 @@ export function EcranAccueil(): ReactNode {
       <section style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         <h2 className="ui-section-titre">Qualité et transparence</h2>
         <p style={{ fontSize: 14, margin: 0 }}>
-          Les {14} critères de recette du cahier des charges sont publiés avec le test qui les porte :{" "}
+          Les 14 critères de recette du cahier des charges sont publiés avec le test qui les porte :{" "}
           <a href="#/recette">voir la recette vérifiable</a>.
         </p>
       </section>

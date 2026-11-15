@@ -1,41 +1,37 @@
 import type { ReactNode } from "react";
+import { Inbox } from "lucide-react";
 import { Bouton } from "./Bouton.tsx";
-import { COULEURS, ESPACEMENT, TAILLE_TEXTE } from "./jetons.ts";
+import { Icone } from "./Icone.tsx";
 
 /**
- * État vide — l''état le plus souvent oublié, et le plus fréquent en démonstration.
+ * État vide — l'état le plus souvent oublié, et le plus fréquent en démonstration.
  *
- * Règle (docs/design/PARCOURS.md §10) : une phrase qui explique pourquoi c''est vide, et une
- * action qui permet d''en sortir. Un écran vide sans action est un cul-de-sac.
+ * Règle (docs/design/PARCOURS.md §10) : une phrase qui explique pourquoi c'est vide, et une
+ * action qui permet d'en sortir. Un écran vide sans action est un cul-de-sac.
+ *
+ * Aucune couleur n'est posée ici : la surface, la bordure et le texte viennent de `.ui-etat` dans
+ * `theme.css`. C'est ce qui permet à « aucun dossier signalé » de basculer en mode sombre avec le
+ * reste de la page au lieu de rester un rectangle clair.
  */
 export interface ProprietesEtatVide {
   readonly titre: string;
   readonly explication: string;
   readonly libelleAction?: string;
   readonly onAction?: () => void;
+  /** Icône facultative ; une boîte vide par défaut. */
+  readonly icone?: typeof Inbox;
 }
 
 export function EtatVide(proprietes: ProprietesEtatVide): ReactNode {
   return (
-    <div
-      role="status"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: ESPACEMENT.e3,
-        padding: `${ESPACEMENT.e8}px ${ESPACEMENT.e4}px`,
-        textAlign: "center",
-        backgroundColor: COULEURS.surfaceAlt,
-        borderRadius: 8,
-      }}
-    >
-      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.lg, fontWeight: 600, color: COULEURS.texte }}>{proprietes.titre}</p>
-      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.md, color: COULEURS.texteAttenue, maxWidth: 420 }}>
-        {proprietes.explication}
-      </p>
+    <div role="status" className="ui-etat ui-etat--vide">
+      <span className="ui-etat-icone">
+        <Icone icone={proprietes.icone ?? Inbox} taille={28} />
+      </span>
+      <p className="ui-etat-titre">{proprietes.titre}</p>
+      <p className="ui-etat-texte">{proprietes.explication}</p>
       {proprietes.libelleAction && proprietes.onAction ? (
-        <Bouton variante="primaire" onClick={proprietes.onAction}>
+        <Bouton variante="secondaire" onClick={proprietes.onAction}>
           {proprietes.libelleAction}
         </Bouton>
       ) : null}

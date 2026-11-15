@@ -30,6 +30,7 @@
   --ui-courbe: cubic-bezier(0.2, 0.7, 0.3, 1);
   --ui-erreur: #b91c1c;
   --ui-erreur-voile: rgba(185, 28, 28, 0.08);
+  --ui-erreur-fond: #fef2f2;
   --ui-statut-nouveau-texte: #1d4ed8;
   --ui-statut-nouveau-fond: #eff6ff;
   --ui-statut-nouveau-bordure: #bfdbfe;
@@ -93,6 +94,7 @@
   --ui-degrade-heros: radial-gradient(120% 140% at 100% 0%, rgba(45, 212, 191, 0.16) 0%, rgba(45, 212, 191, 0) 55%);
   --ui-erreur: #fca5a5;
   --ui-erreur-voile: rgba(252, 165, 165, 0.14);
+  --ui-erreur-fond: #450a0a;
   --ui-statut-nouveau-texte: #93c5fd;
   --ui-statut-nouveau-fond: #172554;
   --ui-statut-nouveau-bordure: #1e40af;
@@ -524,7 +526,202 @@ a:hover {
   color: var(--ui-texte-attenue);
 }
 
-/* ——— Sélecteur de thème ——— */
+/* ——— Icônes ——— */
+
+.ui-icone {
+  flex: none;
+  display: block;
+}
+
+.ui-marque .ui-icone {
+  color: var(--ui-primaire);
+}
+
+.ui-acces .ui-icone {
+  color: var(--ui-primaire);
+}
+
+/* ——— États : vide, erreur, chargement ——— */
+/* Une seule définition de surface pour les trois, donc un seul comportement en mode sombre. */
+
+.ui-etat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 44px 24px;
+  text-align: center;
+  background: var(--ui-surface);
+  border: 1px solid var(--ui-bordure-douce);
+  border-radius: var(--ui-rayon);
+  animation: ui-apparition var(--ui-duree-entree) var(--ui-courbe) both;
+}
+
+.ui-etat-icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 9999px;
+  background: var(--ui-surface-douce);
+  border: 1px solid var(--ui-bordure-douce);
+  color: var(--ui-primaire);
+}
+
+.ui-etat-titre {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ui-texte);
+}
+
+.ui-etat-texte {
+  font-size: 14px;
+  color: var(--ui-texte-attenue);
+  max-width: 46ch;
+}
+
+.ui-etat-code {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: var(--ui-surface-douce);
+  color: var(--ui-texte-attenue);
+  border: 1px solid var(--ui-bordure-douce);
+}
+
+.ui-etat--erreur {
+  align-items: flex-start;
+  text-align: left;
+  background: var(--ui-erreur-fond);
+  border-color: var(--ui-erreur);
+}
+
+.ui-etat--erreur .ui-etat-icone {
+  color: var(--ui-erreur);
+  background: transparent;
+  border-color: var(--ui-erreur);
+}
+
+.ui-etat--erreur .ui-etat-titre {
+  color: var(--ui-erreur);
+}
+
+.ui-etat-chargement {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ui-squelette {
+  display: block;
+  height: 64px;
+  border-radius: var(--ui-rayon-sm);
+  background: var(--ui-surface-douce);
+  border: 1px solid var(--ui-bordure-douce);
+  animation: ui-respire 1600ms ease-in-out infinite;
+}
+
+/* ——— Pied de page ——— */
+
+.ui-pied {
+  margin-top: auto;
+  padding: 36px 24px 24px;
+  background: var(--ui-surface);
+  border-top: 1px solid var(--ui-bordure-douce);
+  transition: background-color var(--ui-duree) var(--ui-courbe), border-color var(--ui-duree) var(--ui-courbe);
+}
+
+.ui-pied-grille {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr;
+  gap: 28px;
+  max-width: var(--ui-largeur);
+  margin: 0 auto;
+}
+
+.ui-pied-marque {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ui-texte);
+}
+
+.ui-pied-mission {
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--ui-texte-attenue);
+  max-width: 40ch;
+}
+
+.ui-pied-titre {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ui-texte-attenue);
+}
+
+.ui-pied-liste {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.ui-pied-liste a {
+  color: var(--ui-texte);
+  text-decoration: none;
+  transition: color var(--ui-duree-rapide) var(--ui-courbe);
+}
+
+.ui-pied-liste a:hover {
+  color: var(--ui-primaire);
+  text-decoration: underline;
+}
+
+.ui-pied-bas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  max-width: var(--ui-largeur);
+  margin: 28px auto 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--ui-bordure-douce);
+  font-size: 12px;
+  color: var(--ui-texte-attenue);
+}
+
+/* En-tête maintenu visible : le repère de marque reste accessible en défilant. */
+.ui-entete {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: saturate(140%) blur(6px);
+}
+
+/* Contenu étroit pour les pages de décision (session, détail d'un dossier). */
+.ui-page--etroite .ui-contenu {
+  max-width: 680px;
+}
+
+@media (max-width: 720px) {
+  .ui-pied-grille {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
 
 .ui-theme {
   display: inline-flex;

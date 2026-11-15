@@ -188,6 +188,9 @@ describe("états de chemin", () => {
     const html = rendu(<EtatChargement lignes={4} />);
 
     expect(html).toContain('aria-busy="true"');
-    expect((html.match(/height:64px/g) ?? []).length).toBe(4);
+    // La hauteur vit dans `theme.css` (`.ui-squelette`), plus dans un style inline : c'est ce qui
+    // permet au squelette de suivre le mode sombre.
+    expect((html.match(/ui-squelette/g) ?? []).length).toBe(4);
+    expect(html).not.toContain("height:64px");
   });
 });
