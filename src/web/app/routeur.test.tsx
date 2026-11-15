@@ -31,11 +31,13 @@ describe("Routeur", () => {
     signaler: <p>Signaler</p>,
     interventions: <p>Interventions</p>,
     supervision: <p>Supervision</p>,
+    recette: <p>Recette</p>,
   };
 
   test("rend la vue correspondant au fragment", () => {
     expect(rendu(<Routeur fragment="#/signaler" rendu={renduDesRoutes} />)).toContain("Signaler");
     expect(rendu(<Routeur fragment="" rendu={renduDesRoutes} />)).toContain("Accueil");
     expect(rendu(<Routeur fragment="#/supervision" rendu={renduDesRoutes} />)).toContain("Supervision");
+    expect(rendu(<Routeur fragment="#/recette" rendu={renduDesRoutes} />)).toContain("Recette");
   });
 });

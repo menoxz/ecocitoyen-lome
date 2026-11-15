@@ -4,6 +4,7 @@ import { Routeur, fragmentCourant } from "./app/routeur.tsx";
 import { EcranSignaler, positionDuNavigateur } from "./features/signaler/EcranSignaler.tsx";
 import { EcranInterventions } from "./features/interventions/EcranInterventions.tsx";
 import { EcranSupervision } from "./features/supervision/EcranSupervision.tsx";
+import { EcranRecette } from "./features/recette/EcranRecette.tsx";
 import { creerClient } from "./api/client.ts";
 import { COULEURS, ESPACEMENT, TAILLE_TEXTE } from "./ui/jetons.ts";
 import "./ui/ui.css";
@@ -75,6 +76,23 @@ function Application(): React.ReactNode {
                 Je suis superviseur : file de tri
               </a>
               <a
+                href="#/recette"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  minHeight: 44,
+                  padding: `0 ${ESPACEMENT.e4}px`,
+                  borderRadius: 8,
+                  border: `1px solid ${COULEURS.bordure}`,
+                  color: COULEURS.texteAttenue,
+                  fontWeight: 600,
+                  textDecoration: "none",
+                }}
+              >
+                Recette : les 14 critères et leurs tests
+              </a>
+              <a
                 href="#/signaler"
                 style={{
                   display: "inline-flex",
@@ -96,6 +114,7 @@ function Application(): React.ReactNode {
           signaler: <EcranSignaler client={client} positionInitiale={position} />,
           interventions: <EcranInterventions client={client} maintenantIso={new Date().toISOString()} />,
           supervision: <EcranSupervision client={client} maintenantIso={new Date().toISOString()} />,
+          recette: <EcranRecette />,
         }}
       />
     </main>
