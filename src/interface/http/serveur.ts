@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { creerApp } from "./app.ts";
 import { chargerFichierEnv } from "@infrastructure/environnement/charger-dotenv.ts";
 import { chargerEnvironnement } from "@config/environnement.ts";
@@ -53,7 +55,11 @@ export function assembler(cheminBase: string, modeDemo: boolean): { app: ReturnT
     horloge,
   };
 
-  return { app: creerApp(deps, { production: false }), base };
+  // Le build n'existe qu'après `bun run build` : sans lui, le serveur reste une API pure.
+  const dossierStatique = process.env.DOSSIER_STATIQUE ?? "dist";
+  const servirStatique = existsSync(join(dossierStatique, "signaler.html"));
+
+  return { app: creerApp(deps, { production: false, dossierStatique: servirStatique ? dossierStatique : undefined }), base };
 }
 
 async function demarrer(): Promise<void> {

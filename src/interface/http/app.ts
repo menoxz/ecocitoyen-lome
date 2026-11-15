@@ -16,7 +16,10 @@ import type { Dependances } from "@application/dependances.type.ts";
  * Cette fonction est ce que les tests attaquent : mêmes middlewares, mêmes routes, même table
  * de statuts que la production. Un test qui passerait ici passerait en production.
  */
-export function creerApp(deps: Dependances, options: { readonly production?: boolean } = {}): Express {
+export function creerApp(
+  deps: Dependances,
+  options: { readonly production?: boolean; readonly dossierStatique?: string } = {},
+): Express {
   const app = express();
   app.disable("x-powered-by");
   app.set("trust proxy", true);
@@ -42,6 +45,25 @@ export function creerApp(deps: Dependances, options: { readonly production?: boo
   app.use("/api/v1/notifications", routesNotifications(deps));
   app.use("/api/v1/ia", routesIa(deps));
   app.use("/api/v1/indicateurs", routesIndicateurs(deps));
+
+  /**
+   * Interface servie depuis le même port que l'API, seulement si un dossier de build est fourni.
+   *
+   * Optionnel à dessein : les tests d'API créent l'application sans dossier statique, donc leur
+   * comportement ne change pas. Le repli renvoie `signaler.html` et non `index.html` : le legacy
+   * n'est pas servi par ce serveur, la bascule finale (P8) supprimera l'ancienne page.
+   */
+  if (options.dossierStatique) {
+    const dossier = options.dossierStatique;
+    app.use(express.static(dossier, { index: false }));
+    app.get(/^(?!\/api\/).*/, (_req, res, suivant) => {
+      res.sendFile("signaler.html", { root: dossier }, (erreur) => {
+        if (erreur) {
+          suivant();
+        }
+      });
+    });
+  }
 
   app.use((_req, res) => {
     res.status(404).json({ code: "RESSOURCE_INTROUVABLE", message: "Route inconnue." });
