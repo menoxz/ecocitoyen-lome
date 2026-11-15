@@ -334,6 +334,55 @@ a:hover {
   transform: scale(0.97);
 }
 
+/* Sélecteur de thème — contrôle segmenté, à droite de la navigation.
+   Trois états dans un seul bloc : « auto » est un choix, pas une absence de choix. Le segment
+   actif prend la couleur primaire pleine, les autres restent en texte atténué sur surface douce
+   (paires vérifiées par `verifier-contrastes.mjs`). */
+.ui-theme {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--ui-bordure-douce);
+  border-radius: 9999px;
+  background: var(--ui-surface-douce);
+  transition: background-color var(--ui-duree) var(--ui-courbe),
+    border-color var(--ui-duree) var(--ui-courbe);
+}
+
+.ui-theme button {
+  appearance: none;
+  border: 0;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 9999px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--ui-texte-attenue);
+  background: transparent;
+  cursor: pointer;
+  transition: background-color var(--ui-duree-rapide) var(--ui-courbe),
+    color var(--ui-duree-rapide) var(--ui-courbe);
+}
+
+.ui-theme button:hover {
+  color: var(--ui-texte);
+  background: var(--ui-primaire-voile);
+}
+
+.ui-theme button[aria-pressed="true"] {
+  color: var(--ui-sur-primaire);
+  background: var(--ui-primaire);
+  box-shadow: var(--ui-ombre-douce);
+}
+
+.ui-theme button:focus-visible {
+  outline: 2px solid var(--ui-focus);
+  outline-offset: 2px;
+}
+
 .ui-contenu {
   flex: 1;
   width: 100%;

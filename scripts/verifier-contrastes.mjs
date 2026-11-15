@@ -42,6 +42,7 @@ const PAIRES = [
   ['priorite HAUTE', '#92400e', '#fef3c7', 4.5],
   ['priorite URGENTE', '#991b1b', '#fee2e2', 4.5],
   ['focus sur surface (3:1 non textuel)', '#14532d', '#fffdf8', 3],
+  ['bascule theme, libelle inactif sur surface douce', '#57503f', '#efe7d8', 4.5],
 
   // Mode sombre — mêmes exigences.
   ['sombre texte sur surface', '#f0ece3', '#16211b', 4.5],
@@ -52,6 +53,7 @@ const PAIRES = [
   ['sombre primaire sur surface (lien)', '#4ade80', '#16211b', 4.5],
   ['sombre accent sur surface', '#fbbf24', '#16211b', 4.5],
   ['sombre focus sur fond (3:1 non textuel)', '#4ade80', '#0d1512', 3],
+  ['sombre bascule theme, libelle inactif sur surface douce', '#b3aa99', '#1c2b23', 4.5],
 ];
 
 let echecs = 0;
