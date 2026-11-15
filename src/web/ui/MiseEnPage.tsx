@@ -43,7 +43,7 @@ export function MiseEnPage(proprietes: ProprietesMiseEnPage): ReactNode {
     <div className={proprietes.etroite === true ? "ui-page ui-page--etroite" : "ui-page"}>
       <header className="ui-entete">
         <a href="#/" className="ui-marque">
-          <Logo taille={22} />
+          <Logo taille={34} />
           EcoCitoyen Lomé
         </a>
         <nav className="ui-nav" aria-label="Accès rapides">
@@ -63,7 +63,7 @@ export function MiseEnPage(proprietes: ProprietesMiseEnPage): ReactNode {
         <div className="ui-pied-grille">
           <div>
             <span className="ui-pied-marque">
-              <Logo taille={18} />
+              <Logo taille={24} />
               EcoCitoyen Lomé
             </span>
             <p className="ui-pied-mission">
@@ -105,5 +105,6 @@ export function MiseEnPage(proprietes: ProprietesMiseEnPage): ReactNode {
     </div>
   );
 }
+
 
 

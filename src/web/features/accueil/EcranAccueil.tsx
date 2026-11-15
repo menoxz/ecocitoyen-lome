@@ -48,7 +48,7 @@ export function EcranAccueil(): ReactNode {
     <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
       <section className="ui-heros">
         <span className="ui-tete-icone" aria-hidden="true">
-          <Logo taille={26} />
+          <Logo taille={34} />
         </span>
         <h1 className="ui-titre-page">Signaler un problème de propreté, et savoir ce qu'il devient</h1>
         <p className="ui-sous-titre">
@@ -99,4 +99,5 @@ export function EcranAccueil(): ReactNode {
     </div>
   );
 }
+
 
