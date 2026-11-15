@@ -32,8 +32,7 @@ import {
 export interface ProprietesAssistant {
   readonly categories: readonly OptionSelect[];
   readonly quartiers: readonly OptionSelect[];
-  readonly envoyer: (demande: ReturnType<typeof construireDemande>) => Promise<Resultat<{ signalement: SignalementApi }>>;
-  readonly envoyerPhoto?: (idSignalement: string, photo: PhotoChoisie) => Promise<Resultat<unknown>>;
+  readonly envoyer: (demande: ReturnType<typeof construireDemande>, photos: readonly PhotoChoisie[]) => Promise<Resultat<{ signalement: SignalementApi }>>;
   readonly etapeInitiale?: CleEtape;
   readonly positionInitiale?: { readonly latitude: number; readonly longitude: number } | null;
   readonly onOuvrirDossier?: (idSignalement: string) => void;
@@ -69,7 +68,7 @@ export function AssistantSignalement(proprietes: ProprietesAssistant): ReactNode
 
     setEnvoiEnCours(true);
     try {
-      const resultat = await proprietes.envoyer(construireDemande(brouillon));
+      const resultat = await proprietes.envoyer(construireDemande(brouillon), brouillon.photos as readonly PhotoChoisie[]);
       if (!resultat.ok) {
         setErreurServeur(resultat.erreur);
         return;

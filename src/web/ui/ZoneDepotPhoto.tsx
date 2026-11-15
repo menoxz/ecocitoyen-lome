@@ -14,6 +14,9 @@ export interface PhotoChoisie {
   readonly id: string;
   readonly nom: string;
   readonly urlApercu?: string;
+  /** Octets réels du fichier. Absents en rendu de démonstration, présents après un vrai choix. */
+  readonly octets?: Blob;
+  readonly typeMime?: string;
 }
 
 export interface ProprietesZoneDepotPhoto {

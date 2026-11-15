@@ -19,6 +19,16 @@ export default defineConfig(() => {
         '@web': path.resolve(__dirname, 'src/web'),
       },
     },
+    build: {
+      // Deux entrees : le prototype (index.html) et le nouveau parcours (signaler.html).
+      // La bascule finale consistera a supprimer l'ancienne, pas a reecrire celle-ci.
+      rollupOptions: {
+        input: {
+          main: path.resolve(__dirname, 'index.html'),
+          signaler: path.resolve(__dirname, 'signaler.html'),
+        },
+      },
+    },
     server: {
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
       // Do not modify—file watching is disabled to prevent flickering during agent edits.
