@@ -54,7 +54,7 @@ export function ChampZoneTexte(proprietes: ProprietesChampZoneTexte): ReactNode 
         aria-describedby={[idCompteur, enErreur ? idErreur : proprietes.aide ? idAide : ""].filter(Boolean).join(" ")}
         style={{
           color: "inherit",
-          backgroundColor: proprietes.desactive ? COULEURS.surfaceAlt : COULEURS.surface,
+          backgroundColor: proprietes.desactive ? "var(--ui-surface-douce)" : "var(--ui-surface)",
           borderColor: enErreur ? COULEURS.erreur : COULEURS.bordure,
           borderRadius: RAYON.md,
           fontFamily: "inherit",

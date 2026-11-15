@@ -50,7 +50,7 @@ export function ChampSelect(proprietes: ProprietesChampSelect): ReactNode {
         aria-describedby={enErreur ? idErreur : proprietes.aide ? idAide : undefined}
         style={{
           color: "inherit",
-          backgroundColor: proprietes.desactive || sansOption ? COULEURS.surfaceAlt : COULEURS.surface,
+          backgroundColor: proprietes.desactive || sansOption ? "var(--ui-surface-douce)" : "var(--ui-surface)",
           borderColor: enErreur ? COULEURS.erreur : COULEURS.bordure,
           borderRadius: RAYON.md,
         }}

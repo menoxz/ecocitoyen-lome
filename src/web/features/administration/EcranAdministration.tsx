@@ -125,7 +125,7 @@ export function EcranAdministration(proprietes: ProprietesEcranAdministration): 
               padding: ESPACEMENT.e3,
               border: `1px solid ${COULEURS.bordure}`,
               borderRadius: RAYON.md,
-              backgroundColor: compte.actif === false ? COULEURS.surfaceAlt : COULEURS.surface,
+              backgroundColor: compte.actif === false ? "var(--ui-surface-douce)" : "var(--ui-surface)",
             }}
           >
             <span style={{ fontSize: TAILLE_TEXTE.md, color: "inherit", fontWeight: 600 }}>

@@ -1,13 +1,15 @@
 /**
  * Jetons de style — source unique.
  *
- * Aucune couleur, taille ou durée n''est écrite dans un composant : tout vient d''ici.
- * Les ratios de contraste de chaque paire sont consignés dans `docs/design/DESIGN.md` et
- * revérifiés par `node scripts/verifier-contrastes.mjs`.
+ * Direction visuelle : « terrain tropical ». Un service utilisé dehors, à Lomé, sur un téléphone
+ * tenu à une main, en plein soleil et sur un réseau lent. Trois conséquences assumées :
+ *   - palette chaude (vert forêt et terre) plutôt que le gris froid des logiciels de bureau ;
+ *   - contrôles larges (48 px minimum) pour un pouce, pas pour un curseur ;
+ *   - contraste élevé, parce qu'un écran se lit mal en extérieur.
  *
- * Les clés métier sont déclarées ici en types littéraux, et non importées du domaine :
- * la couche `web` ne peut importer que `contrats` (voir `src/web/AGENTS.md`). L''égalité avec
- * le vocabulaire du domaine est garantie par un test transversal (`tests/design`).
+ * Aucune couleur, taille ou durée n'est écrite dans un composant : tout vient d'ici, et les
+ * variables correspondantes vivent dans `theme.css`. Les ratios sont consignés dans
+ * `docs/design/DESIGN.md` et revérifiés par `node scripts/verifier-contrastes.mjs`.
  */
 export type CleStatut = "NOUVEAU" | "VALIDE" | "EN_COURS" | "RESOLU" | "REJETE" | "ROUVERT";
 export type ClePriorite = "BASSE" | "NORMALE" | "HAUTE" | "URGENTE";
@@ -20,36 +22,40 @@ export interface Teinte {
 }
 
 export const COULEURS = {
-  surface: "#ffffff",
-  surfaceAlt: "#f6f7f9",
-  texte: "#111827",
-  texteAttenue: "#4b5563",
-  bordure: "#d1d5db",
-  primaire: "#0f766e",
-  primaireSurvol: "#115e59",
-  succes: "#15803d",
+  /** Papier chaud, pas gris : le fond d'un formulaire de terrain. */
+  surface: "#fffdf8",
+  surfaceAlt: "#efe7d8",
+  texte: "#1a1712",
+  texteAttenue: "#57503f",
+  bordure: "#ddd2bd",
+  /** Vert forêt : l'action principale, celui qu'on vise au pouce. */
+  primaire: "#14532d",
+  primaireSurvol: "#0d3d21",
+  /** Terre cuite : l'accent, l'attention, la matière. */
+  accent: "#9c4407",
+  succes: "#166534",
   alerte: "#b45309",
-  erreur: "#b91c1c",
-  info: "#1d4ed8",
-  focus: "#0f766e",
+  erreur: "#a51c1c",
+  info: "#1e40af",
+  focus: "#14532d",
 } as const;
 
-/** Six statuts du domaine, avec libellé d''usager et teinte mesurée. */
+/** Six statuts du domaine, avec libellé d'usager et teinte mesurée. */
 export const STATUTS: Readonly<Record<CleStatut, Teinte & { readonly libelle: string }>> = {
-  NOUVEAU: { texte: "#1d4ed8", fond: "#eff6ff", bordure: "#bfdbfe", libelle: "Nouveau" },
-  VALIDE: { texte: "#6d28d9", fond: "#f5f3ff", bordure: "#ddd6fe", libelle: "Validé" },
-  EN_COURS: { texte: "#b45309", fond: "#fffbeb", bordure: "#fde68a", libelle: "En cours" },
-  RESOLU: { texte: "#15803d", fond: "#f0fdf4", bordure: "#bbf7d0", libelle: "Résolu" },
-  REJETE: { texte: "#b91c1c", fond: "#fef2f2", bordure: "#fecaca", libelle: "Rejeté" },
-  ROUVERT: { texte: "#c2410c", fond: "#fff7ed", bordure: "#fed7aa", libelle: "Rouvert" },
+  NOUVEAU: { texte: "#1e3a8a", fond: "#eff6ff", bordure: "#bfdbfe", libelle: "Nouveau" },
+  VALIDE: { texte: "#5b21b6", fond: "#f5f3ff", bordure: "#ddd6fe", libelle: "Validé" },
+  EN_COURS: { texte: "#92400e", fond: "#fef3c7", bordure: "#fcd34d", libelle: "En cours" },
+  RESOLU: { texte: "#14532d", fond: "#dcfce7", bordure: "#86efac", libelle: "Résolu" },
+  REJETE: { texte: "#991b1b", fond: "#fee2e2", bordure: "#fca5a5", libelle: "Rejeté" },
+  ROUVERT: { texte: "#9a3412", fond: "#ffedd5", bordure: "#fdba74", libelle: "Rouvert" },
 };
 
-/** Quatre priorités, avec l''échéance de résolution affichable. */
+/** Quatre priorités, avec l'échéance de résolution affichable. */
 export const PRIORITES: Readonly<Record<ClePriorite, Teinte & { readonly libelle: string }>> = {
-  BASSE: { texte: "#374151", fond: "#f3f4f6", bordure: "#d1d5db", libelle: "Basse" },
-  NORMALE: { texte: "#0369a1", fond: "#e0f2fe", bordure: "#bae6fd", libelle: "Normale" },
-  HAUTE: { texte: "#92400e", fond: "#fef3c7", bordure: "#fde68a", libelle: "Haute" },
-  URGENTE: { texte: "#991b1b", fond: "#fee2e2", bordure: "#fecaca", libelle: "Urgente" },
+  BASSE: { texte: "#3f3a2f", fond: "#efe7d8", bordure: "#ddd2bd", libelle: "Basse" },
+  NORMALE: { texte: "#0c4a6e", fond: "#e0f2fe", bordure: "#7dd3fc", libelle: "Normale" },
+  HAUTE: { texte: "#92400e", fond: "#fef3c7", bordure: "#fcd34d", libelle: "Haute" },
+  URGENTE: { texte: "#991b1b", fond: "#fee2e2", bordure: "#fca5a5", libelle: "Urgente" },
 };
 
 /** Mention obligatoire quand la classification vient du simulateur (RG18). */
@@ -57,17 +63,30 @@ export const MENTION_SIMULATION = "Classification simulée — démonstration";
 
 export const ESPACEMENT = { e1: 4, e2: 8, e3: 12, e4: 16, e6: 24, e8: 32, e12: 48 } as const;
 
-export const TAILLE_TEXTE = { xs: 12, sm: 14, md: 16, lg: 20, xl: 24, xxl: 32 } as const;
+/**
+ * Échelle typographique large et contrastée : trois sauts nets plutôt que six tailles voisines.
+ * Sur un écran de terrain, un titre doit se lire d'un coup d'œil, à bout de bras.
+ */
+export const TAILLE_TEXTE = {
+  xs: 13,
+  sm: 15,
+  md: 17,
+  lg: 22,
+  xl: 30,
+  xxl: 38,
+} as const;
 
-export const RAYON = { sm: 4, md: 8, pilule: 9999 } as const;
+/** Rayons généreux : la carte arrondie est la forme de base, pas le rectangle. */
+export const RAYON = { sm: 10, md: 16, pilule: 9999 } as const;
 
-export const CIBLE_TACTILE = 44;
+/** 48 px : un pouce, pas un curseur. Exigence du parcours de terrain. */
+export const CIBLE_TACTILE = 48;
 
 export const DUREE = { rapide: 120, normal: 200 } as const;
 
 /**
- * Classes d''état portées par la feuille globale (`ui.css`) : survol et focus ne peuvent pas être
- * simulés en rendu serveur, mais leur présence est vérifiable et leur style vit au même endroit.
+ * Classes d'état portées par la feuille globale : survol et focus ne peuvent pas être simulés en
+ * rendu serveur, mais leur présence est vérifiable et leur style vit au même endroit.
  */
 export const CLASSES = {
   bouton: "ui-bouton",

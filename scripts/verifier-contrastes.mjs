@@ -21,32 +21,37 @@ function contraste(a, b) {
 }
 
 const PAIRES = [
-  ['texte sur surface', '#111827', '#ffffff', 4.5],
-  ['texte attenue sur surface', '#4b5563', '#ffffff', 4.5],
-  ['texte sur surface-alt', '#111827', '#f6f7f9', 4.5],
-  ['blanc sur primaire', '#ffffff', '#0f766e', 4.5],
-  ['NOUVEAU', '#1d4ed8', '#eff6ff', 4.5],
-  ['VALIDE', '#6d28d9', '#f5f3ff', 4.5],
-  ['EN_COURS', '#b45309', '#fffbeb', 4.5],
-  ['RESOLU', '#15803d', '#f0fdf4', 4.5],
-  ['REJETE', '#b91c1c', '#fef2f2', 4.5],
-  ['ROUVERT', '#c2410c', '#fff7ed', 4.5],
-  ['priorite BASSE', '#374151', '#f3f4f6', 4.5],
-  ['priorite NORMALE', '#0369a1', '#e0f2fe', 4.5],
+  // Direction « terrain tropical » — mode clair.
+  ['texte sur surface', '#1a1712', '#fffdf8', 4.5],
+  ['texte attenue sur surface', '#57503f', '#fffdf8', 4.5],
+  ['texte sur fond', '#1a1712', '#f6f1e7', 4.5],
+  ['texte attenue sur fond', '#57503f', '#f6f1e7', 4.5],
+  ['blanc sur primaire', '#ffffff', '#14532d', 4.5],
+  ['accent terre sur surface', '#9c4407', '#fffdf8', 4.5],
+  ['accent terre sur fond', '#9c4407', '#f6f1e7', 4.5],
+  ['erreur sur surface', '#a51c1c', '#fffdf8', 4.5],
+  ['succes sur surface', '#166534', '#fffdf8', 4.5],
+  ['NOUVEAU', '#1e3a8a', '#eff6ff', 4.5],
+  ['VALIDE', '#5b21b6', '#f5f3ff', 4.5],
+  ['EN_COURS', '#92400e', '#fef3c7', 4.5],
+  ['RESOLU', '#14532d', '#dcfce7', 4.5],
+  ['REJETE', '#991b1b', '#fee2e2', 4.5],
+  ['ROUVERT', '#9a3412', '#ffedd5', 4.5],
+  ['priorite BASSE', '#3f3a2f', '#efe7d8', 4.5],
+  ['priorite NORMALE', '#0c4a6e', '#e0f2fe', 4.5],
   ['priorite HAUTE', '#92400e', '#fef3c7', 4.5],
   ['priorite URGENTE', '#991b1b', '#fee2e2', 4.5],
-  ['erreur sur surface', '#b91c1c', '#ffffff', 4.5],
-  ['succes sur surface', '#15803d', '#ffffff', 4.5],
-  ['bordure focus (3:1 non textuel)', '#0f766e', '#ffffff', 3],
+  ['focus sur surface (3:1 non textuel)', '#14532d', '#fffdf8', 3],
 
-  // Mode sombre — mêmes exigences, variables de theme.css sous `prefers-color-scheme: dark`.
-  ['sombre texte sur surface', '#e6ebf2', '#131c2b', 4.5],
-  ['sombre texte attenue sur surface', '#a7b2c4', '#131c2b', 4.5],
-  ['sombre texte sur fond', '#e6ebf2', '#0a1120', 4.5],
-  ['sombre texte attenue sur fond', '#a7b2c4', '#0a1120', 4.5],
-  ['sombre sur-primaire sur primaire', '#06231f', '#2dd4bf', 4.5],
-  ['sombre primaire sur surface (lien)', '#2dd4bf', '#131c2b', 4.5],
-  ['sombre focus sur fond (3:1 non textuel)', '#2dd4bf', '#0a1120', 3],
+  // Mode sombre — mêmes exigences.
+  ['sombre texte sur surface', '#f0ece3', '#16211b', 4.5],
+  ['sombre texte attenue sur surface', '#b3aa99', '#16211b', 4.5],
+  ['sombre texte sur fond', '#f0ece3', '#0d1512', 4.5],
+  ['sombre texte attenue sur fond', '#b3aa99', '#0d1512', 4.5],
+  ['sombre sur-primaire sur primaire', '#052e16', '#4ade80', 4.5],
+  ['sombre primaire sur surface (lien)', '#4ade80', '#16211b', 4.5],
+  ['sombre accent sur surface', '#fbbf24', '#16211b', 4.5],
+  ['sombre focus sur fond (3:1 non textuel)', '#4ade80', '#0d1512', 3],
 ];
 
 let echecs = 0;
@@ -57,3 +62,8 @@ for (const [nom, texte, fond, minimum] of PAIRES) {
   console.log(`${ok ? 'OK ' : 'ECHEC'} ${nom.padEnd(34)} ${String(ratio).padStart(5)} (min ${minimum})`);
 }
 console.log(`PAIRES=${PAIRES.length} ECHECS=${echecs}`);
+if (echecs > 0) {
+  console.error(`${echecs} paire(s) sous le minimum WCAG.`);
+  process.exit(1);
+}
+process.exit(0);

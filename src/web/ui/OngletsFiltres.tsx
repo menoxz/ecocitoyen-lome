@@ -49,9 +49,9 @@ export function OngletsFiltres(proprietes: ProprietesOngletsFiltres): ReactNode 
             style={{
               minHeight: 44,
               padding: `0 ${ESPACEMENT.e3}px`,
-              border: `1px solid ${selectionne ? COULEURS.primaire : COULEURS.bordure}`,
+              border: `1px solid ${selectionne ? "var(--ui-primaire)" : COULEURS.bordure}`,
               borderRadius: RAYON.pilule,
-              backgroundColor: selectionne ? COULEURS.primaire : COULEURS.surface,
+              backgroundColor: selectionne ? "var(--ui-primaire)" : "var(--ui-surface)",
               color: selectionne ? "#ffffff" : COULEURS.texte,
               fontSize: TAILLE_TEXTE.sm,
               fontWeight: selectionne ? 700 : 500,

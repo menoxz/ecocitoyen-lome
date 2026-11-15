@@ -78,6 +78,8 @@ describe("ChampZoneTexte", () => {
     const html = rendu(<ChampZoneTexte {...base} desactive />);
 
     expect(html).toContain("disabled");
-    expect(html).toContain("background-color:#f6f7f9");
+    // Le fond désactivé vient désormais de la feuille (`var(--ui-surface-douce)`), pas d'un
+    // littéral dans le composant : c'est ce qui le fait suivre le thème clair ou sombre.
+    expect(html).toContain("var(--ui-surface-douce)");
   });
 });

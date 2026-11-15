@@ -57,8 +57,8 @@ export function FilParcours(proprietes: ProprietesFilParcours): ReactNode {
                 borderRadius: 9999,
                 fontSize: TAILLE_TEXTE.xs,
                 color: courante ? "#ffffff" : COULEURS.texteAttenue,
-                backgroundColor: courante ? COULEURS.primaire : faite ? COULEURS.succes : COULEURS.surfaceAlt,
-                border: `1px solid ${courante ? COULEURS.primaire : COULEURS.bordure}`,
+                backgroundColor: courante ? "var(--ui-primaire)" : faite ? "var(--ui-succes)" : "var(--ui-surface-douce)",
+                border: `1px solid ${courante ? "var(--ui-primaire)" : COULEURS.bordure}`,
               }}
             >
               {faite && !courante ? "✓" : index + 1}

@@ -1,102 +1,134 @@
-/* Thème applicatif — la couche qui manquait.
-   Il porte la PAGE : fond, typographie, rythme, surfaces, en-tête, animations, états interactifs
-   et mode sombre. Les couleurs métier restent dans jetons.ts ; ici seulement les variables du
-   design system, posées une fois. Contrastes vérifiés par `scripts/verifier-contrastes.mjs`. */
+/* Thème applicatif — direction « terrain tropical ».
+   Un service utilisé dehors, à Lomé, à une main, en plein soleil. D'où : palette chaude (vert
+   forêt et terre), très grands titres, contrôles de 48 px, contraste élevé, cartes arrondies.
+   Variables clair et sombre, ossature de page, animations, états interactifs. Contrastes
+   vérifiés par `scripts/verifier-contrastes.mjs`. */
 
 :root {
-  --ui-fond: #eef1f4;
-  --ui-surface: #ffffff;
-  --ui-surface-douce: #f6f7f9;
-  --ui-texte: #111827;
-  --ui-texte-attenue: #4b5563;
-  --ui-bordure: #d1d5db;
-  --ui-bordure-douce: #e5e7eb;
-  --ui-primaire: #0f766e;
-  --ui-primaire-fonce: #115e59;
+  --ui-fond: #f6f1e7;
+  --ui-surface: #fffdf8;
+  --ui-surface-douce: #efe7d8;
+  --ui-texte: #1a1712;
+  --ui-texte-attenue: #57503f;
+  --ui-bordure: #ddd2bd;
+  --ui-bordure-douce: #e8dfcd;
+  --ui-primaire: #14532d;
+  --ui-primaire-fonce: #0d3d21;
   --ui-sur-primaire: #ffffff;
-  --ui-primaire-voile: rgba(15, 118, 110, 0.08);
-  --ui-focus: #0f766e;
-  --ui-ombre: 0 1px 2px rgba(17, 24, 39, 0.06), 0 10px 30px rgba(17, 24, 39, 0.07);
-  --ui-ombre-douce: 0 1px 2px rgba(17, 24, 39, 0.05);
-  --ui-ombre-survol: 0 2px 6px rgba(17, 24, 39, 0.08), 0 16px 36px rgba(17, 24, 39, 0.10);
-  --ui-degrade-heros: radial-gradient(120% 140% at 100% 0%, #d7ece9 0%, rgba(215, 236, 233, 0) 55%);
-  --ui-rayon: 12px;
-  --ui-rayon-sm: 8px;
-  --ui-largeur: 1040px;
-  --ui-police: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --ui-duree-rapide: 120ms;
-  --ui-duree: 200ms;
-  --ui-duree-entree: 280ms;
-  --ui-courbe: cubic-bezier(0.2, 0.7, 0.3, 1);
-  --ui-erreur: #b91c1c;
-  --ui-erreur-voile: rgba(185, 28, 28, 0.08);
-  --ui-erreur-fond: #fef2f2;
-  --ui-succes: #15803d;
+  --ui-primaire-voile: rgba(20, 83, 45, 0.09);
+  --ui-accent: #9c4407;
+  --ui-accent-voile: rgba(156, 68, 7, 0.12);
+  --ui-focus: #14532d;
+  --ui-ombre: 0 1px 2px rgba(58, 44, 22, 0.08), 0 14px 34px rgba(58, 44, 22, 0.12);
+  --ui-ombre-douce: 0 1px 2px rgba(58, 44, 22, 0.07);
+  --ui-ombre-survol: 0 3px 8px rgba(58, 44, 22, 0.12), 0 22px 44px rgba(58, 44, 22, 0.16);
+  --ui-degrade-heros: radial-gradient(120% 150% at 100% 0%, #fde8c4 0%, rgba(253, 232, 196, 0) 58%),
+    radial-gradient(90% 120% at 0% 100%, #dcecd6 0%, rgba(220, 236, 214, 0) 60%);
+  --ui-rayon: 16px;
+  --ui-rayon-sm: 12px;
+  --ui-largeur: 1080px;
+  --ui-police: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --ui-duree-rapide: 130ms;
+  --ui-duree: 220ms;
+  --ui-duree-entree: 320ms;
+  --ui-courbe: cubic-bezier(0.22, 0.68, 0.26, 1);
+  --ui-erreur: #a51c1c;
+  --ui-erreur-voile: rgba(165, 28, 28, 0.09);
+  --ui-erreur-fond: #fdeeee;
+  --ui-succes: #166534;
   --ui-alerte: #b45309;
-  --ui-statut-nouveau-texte: #1d4ed8;
+  --ui-statut-nouveau-texte: #1e3a8a;
   --ui-statut-nouveau-fond: #eff6ff;
   --ui-statut-nouveau-bordure: #bfdbfe;
-  --ui-statut-valide-texte: #6d28d9;
+  --ui-statut-valide-texte: #5b21b6;
   --ui-statut-valide-fond: #f5f3ff;
   --ui-statut-valide-bordure: #ddd6fe;
-  --ui-statut-encours-texte: #b45309;
-  --ui-statut-encours-fond: #fffbeb;
-  --ui-statut-encours-bordure: #fde68a;
-  --ui-statut-resolu-texte: #15803d;
-  --ui-statut-resolu-fond: #f0fdf4;
-  --ui-statut-resolu-bordure: #bbf7d0;
-  --ui-statut-rejete-texte: #b91c1c;
-  --ui-statut-rejete-fond: #fef2f2;
-  --ui-statut-rejete-bordure: #fecaca;
-  --ui-statut-rouvert-texte: #c2410c;
-  --ui-statut-rouvert-fond: #fff7ed;
-  --ui-statut-rouvert-bordure: #fed7aa;
+  --ui-statut-encours-texte: #92400e;
+  --ui-statut-encours-fond: #fef3c7;
+  --ui-statut-encours-bordure: #fcd34d;
+  --ui-statut-resolu-texte: #14532d;
+  --ui-statut-resolu-fond: #dcfce7;
+  --ui-statut-resolu-bordure: #86efac;
+  --ui-statut-rejete-texte: #991b1b;
+  --ui-statut-rejete-fond: #fee2e2;
+  --ui-statut-rejete-bordure: #fca5a5;
+  --ui-statut-rouvert-texte: #9a3412;
+  --ui-statut-rouvert-fond: #ffedd5;
+  --ui-statut-rouvert-bordure: #fdba74;
   color-scheme: light;
 }
 
-/* Mode sombre : automatique selon le système, ou forcé par le sélecteur de thème. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="clair"]) {
-    --ui-fond: #0a1120;
-    --ui-surface: #131c2b;
-    --ui-surface-douce: #182233;
-    --ui-texte: #e6ebf2;
-    --ui-texte-attenue: #a7b2c4;
-    --ui-bordure: #2b3648;
-    --ui-bordure-douce: #202b3c;
-    --ui-primaire: #2dd4bf;
-    --ui-primaire-fonce: #5eead4;
-    --ui-sur-primaire: #06231f;
-    --ui-primaire-voile: rgba(45, 212, 191, 0.14);
-    --ui-focus: #2dd4bf;
-    --ui-ombre: 0 1px 2px rgba(0, 0, 0, 0.5), 0 12px 32px rgba(0, 0, 0, 0.45);
-    --ui-ombre-douce: 0 1px 2px rgba(0, 0, 0, 0.4);
-    --ui-ombre-survol: 0 2px 8px rgba(0, 0, 0, 0.55), 0 20px 44px rgba(0, 0, 0, 0.5);
-    --ui-degrade-heros: radial-gradient(120% 140% at 100% 0%, rgba(45, 212, 191, 0.16) 0%, rgba(45, 212, 191, 0) 55%);
+    --ui-fond: #0d1512;
+    --ui-surface: #16211b;
+    --ui-surface-douce: #1c2b23;
+    --ui-texte: #f0ece3;
+    --ui-texte-attenue: #b3aa99;
+    --ui-bordure: #2b3a31;
+    --ui-bordure-douce: #223026;
+    --ui-primaire: #4ade80;
+    --ui-primaire-fonce: #86efac;
+    --ui-sur-primaire: #052e16;
+    --ui-primaire-voile: rgba(74, 222, 128, 0.16);
+    --ui-accent: #fbbf24;
+    --ui-accent-voile: rgba(251, 191, 36, 0.16);
+    --ui-focus: #4ade80;
+    --ui-ombre: 0 1px 2px rgba(0, 0, 0, 0.55), 0 14px 34px rgba(0, 0, 0, 0.5);
+    --ui-ombre-douce: 0 1px 2px rgba(0, 0, 0, 0.45);
+    --ui-ombre-survol: 0 3px 10px rgba(0, 0, 0, 0.6), 0 22px 48px rgba(0, 0, 0, 0.55);
+    --ui-degrade-heros: radial-gradient(120% 150% at 100% 0%, rgba(251, 191, 36, 0.14) 0%, rgba(251, 191, 36, 0) 58%),
+      radial-gradient(90% 120% at 0% 100%, rgba(74, 222, 128, 0.12) 0%, rgba(74, 222, 128, 0) 60%);
+    --ui-erreur: #fca5a5;
+    --ui-erreur-voile: rgba(252, 165, 165, 0.14);
+    --ui-erreur-fond: #3f1010;
+    --ui-succes: #86efac;
+    --ui-alerte: #fcd34d;
+    --ui-statut-nouveau-texte: #93c5fd;
+    --ui-statut-nouveau-fond: #172554;
+    --ui-statut-nouveau-bordure: #1e40af;
+    --ui-statut-valide-texte: #c4b5fd;
+    --ui-statut-valide-fond: #2e1065;
+    --ui-statut-valide-bordure: #5b21b6;
+    --ui-statut-encours-texte: #fcd34d;
+    --ui-statut-encours-fond: #451a03;
+    --ui-statut-encours-bordure: #92400e;
+    --ui-statut-resolu-texte: #86efac;
+    --ui-statut-resolu-fond: #052e16;
+    --ui-statut-resolu-bordure: #166534;
+    --ui-statut-rejete-texte: #fca5a5;
+    --ui-statut-rejete-fond: #450a0a;
+    --ui-statut-rejete-bordure: #991b1b;
+    --ui-statut-rouvert-texte: #fdba74;
+    --ui-statut-rouvert-fond: #431407;
+    --ui-statut-rouvert-bordure: #9a3412;
     color-scheme: dark;
   }
 }
 
 :root[data-theme="sombre"] {
-  --ui-fond: #0a1120;
-  --ui-surface: #131c2b;
-  --ui-surface-douce: #182233;
-  --ui-texte: #e6ebf2;
-  --ui-texte-attenue: #a7b2c4;
-  --ui-bordure: #2b3648;
-  --ui-bordure-douce: #202b3c;
-  --ui-primaire: #2dd4bf;
-  --ui-primaire-fonce: #5eead4;
-  --ui-sur-primaire: #06231f;
-  --ui-primaire-voile: rgba(45, 212, 191, 0.14);
-  --ui-focus: #2dd4bf;
-  --ui-ombre: 0 1px 2px rgba(0, 0, 0, 0.5), 0 12px 32px rgba(0, 0, 0, 0.45);
-  --ui-ombre-douce: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --ui-ombre-survol: 0 2px 8px rgba(0, 0, 0, 0.55), 0 20px 44px rgba(0, 0, 0, 0.5);
-  --ui-degrade-heros: radial-gradient(120% 140% at 100% 0%, rgba(45, 212, 191, 0.16) 0%, rgba(45, 212, 191, 0) 55%);
+  --ui-fond: #0d1512;
+  --ui-surface: #16211b;
+  --ui-surface-douce: #1c2b23;
+  --ui-texte: #f0ece3;
+  --ui-texte-attenue: #b3aa99;
+  --ui-bordure: #2b3a31;
+  --ui-bordure-douce: #223026;
+  --ui-primaire: #4ade80;
+  --ui-primaire-fonce: #86efac;
+  --ui-sur-primaire: #052e16;
+  --ui-primaire-voile: rgba(74, 222, 128, 0.16);
+  --ui-accent: #fbbf24;
+  --ui-accent-voile: rgba(251, 191, 36, 0.16);
+  --ui-focus: #4ade80;
+  --ui-ombre: 0 1px 2px rgba(0, 0, 0, 0.55), 0 14px 34px rgba(0, 0, 0, 0.5);
+  --ui-ombre-douce: 0 1px 2px rgba(0, 0, 0, 0.45);
+  --ui-ombre-survol: 0 3px 10px rgba(0, 0, 0, 0.6), 0 22px 48px rgba(0, 0, 0, 0.55);
+  --ui-degrade-heros: radial-gradient(120% 150% at 100% 0%, rgba(251, 191, 36, 0.14) 0%, rgba(251, 191, 36, 0) 58%),
+    radial-gradient(90% 120% at 0% 100%, rgba(74, 222, 128, 0.12) 0%, rgba(74, 222, 128, 0) 60%);
   --ui-erreur: #fca5a5;
   --ui-erreur-voile: rgba(252, 165, 165, 0.14);
-  --ui-erreur-fond: #450a0a;
+  --ui-erreur-fond: #3f1010;
   --ui-succes: #86efac;
   --ui-alerte: #fcd34d;
   --ui-statut-nouveau-texte: #93c5fd;
@@ -134,8 +166,8 @@ body {
   background: var(--ui-fond);
   color: var(--ui-texte);
   font-family: var(--ui-police);
-  font-size: 16px;
-  line-height: 1.55;
+  font-size: 17px;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   transition: background-color var(--ui-duree) var(--ui-courbe), color var(--ui-duree) var(--ui-courbe);
 }
@@ -146,6 +178,13 @@ h3,
 p,
 figure {
   margin: 0;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.15;
+  letter-spacing: -0.02em;
 }
 
 a {
@@ -159,9 +198,9 @@ a:hover {
 }
 
 :focus-visible {
-  outline: 2px solid var(--ui-focus);
+  outline: 3px solid var(--ui-focus);
   outline-offset: 2px;
-  border-radius: 4px;
+  border-radius: 6px;
 }
 
 /* ——— Animations ——— */
@@ -169,7 +208,7 @@ a:hover {
 @keyframes ui-apparition {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -213,16 +252,16 @@ a:hover {
 
 .ui-grille-acces .ui-acces:nth-child(2),
 .ui-etapes li:nth-child(2) {
-  animation-delay: 60ms;
+  animation-delay: 70ms;
 }
 
 .ui-grille-acces .ui-acces:nth-child(3),
 .ui-etapes li:nth-child(3) {
-  animation-delay: 120ms;
+  animation-delay: 140ms;
 }
 
 .ui-grille-acces .ui-acces:nth-child(4) {
-  animation-delay: 180ms;
+  animation-delay: 210ms;
 }
 
 /* ——— Ossature de page ——— */
@@ -234,13 +273,17 @@ a:hover {
 }
 
 .ui-entete {
+  position: sticky;
+  top: 0;
+  z-index: 20;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
-  padding: 14px 24px;
-  background: var(--ui-surface);
+  padding: 14px 28px;
+  background: color-mix(in srgb, var(--ui-surface) 88%, transparent);
+  backdrop-filter: saturate(150%) blur(8px);
   border-bottom: 1px solid var(--ui-bordure-douce);
   transition: background-color var(--ui-duree) var(--ui-courbe), border-color var(--ui-duree) var(--ui-courbe);
 }
@@ -248,38 +291,33 @@ a:hover {
 .ui-marque {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  gap: 12px;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
   color: var(--ui-texte);
   text-decoration: none;
 }
 
-.ui-marque::before {
-  content: "";
-  width: 10px;
-  height: 26px;
-  border-radius: 9999px;
-  background: var(--ui-primaire);
-  transition: background-color var(--ui-duree) var(--ui-courbe);
+.ui-marque .ui-icone {
+  color: var(--ui-primaire);
 }
 
 .ui-nav {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
 .ui-nav a {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  min-height: 36px;
-  padding: 0 12px;
+  gap: 9px;
+  min-height: 40px;
+  padding: 0 14px;
   border-radius: 9999px;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--ui-texte-attenue);
   text-decoration: none;
@@ -288,7 +326,7 @@ a:hover {
 }
 
 .ui-nav a:hover {
-  background: var(--ui-surface-douce);
+  background: var(--ui-primaire-voile);
   color: var(--ui-primaire);
 }
 
@@ -301,14 +339,7 @@ a:hover {
   width: 100%;
   max-width: var(--ui-largeur);
   margin: 0 auto;
-  padding: 32px 24px 56px;
-}
-
-.ui-pied {
-  padding: 20px 24px 28px;
-  text-align: center;
-  font-size: 13px;
-  color: var(--ui-texte-attenue);
+  padding: 40px 28px 64px;
 }
 
 /* ——— Blocs de contenu ——— */
@@ -318,7 +349,7 @@ a:hover {
   border: 1px solid var(--ui-bordure-douce);
   border-radius: var(--ui-rayon);
   box-shadow: var(--ui-ombre-douce);
-  padding: 24px;
+  padding: 26px;
   transition: background-color var(--ui-duree) var(--ui-courbe), border-color var(--ui-duree) var(--ui-courbe),
     box-shadow var(--ui-duree) var(--ui-courbe);
 }
@@ -328,25 +359,25 @@ a:hover {
 }
 
 .ui-titre-page {
-  font-size: 30px;
-  line-height: 1.2;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-size: clamp(28px, 4vw, 38px);
+  font-weight: 800;
+  letter-spacing: -0.025em;
   color: var(--ui-texte);
 }
 
 .ui-sous-titre {
-  font-size: 16px;
+  font-size: 18px;
+  line-height: 1.55;
   color: var(--ui-texte-attenue);
-  max-width: 62ch;
+  max-width: 60ch;
 }
 
 .ui-section-titre {
   font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-weight: 800;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--ui-texte-attenue);
+  color: var(--ui-accent);
 }
 
 /* ——— Accueil ——— */
@@ -354,9 +385,9 @@ a:hover {
 .ui-heros {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding: 40px 32px;
-  border-radius: var(--ui-rayon);
+  gap: 18px;
+  padding: 48px 40px;
+  border-radius: 24px;
   background: var(--ui-degrade-heros), var(--ui-surface);
   border: 1px solid var(--ui-bordure-douce);
   box-shadow: var(--ui-ombre);
@@ -364,30 +395,31 @@ a:hover {
 }
 
 .ui-heros .ui-titre-page {
-  font-size: 34px;
-  max-width: 22ch;
+  font-size: clamp(32px, 5vw, 46px);
+  max-width: 20ch;
 }
 
 .ui-actions-principales {
   display: flex;
-  gap: 12px;
+  gap: 14px;
   flex-wrap: wrap;
-  margin-top: 6px;
+  margin-top: 10px;
 }
 
 .ui-lien-bouton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
-  padding: 0 22px;
+  gap: 10px;
+  min-height: 54px;
+  padding: 0 26px;
   border-radius: var(--ui-rayon-sm);
   background: var(--ui-primaire);
   color: var(--ui-sur-primaire);
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 700;
   text-decoration: none;
-  border: 1px solid transparent;
+  border: 2px solid transparent;
   box-shadow: var(--ui-ombre-douce);
   transition: background-color var(--ui-duree-rapide) var(--ui-courbe),
     transform var(--ui-duree-rapide) var(--ui-courbe), box-shadow var(--ui-duree-rapide) var(--ui-courbe);
@@ -396,7 +428,7 @@ a:hover {
 .ui-lien-bouton:hover {
   background: var(--ui-primaire-fonce);
   color: var(--ui-sur-primaire);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow: var(--ui-ombre-survol);
 }
 
@@ -419,15 +451,15 @@ a:hover {
 
 .ui-grille-acces {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(248px, 1fr));
+  gap: 14px;
 }
 
 .ui-acces {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 18px 20px;
+  gap: 8px;
+  padding: 22px;
   border-radius: var(--ui-rayon);
   background: var(--ui-surface);
   border: 1px solid var(--ui-bordure-douce);
@@ -438,10 +470,14 @@ a:hover {
     background-color var(--ui-duree) var(--ui-courbe);
 }
 
+.ui-acces .ui-icone {
+  color: var(--ui-accent);
+}
+
 .ui-acces:hover {
   border-color: var(--ui-primaire);
   box-shadow: var(--ui-ombre-survol);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
 }
 
 .ui-acces:active {
@@ -450,19 +486,19 @@ a:hover {
 }
 
 .ui-acces-titre {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
 }
 
 .ui-acces-detail {
-  font-size: 14px;
+  font-size: 15px;
   color: var(--ui-texte-attenue);
 }
 
 .ui-etapes {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -471,10 +507,10 @@ a:hover {
 
 .ui-etapes li {
   position: relative;
-  padding: 14px 16px 14px 44px;
+  padding: 18px 18px 18px 52px;
   border-radius: var(--ui-rayon-sm);
   background: var(--ui-surface-douce);
-  font-size: 14px;
+  font-size: 16px;
   color: var(--ui-texte);
   counter-increment: etape;
   transition: background-color var(--ui-duree) var(--ui-courbe);
@@ -483,38 +519,37 @@ a:hover {
 .ui-etapes li::before {
   content: counter(etape);
   position: absolute;
-  left: 14px;
-  top: 14px;
-  width: 22px;
-  height: 22px;
+  left: 16px;
+  top: 17px;
+  width: 26px;
+  height: 26px;
   border-radius: 9999px;
   background: var(--ui-primaire);
   color: var(--ui-sur-primaire);
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* ——— Champs : structure, marque obligatoire, mot de passe révélable ——— */
+/* ——— Champs ——— */
 
 .ui-champ-groupe {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .ui-champ-libelle {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   color: var(--ui-texte);
 }
 
-/* La marque de champ obligatoire prend la couleur d'alerte et suit le thème. */
 .ui-requis {
   color: var(--ui-erreur);
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .ui-champ-message {
@@ -533,21 +568,21 @@ a:hover {
 }
 
 .ui-champ--avec-bouton {
-  padding-right: 46px;
+  padding-right: 52px;
 }
 
 .ui-bouton-oeil {
   position: absolute;
-  right: 4px;
+  right: 5px;
   top: 50%;
   transform: translateY(-50%);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
+  width: 42px;
+  height: 42px;
   border: 0;
-  border-radius: 8px;
+  border-radius: 10px;
   background: transparent;
   color: var(--ui-texte-attenue);
   cursor: pointer;
@@ -560,30 +595,29 @@ a:hover {
   background: var(--ui-primaire-voile);
 }
 
-/* ——— Formulaire de session : carte centrée, contenu aligné ——— */
+/* ——— Formulaire de session ——— */
 
 .ui-session {
   display: flex;
   justify-content: center;
-  padding-top: 8px;
+  padding-top: 12px;
 }
 
 .ui-session-carte {
   width: 100%;
-  max-width: 460px;
+  max-width: 480px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  padding: 32px;
+  gap: 22px;
+  padding: 36px;
   text-align: center;
   background: var(--ui-surface);
   border: 1px solid var(--ui-bordure-douce);
-  border-radius: var(--ui-rayon);
+  border-radius: 22px;
   box-shadow: var(--ui-ombre);
   transition: background-color var(--ui-duree) var(--ui-courbe), border-color var(--ui-duree) var(--ui-courbe);
 }
 
-/* Les champs restent alignés à gauche : un libellé centré au-dessus d'un champ se lit mal. */
 .ui-session-carte .ui-champ-groupe {
   text-align: left;
 }
@@ -591,23 +625,23 @@ a:hover {
 .ui-session-actions {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-}
-
-.ui-titre-page--centre {
-  text-align: center;
+  gap: 10px;
 }
 
 .ui-session-titre {
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
   color: var(--ui-texte);
 }
 
 .ui-session-detail {
-  font-size: 14px;
+  font-size: 15px;
   color: var(--ui-texte-attenue);
+}
+
+.ui-titre-page--centre {
+  text-align: center;
 }
 
 /* ——— Icônes ——— */
@@ -617,23 +651,14 @@ a:hover {
   display: block;
 }
 
-.ui-marque .ui-icone {
-  color: var(--ui-primaire);
-}
-
-.ui-acces .ui-icone {
-  color: var(--ui-primaire);
-}
-
 /* ——— États : vide, erreur, chargement ——— */
-/* Une seule définition de surface pour les trois, donc un seul comportement en mode sombre. */
 
 .ui-etat {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 44px 24px;
+  gap: 14px;
+  padding: 52px 28px;
   text-align: center;
   background: var(--ui-surface);
   border: 1px solid var(--ui-bordure-douce);
@@ -645,8 +670,8 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 52px;
-  height: 52px;
+  width: 60px;
+  height: 60px;
   border-radius: 9999px;
   background: var(--ui-surface-douce);
   border: 1px solid var(--ui-bordure-douce);
@@ -654,23 +679,23 @@ a:hover {
 }
 
 .ui-etat-titre {
-  font-size: 17px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 800;
   color: var(--ui-texte);
 }
 
 .ui-etat-texte {
-  font-size: 14px;
+  font-size: 16px;
   color: var(--ui-texte-attenue);
   max-width: 46ch;
 }
 
 .ui-etat-code {
   font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: 0.02em;
-  padding: 4px 8px;
-  border-radius: 6px;
+  padding: 5px 10px;
+  border-radius: 8px;
   background: var(--ui-surface-douce);
   color: var(--ui-texte-attenue);
   border: 1px solid var(--ui-bordure-douce);
@@ -696,12 +721,12 @@ a:hover {
 .ui-etat-chargement {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .ui-squelette {
   display: block;
-  height: 64px;
+  height: 72px;
   border-radius: var(--ui-rayon-sm);
   background: var(--ui-surface-douce);
   border: 1px solid var(--ui-bordure-douce);
@@ -712,19 +737,17 @@ a:hover {
 
 .ui-pied {
   margin-top: auto;
-  padding: 36px 24px 24px;
+  padding: 44px 28px 28px;
   background: var(--ui-surface);
   border-top: 1px solid var(--ui-bordure-douce);
-  /* Un pied de page s'aligne sur la gauche : centrer le bloc entier désalignait le logo du
-     paragraphe placé dessous, ce qui se voyait à 144 px près. */
   text-align: left;
   transition: background-color var(--ui-duree) var(--ui-courbe), border-color var(--ui-duree) var(--ui-courbe);
 }
 
 .ui-pied-grille {
   display: grid;
-  grid-template-columns: 1.6fr 1fr 1fr;
-  gap: 28px;
+  grid-template-columns: 1.7fr 1fr 1fr;
+  gap: 32px;
   max-width: var(--ui-largeur);
   margin: 0 auto;
   align-items: start;
@@ -734,46 +757,45 @@ a:hover {
 .ui-pied-marque {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  font-size: 15px;
-  font-weight: 700;
+  gap: 12px;
+  font-size: 17px;
+  font-weight: 800;
   color: var(--ui-texte);
   text-align: left;
 }
 
 .ui-pied-mission {
-  margin-top: 10px;
-  font-size: 14px;
+  margin-top: 12px;
+  font-size: 15px;
+  line-height: 1.6;
   color: var(--ui-texte-attenue);
-  max-width: 40ch;
+  max-width: 42ch;
   text-align: left;
 }
 
 .ui-pied-titre {
   margin: 0;
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-weight: 800;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--ui-texte-attenue);
+  color: var(--ui-accent);
 }
 
 .ui-pied-liste {
   list-style: none;
-  margin: 12px 0 0;
+  margin: 14px 0 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  font-size: 14px;
+  gap: 10px;
+  font-size: 15px;
 }
 
 .ui-pied-liste a {
-  /* `inline` laissait l'icône en bloc occuper sa propre ligne : l'écart avec le libellé
-     devenait vertical et anormal. En ligne flexible, icône et texte restent sur un axe. */
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 9px;
   color: var(--ui-texte);
   text-decoration: none;
   transition: color var(--ui-duree-rapide) var(--ui-courbe);
@@ -789,95 +811,42 @@ a:hover {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 14px;
   max-width: var(--ui-largeur);
-  margin: 28px auto 0;
-  padding-top: 16px;
+  margin: 32px auto 0;
+  padding-top: 18px;
   border-top: 1px solid var(--ui-bordure-douce);
-  font-size: 12px;
-  color: var(--ui-texte-attenue);
-}
-
-/* En-tête maintenu visible : le repère de marque reste accessible en défilant. */
-.ui-entete {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  backdrop-filter: saturate(140%) blur(6px);
-}
-
-/* Contenu étroit pour les pages de décision (session, détail d'un dossier). */
-.ui-page--etroite .ui-contenu {
-  max-width: 680px;
-}
-
-@media (max-width: 720px) {
-  .ui-pied-grille {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-}
-
-
-.ui-theme {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  padding: 2px;
-  border-radius: 9999px;
-  background: var(--ui-surface-douce);
-  border: 1px solid var(--ui-bordure-douce);
-}
-
-.ui-theme button {
-  min-height: 32px;
-  padding: 0 12px;
-  border: 0;
-  border-radius: 9999px;
-  background: transparent;
-  color: var(--ui-texte-attenue);
-  font-family: inherit;
   font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color var(--ui-duree-rapide) var(--ui-courbe),
-    color var(--ui-duree-rapide) var(--ui-courbe), transform var(--ui-duree-rapide) var(--ui-courbe);
+  color: var(--ui-texte-attenue);
 }
 
-.ui-theme button:hover {
-  color: var(--ui-primaire);
-  background: var(--ui-primaire-voile);
+.ui-page--etroite .ui-contenu {
+  max-width: 700px;
 }
 
-.ui-theme button:active {
-  transform: scale(0.96);
-}
-
-.ui-theme button[aria-pressed="true"] {
-  background: var(--ui-surface);
-  color: var(--ui-primaire);
-  box-shadow: var(--ui-ombre-douce);
-}
-
-@media (max-width: 520px) {
+@media (max-width: 760px) {
   .ui-contenu {
-    padding: 20px 16px 40px;
+    padding: 24px 16px 44px;
   }
 
   .ui-heros {
-    padding: 24px 18px;
+    padding: 28px 20px;
   }
 
-  .ui-heros .ui-titre-page {
-    font-size: 26px;
+  .ui-pied-grille {
+    grid-template-columns: 1fr;
+    gap: 26px;
   }
 
   .ui-session-carte {
-    padding: 22px;
+    padding: 24px;
+  }
+
+  .ui-entete {
+    padding: 12px 16px;
   }
 }
 
-/* Accessibilité : aucune animation ni transition quand l'utilisateur les refuse. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -886,7 +855,6 @@ a:hover {
     animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
   }
 
   .ui-acces:hover,
