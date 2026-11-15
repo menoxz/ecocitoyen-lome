@@ -1542,3 +1542,154 @@ a:hover {
 
 
 
+
+/* ——— Liste déroulante thémée ———
+   Le panneau natif d un <select> n est pas stylable : il appartient au système. Celui-ci est
+   rendu par la page, donc il suit --ui-* en clair comme en sombre. */
+.ui-select {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--ui-bordure);
+  border-radius: var(--ui-rayon-sm);
+  background: var(--ui-surface);
+  color: var(--ui-texte);
+  font: inherit;
+  font-size: 15px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ui-select:hover:not(:disabled) {
+  border-color: var(--ui-primaire);
+}
+
+.ui-select[aria-expanded="true"] {
+  border-color: var(--ui-primaire);
+  box-shadow: 0 0 0 3px var(--ui-primaire-voile);
+}
+
+.ui-select[data-etat="vide"] .ui-select-libelle {
+  color: var(--ui-texte-attenue);
+}
+
+.ui-select:disabled {
+  background: var(--ui-surface-douce);
+  color: var(--ui-texte-attenue);
+  cursor: not-allowed;
+}
+
+.ui-select-chevron {
+  display: inline-flex;
+  color: var(--ui-texte-attenue);
+  transition: transform var(--ui-duree-rapide) var(--ui-courbe);
+}
+
+.ui-select[aria-expanded="true"] .ui-select-chevron {
+  transform: rotate(180deg);
+}
+
+.ui-select-panneau {
+  position: absolute;
+  z-index: 30;
+  margin-top: 6px;
+  width: 100%;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 6px;
+  border: 1px solid var(--ui-bordure);
+  border-radius: var(--ui-rayon-sm);
+  background: var(--ui-surface);
+  box-shadow: var(--ui-ombre-douce);
+}
+
+/* Le conteneur du champ est en colonne : le panneau doit se placer sous le déclencheur. */
+.ui-select + .ui-select-panneau {
+  position: absolute;
+}
+
+.ui-select-recherche {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+  margin-bottom: 4px;
+  border: 1px solid var(--ui-bordure);
+  border-radius: 9999px;
+  background: var(--ui-fond);
+  color: var(--ui-texte-attenue);
+}
+
+.ui-select-recherche input {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 44px;
+  border: 0;
+  background: transparent;
+  color: var(--ui-texte);
+  font: inherit;
+  font-size: 14px;
+}
+
+.ui-select-recherche input:focus-visible {
+  outline: none;
+}
+
+.ui-select-options {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ui-select-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 10px;
+  border-radius: var(--ui-rayon-sm);
+  color: var(--ui-texte);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.ui-select-option[data-actif="true"] {
+  background: var(--ui-primaire-voile);
+}
+
+.ui-select-option[aria-selected="true"] {
+  font-weight: 700;
+  color: var(--ui-primaire);
+}
+
+.ui-select-vide {
+  padding: 10px;
+  font-size: 13px;
+  color: var(--ui-texte-attenue);
+}
+
+.ui-carte-pied-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Le conteneur du champ porte le repère de position : le panneau se place sous le déclencheur,
+   pas par rapport au document. */
+.ui-champ-select {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+

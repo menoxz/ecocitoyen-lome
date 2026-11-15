@@ -1,18 +1,25 @@
-import type { ReactNode } from "react";
-import { CLASSES, RAYON, TAILLE_TEXTE } from "./jetons.ts";
+import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { ChevronDown } from "lucide-react";
+import { Icone } from "./Icone.tsx";
+import { PanneauOptions, type OptionSelect } from "./PanneauOptions.tsx";
+import { CLASSES, TAILLE_TEXTE } from "./jetons.ts";
+
+export type { OptionSelect };
 
 /**
- * Liste déroulante — états couverts : repos, survol, focus clavier, actif, désactivé,
- * erreur, vide (aucune option disponible).
+ * Liste déroulante thémée, avec recherche.
  *
- * Une option vide « Sélectionner… » est présente mais non validable : sans elle, un navigateur
- * présélectionne la première valeur et l''utilisateur envoie une catégorie qu''il n''a pas choisie.
+ * Le `<select>` natif n'était pas habillable : le panneau d'options appartient au système, pas à
+ * la page, et aucun thème ne l'atteint. Ici le panneau est rendu par l'application, donc il suit
+ * `--ui-*` en clair comme en sombre.
+ *
+ * Au-delà de 7 options, une recherche apparaît : filtrer est plus rapide que faire défiler une
+ * liste de quartiers. Elle reste masquée en dessous pour ne pas ajouter un champ inutile.
+ *
+ * Accessibilité : `role="combobox"` sur le déclencheur, `aria-expanded`, `aria-controls`,
+ * `role="listbox"` sur le panneau, `aria-activedescendant` sur l'option survolée au clavier.
+ * Échap ferme sans choisir ; Entrée choisit ; les flèches déplacent.
  */
-export interface OptionSelect {
-  readonly valeur: string;
-  readonly libelle: string;
-}
-
 export interface ProprietesChampSelect {
   readonly id: string;
   readonly libelle: string;
@@ -24,44 +31,92 @@ export interface ProprietesChampSelect {
   readonly erreur?: string | null;
   readonly requis?: boolean;
   readonly desactive?: boolean;
+  /** Nombre d'options au-delà duquel la recherche apparaît. */
+  readonly seuilRecherche?: number;
 }
 
 export function ChampSelect(proprietes: ProprietesChampSelect): ReactNode {
+  const [ouverte, setOuverte] = useState(false);
+  const conteneur = useRef<HTMLDivElement | null>(null);
+  const idBase = useId();
+  const idPanneau = `${idBase}-panneau`;
   const idAide = `${proprietes.id}-aide`;
   const idErreur = `${proprietes.id}-erreur`;
+
   const enErreur = typeof proprietes.erreur === "string" && proprietes.erreur.length > 0;
   const sansOption = proprietes.options.length === 0;
+  const inactif = proprietes.desactive === true || sansOption;
+  const choix = proprietes.options.find((option) => option.valeur === proprietes.valeur) ?? null;
+  const affiche = choix ? choix.libelle : sansOption ? "Aucune option disponible" : (proprietes.texteVide ?? "Sélectionner…");
+
+  useEffect(() => {
+    if (!ouverte) {
+      return;
+    }
+    const surClic = (evenement: MouseEvent): void => {
+      if (conteneur.current && !conteneur.current.contains(evenement.target as Node)) {
+        setOuverte(false);
+      }
+    };
+    const surTouche = (evenement: KeyboardEvent): void => {
+      if (evenement.key === "Escape") {
+        setOuverte(false);
+      }
+    };
+    document.addEventListener("mousedown", surClic);
+    document.addEventListener("keydown", surTouche);
+    return () => {
+      document.removeEventListener("mousedown", surClic);
+      document.removeEventListener("keydown", surTouche);
+    };
+  }, [ouverte]);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-      <label htmlFor={proprietes.id} style={{ fontSize: TAILLE_TEXTE.sm, fontWeight: 600, color: "inherit" }}>
+    <div ref={conteneur} className="ui-champ-select">
+      <label htmlFor={proprietes.id} style={{ fontSize: TAILLE_TEXTE.sm, fontWeight: 600, color: "var(--ui-texte)" }}>
         {proprietes.libelle}
         {proprietes.requis ? <span aria-hidden="true"> *</span> : null}
       </label>
 
-      <select
+      <button
         id={proprietes.id}
-        className={[CLASSES.champ, CLASSES.focusable, enErreur ? CLASSES.champErreur : ""].filter(Boolean).join(" ")}
-        value={proprietes.valeur}
-        onChange={(evenement) => proprietes.onChange(evenement.currentTarget.value)}
-        disabled={proprietes.desactive === true || sansOption}
-        required={proprietes.requis === true}
+        type="button"
+        role="combobox"
+        className={[CLASSES.focusable, "ui-select"].join(" ")}
+        aria-expanded={ouverte ? "true" : "false"}
+        aria-controls={idPanneau}
+        aria-haspopup="listbox"
+        aria-required={proprietes.requis === true ? "true" : undefined}
         aria-invalid={enErreur ? "true" : undefined}
         aria-describedby={enErreur ? idErreur : proprietes.aide ? idAide : undefined}
-        style={{
-          color: "inherit",
-          backgroundColor: proprietes.desactive || sansOption ? "var(--ui-surface-douce)" : "var(--ui-surface)",
-          borderColor: enErreur ? "var(--ui-erreur)" : "var(--ui-bordure)",
-          borderRadius: RAYON.md,
+        disabled={inactif}
+        data-etat={choix ? "choisi" : "vide"}
+        onClick={() => setOuverte((precedent) => !precedent)}
+        onKeyDown={(evenement) => {
+          if (evenement.key === "ArrowDown" || evenement.key === "Enter" || evenement.key === " ") {
+            evenement.preventDefault();
+            setOuverte(true);
+          }
         }}
       >
-        <option value="">{sansOption ? "Aucune option disponible" : (proprietes.texteVide ?? "Sélectionner…")}</option>
-        {proprietes.options.map((option) => (
-          <option key={option.valeur} value={option.valeur}>
-            {option.libelle}
-          </option>
-        ))}
-      </select>
+        <span className="ui-select-libelle">{affiche}</span>
+        <span className="ui-select-chevron" aria-hidden="true">
+          <Icone icone={ChevronDown} taille={18} />
+        </span>
+      </button>
+
+      {ouverte ? (
+        <PanneauOptions
+          idPanneau={idPanneau}
+          options={proprietes.options}
+          valeur={proprietes.valeur}
+          seuilRecherche={proprietes.seuilRecherche ?? 7}
+          onChoisir={(valeur) => {
+            proprietes.onChange(valeur);
+            setOuverte(false);
+          }}
+        />
+      ) : null}
 
       {enErreur ? (
         <p id={idErreur} role="alert" style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-erreur)" }}>

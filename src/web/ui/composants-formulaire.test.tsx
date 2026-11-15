@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { renderToStaticMarkup } from "react-dom/server";
 import { ChampSelect } from "./ChampSelect.tsx";
 import { ChampZoneTexte } from "./ChampZoneTexte.tsx";
+import { PanneauOptions } from "./PanneauOptions.tsx";
 
 const rendu = (element: Parameters<typeof renderToStaticMarkup>[0]): string => renderToStaticMarkup(element);
 
@@ -13,14 +14,24 @@ const OPTIONS = [
 describe("ChampSelect", () => {
   const base = { id: "categorie", libelle: "Catégorie", valeur: "", options: OPTIONS, onChange: () => {} };
 
-  test("propose une option vide non validable, pour ne pas preselectionner a la place de l usager", () => {
+  test("n invente aucune valeur et annonce le champ obligatoire", () => {
     const html = rendu(<ChampSelect {...base} requis />);
 
-    expect(html).toContain('value=""');
+    // Aucune option n est preselectionnee : le declencheur affiche l invite, pas une valeur.
     expect(html).toContain("Sélectionner…");
-    expect(html).toContain("Dépôt sauvage");
+    expect(html).toContain('role="combobox"');
+    expect(html).toContain('aria-expanded="false"');
+    expect(html).toContain('aria-required="true"');
+    expect(html).toContain('data-etat="vide"');
+    // Le panneau ne se rend pas ferme : les options n apparaissent qu a l ouverture.
+    expect(html).not.toContain("Dépôt sauvage");
+  });
+
+  test("une valeur choisie s affiche dans le declencheur", () => {
+    const html = rendu(<ChampSelect {...base} valeur="cat-2" />);
+
     expect(html).toContain("Caniveau bouché");
-    expect(html).toContain("required");
+    expect(html).toContain('data-etat="choisi"');
   });
 
   test("sans aucune option : champ desactive et message explicite", () => {
@@ -81,5 +92,35 @@ describe("ChampZoneTexte", () => {
     // Le fond désactivé vient désormais de la feuille (`var(--ui-surface-douce)`), pas d'un
     // littéral dans le composant : c'est ce qui le fait suivre le thème clair ou sombre.
     expect(html).toContain("var(--ui-surface-douce)");
+  });
+});
+
+describe("PanneauOptions", () => {
+  const options = [
+    { valeur: "q-1", libelle: "Bè-Kpota" },
+    { valeur: "q-2", libelle: "Amoutivé" },
+    { valeur: "q-3", libelle: "Baguida" },
+  ];
+
+  test("les options sont toutes rendues, avec la sélection annoncée", () => {
+    const html = rendu(
+      <PanneauOptions idPanneau="p" options={options} valeur="q-2" seuilRecherche={7} onChoisir={() => {}} />,
+    );
+
+    expect(html).toContain('role="listbox"');
+    expect(html).toContain("Bè-Kpota");
+    expect(html).toContain("Amoutivé");
+    expect(html).toContain('aria-selected="true"');
+  });
+
+  test("sous le seuil, aucune recherche ; au-dessus, un champ de recherche", () => {
+    const court = rendu(<PanneauOptions idPanneau="p" options={options} valeur="" seuilRecherche={7} onChoisir={() => {}} />);
+    expect(court).not.toContain('type="search"');
+
+    const long = rendu(
+      <PanneauOptions idPanneau="p" options={[...options, ...options, ...options]} valeur="" seuilRecherche={7} onChoisir={() => {}} />,
+    );
+    expect(long).toContain('type="search"');
+    expect(long).toContain("Chercher dans la liste");
   });
 });

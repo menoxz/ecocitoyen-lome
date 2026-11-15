@@ -102,6 +102,17 @@ export function etapeSuivante(etape: CleEtape): CleEtape | null {
 }
 
 /**
+ * Étape précédente, ou `null` à la première.
+ *
+ * Reculer ne doit rien perdre : le brouillon reste tel quel, et la revalidation se fait à nouveau
+ * en avançant. Le serveur ne voit que le brouillon final, jamais les allers-retours.
+ */
+export function etapePrecedente(etape: CleEtape): CleEtape | null {
+  const index = ETAPES.findIndex((candidate) => candidate.cle === etape);
+  return index > 0 ? ETAPES[index - 1].cle : null;
+}
+
+/**
  * Transforme le brouillon validé en demande conforme au contrat `/signalements`.
  *
  * Quand la position vient du centre du quartier, la demande le déclare : le serveur enregistre

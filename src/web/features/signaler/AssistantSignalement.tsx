@@ -13,6 +13,7 @@ import {
   BROUILLON_INITIAL,
   ETAPES,
   construireDemande,
+  etapePrecedente,
   etapeSuivante,
   peutAvancer,
   type Brouillon,
@@ -130,6 +131,7 @@ export function AssistantSignalement(proprietes: ProprietesAssistant): ReactNode
   }
 
   const dernier = etape === "probleme";
+  const precedente = etapePrecedente(etape);
 
   return (
     <section className="ui-carte-etapes">
@@ -159,7 +161,7 @@ export function AssistantSignalement(proprietes: ProprietesAssistant): ReactNode
       </div>
 
       <footer className="ui-carte-pied">
-        <p className="ui-carte-pied-note">
+        <div className="ui-carte-pied-note">
           {etape === "preuve" && brouillon.photos.length === 0 && !brouillon.sansPhoto
             ? "Ajoutez une photo, ou déclarez que vous ne pouvez pas photographier."
             : etape === "preuve"
@@ -167,11 +169,19 @@ export function AssistantSignalement(proprietes: ProprietesAssistant): ReactNode
               : etape === "lieu"
                 ? "Le quartier détermine l équipe qui sera envoyée."
                 : "Vérifiez avant d envoyer : un signalement envoyé ne se modifie plus."}
-        </p>
-        <Bouton variante="primaire" enChargement={envoiEnCours} onClick={() => void avancer()}>
-          {dernier ? "Envoyer le signalement" : "Continuer"}
-        </Bouton>
+        </div>
+        <div className="ui-carte-pied-actions">
+          {precedente ? (
+            <Bouton variante="secondaire" desactive={envoiEnCours} onClick={() => setEtape(precedente)}>
+              Précédent
+            </Bouton>
+          ) : null}
+          <Bouton variante="primaire" enChargement={envoiEnCours} onClick={() => void avancer()}>
+            {dernier ? "Envoyer le signalement" : "Continuer"}
+          </Bouton>
+        </div>
       </footer>
     </section>
   );
 }
+

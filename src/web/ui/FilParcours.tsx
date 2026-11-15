@@ -48,6 +48,7 @@ export function FilParcours(proprietes: ProprietesFilParcours): ReactNode {
           >
             <span
               aria-hidden="true"
+              data-etat={courante ? "courante" : faite ? "faite" : "a_venir"}
               style={{
                 display: "inline-flex",
                 alignItems: "center",
@@ -56,12 +57,14 @@ export function FilParcours(proprietes: ProprietesFilParcours): ReactNode {
                 height: 24,
                 borderRadius: 9999,
                 fontSize: TAILLE_TEXTE.xs,
-                color: courante ? "var(--ui-sur-primaire)" : "var(--ui-texte-attenue)",
+                fontWeight: 700,
+                /* Le numéro reste lisible sur le vert : la couleur seule ne porte pas l'état. */
+                color: courante || faite ? "var(--ui-sur-primaire)" : "var(--ui-texte-attenue)",
                 backgroundColor: courante ? "var(--ui-primaire)" : faite ? "var(--ui-succes)" : "var(--ui-surface-douce)",
-                border: `1px solid ${courante ? "var(--ui-primaire)" : "var(--ui-bordure)"}`,
+                border: `1px solid ${courante ? "var(--ui-primaire)" : faite ? "var(--ui-succes)" : "var(--ui-bordure)"}`,
               }}
             >
-              {faite && !courante ? "✓" : index + 1}
+              {index + 1}
             </span>
             <span>{etape.libelle}</span>
             {index < proprietes.etapes.length - 1 ? <span aria-hidden="true">›</span> : null}

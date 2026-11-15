@@ -137,7 +137,8 @@ describe("rendu de chaque etape", () => {
     );
 
     expect(html).toContain("Quartier");
-    expect(html).toContain("Bè");
+    // La liste est un combobox fermé : les options sont rendues à l ouverture (test du panneau).
+    expect(html).toContain('role="combobox"');
     expect(html).toContain("Repère (facultatif)");
     expect(html).toContain("Position enregistrée");
     expect(html).not.toContain("Catégorie");
@@ -154,7 +155,7 @@ describe("rendu de chaque etape", () => {
     );
 
     expect(html).toContain("Catégorie");
-    expect(html).toContain("Dépôt sauvage");
+    expect(html).toContain('role="combobox"');
     expect(html).toContain("Description");
     expect(html).toContain("/500 caractères");
     expect(html).toContain("Envoyer le signalement");

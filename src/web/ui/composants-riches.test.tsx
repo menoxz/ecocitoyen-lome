@@ -201,18 +201,23 @@ describe("FilParcours", () => {
     expect((html.match(/aria-current="step"/g) ?? []).length).toBe(1);
   });
 
-  test("les étapes franchies sont cochées, les suivantes numérotées", () => {
+  test("les étapes franchies gardent leur numéro, en vert", () => {
     const html = rendu(<FilParcours etapes={etapes} courante="probleme" />);
 
-    expect((html.match(/✓/g) ?? []).length).toBe(2);
+    // Le numéro reste affiché : un cercle vert seul ne dit plus quelle étape est la 2e.
+    expect((html.match(/data-etat="faite"/g) ?? []).length).toBe(2);
+    expect(html).toContain(">1<");
+    expect(html).toContain(">2<");
     expect(html).toContain(">3<");
+    expect(html).not.toContain("✓");
   });
 
   test("les étapes faites peuvent être imposées explicitement", () => {
     const html = rendu(<FilParcours etapes={etapes} courante="preuve" faites={["lieu"]} />);
 
-    expect(html).toContain("✓");
+    expect((html.match(/data-etat="faite"/g) ?? []).length).toBe(1);
   });
 });
+
 
 
