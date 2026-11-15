@@ -86,3 +86,36 @@ export async function traiterClassifications(deps: Dependances, limite = 5): Pro
 
   return { traitees, echouees, ignorees };
 }
+/**
+ * Reprise au démarrage : enfiler les dossiers jamais classés dont une photo existe déjà.
+ *
+ * La file ne contient que ce qui a été enfilé **après** l'ajout d'une photo. Un dossier créé avant
+ * le branchement du planificateur — ou dont la tâche a été perdue — resterait éternellement sans
+ * suggestion. Cette reprise est idempotente : un dossier classé n'est plus jamais enfilé, puisque
+ * son `modeIa` n'est plus `AUCUN`.
+ */
+export function enfilerClassificationsManquantes(deps: Dependances): number {
+  const maintenant = deps.horloge.maintenant();
+  let enfilees = 0;
+
+  for (const dossier of deps.signalements.lister()) {
+    if (dossier.modeIa !== "AUCUN") {
+      continue;
+    }
+    const photo = deps.signalements
+      .mediasDe(dossier.idSignalement)
+      .find((media) => media.type === "SIGNALEMENT" && !media.masque);
+    if (!photo) {
+      continue;
+    }
+    deps.travaux.enfiler({
+      idTache: deps.identifiants.nouveau("tache"),
+      type: "classification_ia",
+      cible: dossier.idSignalement,
+      disponibleLe: maintenant,
+    });
+    enfilees += 1;
+  }
+
+  return enfilees;
+}

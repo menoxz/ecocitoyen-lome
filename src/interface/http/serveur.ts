@@ -1,6 +1,8 @@
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { creerApp } from "./app.ts";
+import { demarrerPlanificateur } from "./planificateur.ts";
+import { OCTETS_PHOTO_DEMONSTRATION } from "@infrastructure/photos/image-demonstration.ts";
 import { chargerFichierEnv } from "@infrastructure/environnement/charger-dotenv.ts";
 import { chargerEnvironnement } from "@config/environnement.ts";
 import { preparerBase, type Base } from "@infrastructure/sqlite/base.ts";
@@ -27,7 +29,7 @@ import type { Dependances } from "@application/dependances.type.ts";
  * Tout le reste reçoit ses dépendances par paramètre. Remplacer SQLite par PostgreSQL ou Argon2
  * par un autre algorithme se décide ici et nulle part ailleurs.
  */
-export function assembler(cheminBase: string, modeDemo: boolean): { app: ReturnType<typeof creerApp>; base: Base } {
+export function assembler(cheminBase: string, modeDemo: boolean): { app: ReturnType<typeof creerApp>; base: Base; deps: Dependances } {
   const base = preparerBase({ chemin: cheminBase });
   const horloge = creerHorlogeSysteme();
   const identifiants = creerIdentifiantsUuid();
@@ -59,14 +61,67 @@ export function assembler(cheminBase: string, modeDemo: boolean): { app: ReturnT
   const dossierStatique = process.env.DOSSIER_STATIQUE ?? "dist";
   const servirStatique = existsSync(join(dossierStatique, "index.html"));
 
-  return { app: creerApp(deps, { production: false, dossierStatique: servirStatique ? dossierStatique : undefined }), base };
+  return { app: creerApp(deps, { production: false, dossierStatique: servirStatique ? dossierStatique : undefined }), base, deps };
 }
 
+/**
+ * Amorce des photos de démonstration.
+ *
+ * Constat mesuré sur la base : 28 dossiers en `mode_ia = AUCUN` et **aucune** ligne `media` de type
+ * `SIGNALEMENT` — le seed déclare pourtant `sans_photo = 0`. Sans image, la classification IA n'a
+ * rien à traiter et l'indicateur `qualite_ia` reste vide. Cette amorce écrit un vrai fichier via le
+ * port de stockage ; elle ne classe rien, c'est le planificateur qui s'en charge ensuite.
+ *
+ * Vit ici parce que la composition root est le seul endroit autorisé à toucher l'infrastructure.
+ */
+async function amorcerPhotosDemonstration(deps: Dependances): Promise<number> {
+  let ajoutees = 0;
+  for (const dossier of deps.signalements.lister()) {
+    if (dossier.sansPhoto) {
+      continue;
+    }
+    if (deps.signalements.mediasDe(dossier.idSignalement).some((media) => media.type === "SIGNALEMENT")) {
+      continue;
+    }
+    const enregistree = await deps.stockagePhotos.enregistrer(OCTETS_PHOTO_DEMONSTRATION, "image/png");
+    deps.signalements.ajouterMedia({
+      idMedia: deps.identifiants.nouveau("med"),
+      idSignalement: dossier.idSignalement,
+      idIntervention: null,
+      type: "SIGNALEMENT",
+      chemin: enregistree.chemin,
+      mime: enregistree.mime,
+      tailleOctets: enregistree.tailleOctets,
+      masque: false,
+      dateAjout: dossier.dateSignalement,
+    });
+    ajoutees += 1;
+  }
+  return ajoutees;
+}
 async function demarrer(): Promise<void> {
   chargerFichierEnv();
   const env = chargerEnvironnement(process.env);
   const cheminBase = process.env.DB_CHEMIN ?? "data/ecocitoyen.db";
-  const { app } = assembler(cheminBase, env.modeDemo);
+  const { app, deps } = assembler(cheminBase, env.modeDemo);
+
+  // Les dossiers de démonstration déclarent une photo mais n'en ont aucune en base : sans elle,
+  // l'IA n'a rien à classer et l'indicateur qualite_ia reste vide.
+  if (env.modeDemo) {
+    const ajoutees = await amorcerPhotosDemonstration(deps);
+    if (ajoutees > 0) {
+      process.stdout.write(`[demonstration] ${ajoutees} photo(s) de signalement créée(s) pour l IA` + "\n");
+    }
+  }
+
+  // La classification IA n était jamais exécutée : la file était remplie, personne ne la vidait.
+  const planificateur = demarrerPlanificateur(deps);
+  const arreter = (): void => {
+    planificateur.arreter();
+    process.exit(0);
+  };
+  process.on("SIGINT", arreter);
+  process.on("SIGTERM", arreter);
 
   for (const avertissement of env.avertissements) {
     process.stderr.write(`[configuration] ${avertissement}` + "\n");
@@ -80,3 +135,6 @@ async function demarrer(): Promise<void> {
 if (process.env.NODE_ENV !== "test") {
   void demarrer();
 }
+
+
+
