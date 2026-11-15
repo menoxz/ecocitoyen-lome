@@ -6,13 +6,15 @@ import { CLASSES, ESPACEMENT, TAILLE_TEXTE } from "./jetons.ts";
 /**
  * Grille de dépôt de photos — l'image parle avant le texte.
  *
- * Ouverture du sélecteur : trois approches ont échoué avant celle-ci (label implicite, `ref.click()`
- * depuis un input réduit à 1 px, input transparent superposé). La case est maintenant un
- * `<button>` qui appelle `showPicker()` — l'API prévue pour ouvrir le sélecteur depuis une
- * activation utilisateur, y compris quand l'input est masqué — avec `click()` en repli pour les
- * navigateurs qui ne l'implémentent pas encore.
+ * Ouverture du sélecteur : l'`<input type="file">` natif **couvre toute la case** et le contenu
+ * visuel est rendu transparent au clic (`pointer-events: none`). C'est le seul montage qui ne
+ * dépend d'aucun script : le navigateur ouvre son sélecteur comme pour n'importe quel champ fichier.
  *
- * Le glisser-déposer reste actif sur toute la grille. Un aperçu qui ne se charge pas laisse voir le
+ * Les tentatives précédentes échouaient parce que le clic atteignait le texte de la case, pas le
+ * contrôle : `label` implicite, puis `ref.click()` sur un input réduit à 1 px, puis `showPicker()`
+ * depuis un bouton dont le contenu captait le clic. Ici le hit-test ne peut pas se tromper.
+ *
+ * Le glisser-déposer reste actif sur toute la grille. Un aperçu qui ne charge pas laisse voir le
  * nom du fichier au lieu d'un carré vide.
  */
 export interface PhotoGrille {
@@ -32,7 +34,7 @@ export interface ProprietesGrillePhotos {
 
 export function GrillePhotos(proprietes: ProprietesGrillePhotos): ReactNode {
   const [survol, setSurvol] = useState(false);
-  const champ = useRef<HTMLInputElement | null>(null);
+  const compteur = useRef(0);
   const restantes = Math.max(0, proprietes.maximum - proprietes.photos.length);
   const libre = proprietes.desactive !== true && restantes > 0;
 
@@ -41,19 +43,6 @@ export function GrillePhotos(proprietes: ProprietesGrillePhotos): ReactNode {
       return;
     }
     proprietes.onFichiers(Array.from(liste).slice(0, restantes));
-  };
-
-  /** Ouvre le sélecteur natif depuis le clic de l'usager (activation utilisateur garantie). */
-  const ouvrirSelecteur = (): void => {
-    const input = champ.current;
-    if (!input || !libre) {
-      return;
-    }
-    try {
-      input.showPicker();
-    } catch {
-      input.click();
-    }
   };
 
   return (
@@ -73,20 +62,6 @@ export function GrillePhotos(proprietes: ProprietesGrillePhotos): ReactNode {
         prendre(evenement.dataTransfer.files);
       }}
     >
-      <input
-        ref={champ}
-        type="file"
-        className="ui-sr-only"
-        accept="image/jpeg,image/png,image/webp"
-        multiple={restantes > 1}
-        tabIndex={-1}
-        aria-hidden="true"
-        onChange={(evenement) => {
-          prendre(evenement.currentTarget.files);
-          evenement.currentTarget.value = "";
-        }}
-      />
-
       {Array.from({ length: proprietes.maximum }, (_, index) => {
         const photo = proprietes.photos[index];
 
@@ -123,21 +98,37 @@ export function GrillePhotos(proprietes: ProprietesGrillePhotos): ReactNode {
         }
 
         const premier = index === 0;
+        compteur.current += 1;
+        const idChamp = `photo-emplacement-${compteur.current}-${index}`;
+
         return (
-          <button
+          <div
             key={`site-${index}`}
-            type="button"
-            className={[CLASSES.focusable, "ui-photo-case ui-photo-case--vide"].join(" ")}
+            className="ui-photo-case ui-photo-case--vide"
             data-site={`photo-${index + 1}`}
-            disabled={!libre}
-            onClick={ouvrirSelecteur}
+            data-desactive={libre ? undefined : "true"}
           >
-            <span className="ui-photo-case-icone" aria-hidden="true">
-              <Icone icone={premier ? ImagePlus : Upload} taille={24} />
+            <input
+              id={idChamp}
+              type="file"
+              className="ui-photo-input ui-focusable"
+              accept="image/jpeg,image/png,image/webp"
+              multiple={restantes > 1}
+              disabled={!libre}
+              aria-label={`Ajouter une photo, emplacement ${index + 1}`}
+              onChange={(evenement) => {
+                prendre(evenement.currentTarget.files);
+                evenement.currentTarget.value = "";
+              }}
+            />
+            <span className="ui-photo-visuel" aria-hidden="true">
+              <span className="ui-photo-case-icone">
+                <Icone icone={premier ? ImagePlus : Upload} taille={24} />
+              </span>
+              <span className="ui-photo-case-titre">{premier ? "Ajouter une photo" : `Photo ${index + 1}`}</span>
+              <span className="ui-photo-case-aide">{premier ? "Cliquez ou déposez ici" : "Emplacement libre"}</span>
             </span>
-            <span className="ui-photo-case-titre">{premier ? "Ajouter une photo" : `Photo ${index + 1}`}</span>
-            <span className="ui-photo-case-aide">{premier ? "Cliquez ou déposez ici" : "Emplacement libre"}</span>
-          </button>
+          </div>
         );
       })}
 

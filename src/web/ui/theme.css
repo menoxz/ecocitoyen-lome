@@ -1731,19 +1731,64 @@ a:focus-visible {
   border-radius: var(--ui-rayon-sm);
 }
 
-/* ——— Case photo vide : un bouton ———
-   Le sélecteur est ouvert par `showPicker()` au clic, pas par un input superposé ni par un label.
-   Le bouton porte donc lui-même le survol, le focus et la cible tactile. */
+/* ——— Case photo vide : l'input natif couvre la case ———
+   Le contenu visuel ne capte jamais le clic : il est traversé (`pointer-events: none`), donc
+   n'importe quel point de la case — icône, texte, bord — atteint le champ fichier natif.
+   C'est ce qui manquait quand le clic tombait sur le libellé au lieu du contrôle. */
 .ui-photo-case--vide {
   border-style: dashed;
   background: var(--ui-fond);
   font: inherit;
-  cursor: pointer;
+  padding: 0;
 }
 
-.ui-photo-case--vide:disabled {
+.ui-photo-case--vide[data-desactive="true"] {
   opacity: 0.55;
+}
+
+.ui-photo-visuel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  pointer-events: none;
+}
+
+.ui-photo-case--vide:hover {
+  border-color: var(--ui-primaire);
+  background: var(--ui-primaire-voile);
+}
+
+.ui-photo-case--vide:hover .ui-photo-case-titre {
+  color: var(--ui-primaire);
+}
+
+.ui-photo-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  cursor: pointer;
+  font-size: 0;
+}
+
+.ui-photo-input:disabled {
   cursor: not-allowed;
+}
+
+/* Le focus est visible sur la case, pas sur le champ transparent. */
+.ui-photo-case--vide:focus-within {
+  outline: 2px solid var(--ui-focus);
+  outline-offset: 2px;
+  border-color: var(--ui-primaire);
 }
 
 .ui-photo-case--vide[data-desactive="true"] {
@@ -1756,6 +1801,7 @@ a:focus-visible {
   outline: 2px solid var(--ui-focus);
   outline-offset: 2px;
 }
+
 
 
 
