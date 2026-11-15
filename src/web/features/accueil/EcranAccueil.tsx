@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
-import { ChartColumn, Leaf, Megaphone, Search, ShieldCheck, Wrench } from "lucide-react";
+import { ChartColumn, Megaphone, Search, ShieldCheck, Wrench } from "lucide-react";
 import { Icone } from "../../ui/Icone.tsx";
+import { Logo } from "../../ui/Logo.tsx";
 
 /**
  * Page d'accueil : dire ce que fait le service, puis laisser choisir son rôle.
@@ -47,7 +48,7 @@ export function EcranAccueil(): ReactNode {
     <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
       <section className="ui-heros">
         <span className="ui-tete-icone" aria-hidden="true">
-          <Icone icone={Leaf} taille={26} />
+          <Logo taille={26} />
         </span>
         <h1 className="ui-titre-page">Signaler un problème de propreté, et savoir ce qu'il devient</h1>
         <p className="ui-sous-titre">
@@ -98,3 +99,4 @@ export function EcranAccueil(): ReactNode {
     </div>
   );
 }
+
