@@ -2,6 +2,7 @@ import { createRoot } from "react-dom/client";
 import { useEffect, useState } from "react";
 import { Routeur, fragmentCourant } from "./app/routeur.tsx";
 import { EcranSignaler, positionDuNavigateur } from "./features/signaler/EcranSignaler.tsx";
+import { EcranInterventions } from "./features/interventions/EcranInterventions.tsx";
 import { creerClient } from "./api/client.ts";
 import { COULEURS, ESPACEMENT, TAILLE_TEXTE } from "./ui/jetons.ts";
 import "./ui/ui.css";
@@ -58,6 +59,7 @@ function Application(): React.ReactNode {
             </section>
           ),
           signaler: <EcranSignaler client={client} positionInitiale={position} />,
+          interventions: <EcranInterventions client={client} maintenantIso={new Date().toISOString()} />,
         }}
       />
     </main>

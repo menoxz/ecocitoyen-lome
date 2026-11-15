@@ -25,6 +25,10 @@ function clientFactice(): ClientApi {
     quartiers: jamais,
     creerSignalement: jamais,
     envoyerPhoto: jamais,
+    listerInterventions: jamais,
+    dossier: jamais,
+    demarrer: jamais,
+    resoudre: jamais,
   };
 }
 

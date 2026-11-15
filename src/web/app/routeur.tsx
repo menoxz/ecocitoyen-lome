@@ -9,13 +9,16 @@ import type { ReactNode } from "react";
  *
  * `resoudre` est pur et testable : la correspondance route → vue se vérifie sans navigateur.
  */
-export const ROUTES = ["accueil", "signaler"] as const;
+export const ROUTES = ["accueil", "signaler", "interventions"] as const;
 export type Route = (typeof ROUTES)[number];
 
 export function resoudre(fragment: string): Route {
   const propre = fragment.replace(/^#\/?/, "").split("?")[0].toLowerCase();
   if (propre === "signaler") {
     return "signaler";
+  }
+  if (propre === "interventions") {
+    return "interventions";
   }
   return "accueil";
 }

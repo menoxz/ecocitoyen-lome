@@ -25,7 +25,7 @@ describe("résolution de route", () => {
 });
 
 describe("Routeur", () => {
-  const renduDesRoutes = { accueil: <p>Accueil</p>, signaler: <p>Signaler</p> };
+  const renduDesRoutes = { accueil: <p>Accueil</p>, signaler: <p>Signaler</p>, interventions: <p>Interventions</p> };
 
   test("rend la vue correspondant au fragment", () => {
     expect(rendu(<Routeur fragment="#/signaler" rendu={renduDesRoutes} />)).toContain("Signaler");

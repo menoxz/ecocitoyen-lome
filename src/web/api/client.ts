@@ -71,6 +71,14 @@ export interface ClientApi {
   quartiers(): Promise<Resultat<readonly QuartierApi[]>>;
   creerSignalement(demande: DemandeSignalement): Promise<Resultat<{ signalement: SignalementApi; doublons: readonly DoublonApi[] }>>;
   envoyerPhoto(idSignalement: string, octets: Blob, typeMime: string): Promise<Resultat<{ media: { chemin: string } }>>;
+  /** Dossiers visibles par l'acteur ; le serveur applique déjà le périmètre d'équipe et de statut. */
+  listerInterventions(): Promise<Resultat<readonly SignalementApi[]>>;
+  dossier(idSignalement: string): Promise<Resultat<SignalementApi>>;
+  demarrer(idSignalement: string): Promise<Resultat<{ demarre: boolean; statut: string }>>;
+  resoudre(
+    idSignalement: string,
+    entree: { commentaire: string; photo: { chemin: string; mime: string; taille_octets: number } },
+  ): Promise<Resultat<SignalementApi>>;
 }
 
 const ERREUR_RESEAU: ErreurApi = {
@@ -133,6 +141,11 @@ export function creerClient(base: string): ClientApi {
     quartiers: () => appeler<readonly QuartierApi[]>("/referentiels/quartiers"),
     creerSignalement: (demande) =>
       appeler<{ signalement: SignalementApi; doublons: readonly DoublonApi[] }>("/signalements", json("POST", demande)),
+    listerInterventions: () => appeler<readonly SignalementApi[]>("/signalements?limite=100"),
+    dossier: (idSignalement) => appeler<SignalementApi>(`/signalements/${idSignalement}`),
+    demarrer: (idSignalement) => appeler<{ demarre: boolean; statut: string }>(`/signalements/${idSignalement}/demarrer`, { method: "POST" }),
+    resoudre: (idSignalement, entree) =>
+      appeler<SignalementApi>(`/signalements/${idSignalement}/resoudre`, json("POST", entree)),
     envoyerPhoto: (idSignalement, octets, typeMime) =>
       appeler<{ media: { chemin: string } }>(`/signalements/${idSignalement}/photos`, {
         method: "POST",
