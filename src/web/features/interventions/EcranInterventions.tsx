@@ -5,7 +5,6 @@ import { EnTeteVue } from "../../ui/EnTeteVue.tsx";
 import { EtatChargement } from "../../ui/EtatChargement.tsx";
 import { EtatErreur } from "../../ui/EtatErreur.tsx";
 import { EtatVide } from "../../ui/EtatVide.tsx";
-import { Modale } from "../../ui/Modale.tsx";
 import { ESPACEMENT, TAILLE_TEXTE } from "../../ui/jetons.ts";
 import type { ClientApi, ErreurApi, SignalementApi } from "../../api/client.ts";
 import { DetailIntervention } from "./DetailIntervention.tsx";
@@ -159,22 +158,14 @@ export function EcranInterventions(proprietes: ProprietesEcranInterventions): Re
       ) : null}
 
       {dossierOuvert ? (
-        <Modale
-          ouverte
-          pleineLargeur
-          titre={`Dossier ${dossierOuvert.id_signalement}`}
-          libelleFermeture="Fermer le dossier"
+        <DetailIntervention
+          dossier={dossierOuvert}
+          client={proprietes.client}
+          maintenantIso={proprietes.maintenantIso}
           onFermer={() => setOuvert(null)}
-        >
-          <DetailIntervention
-            dossier={dossierOuvert}
-            client={proprietes.client}
-            maintenantIso={proprietes.maintenantIso}
-            onFermer={() => setOuvert(null)}
-            onMessage={setMessage}
-            onRecharge={() => void charger()}
-          />
-        </Modale>
+          onMessage={setMessage}
+          onRecharge={() => void charger()}
+        />
       ) : (
         <ListeInterventions
           dossiers={dossiers}
@@ -188,3 +179,4 @@ export function EcranInterventions(proprietes: ProprietesEcranInterventions): Re
     </section>
   );
 }
+
