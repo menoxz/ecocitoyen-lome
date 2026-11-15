@@ -1,4 +1,4 @@
-import { useId, useRef, useState, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { ImagePlus, Trash2, Upload } from "lucide-react";
 import { Icone } from "./Icone.tsx";
 import { CLASSES, ESPACEMENT, TAILLE_TEXTE } from "./jetons.ts";
@@ -6,12 +6,12 @@ import { CLASSES, ESPACEMENT, TAILLE_TEXTE } from "./jetons.ts";
 /**
  * Grille de dépôt de photos — l'image parle avant le texte.
  *
- * Trois emplacements fixes, dessinés même vides : le citoyen voit du premier coup d'œil combien de
- * photos sont attendues, sans lire une phrase. Chaque case vide est une cible : clic (sélecteur de
- * fichiers) ou dépôt direct (glisser-déposer). Une case pleine montre l'aperçu et un retrait nommé.
+ * Trois emplacements fixes, dessinés même vides. Chaque case vide est un **bouton** qui ouvre
+ * directement le sélecteur de fichiers : le déclenchement est explicite (`inputRef.click()`) et ne
+ * dépend plus de la propagation d'un `<label>`. Le glisser-déposer reste actif sur toute la grille.
  *
- * Les limites (3 photos, 5 Mo, JPEG/PNG/WebP) sont portées par l'appelant : ce composant ne décide
- * de rien, il transmet les fichiers choisis et rend ce qu'on lui donne.
+ * Un seul input pour la grille : le nombre de photos déjà prises décide de ce qui reste acceptable.
+ * Les limites (3 photos, 5 Mo, JPEG/PNG/WebP) sont portées par l'appelant.
  */
 export interface PhotoGrille {
   readonly id: string;
@@ -31,7 +31,6 @@ export interface ProprietesGrillePhotos {
 export function GrillePhotos(proprietes: ProprietesGrillePhotos): ReactNode {
   const [survol, setSurvol] = useState(false);
   const champ = useRef<HTMLInputElement | null>(null);
-  const idBase = useId();
   const restantes = Math.max(0, proprietes.maximum - proprietes.photos.length);
   const libre = proprietes.desactive !== true && restantes > 0;
 
@@ -59,6 +58,20 @@ export function GrillePhotos(proprietes: ProprietesGrillePhotos): ReactNode {
         prendre(evenement.dataTransfer.files);
       }}
     >
+      <input
+        ref={champ}
+        type="file"
+        className="ui-sr-only"
+        accept="image/jpeg,image/png,image/webp"
+        multiple={restantes > 1}
+        tabIndex={-1}
+        aria-hidden="true"
+        onChange={(evenement) => {
+          prendre(evenement.currentTarget.files);
+          evenement.currentTarget.value = "";
+        }}
+      />
+
       {Array.from({ length: proprietes.maximum }, (_, index) => {
         const photo = proprietes.photos[index];
 
@@ -69,13 +82,11 @@ export function GrillePhotos(proprietes: ProprietesGrillePhotos): ReactNode {
                 <img
                   src={photo.urlApercu}
                   alt={`Photo ${index + 1} du problème`}
+                  data-apercu={photo.id}
                   onError={() => {
-                    // Un aperçu illisible (fichier abîmé, format non rendu) ne doit pas laisser
-                    // un carré vide : on retombe sur le nom, et la photo reste retirable.
                     const cible = document.querySelector(`[data-apercu="${photo.id}"]`);
                     cible?.setAttribute("data-apercu-casse", "true");
                   }}
-                  data-apercu={photo.id}
                 />
               ) : null}
               <span className="ui-photo-case-vide-texte" data-apercu-repli={photo.id}>
@@ -98,29 +109,21 @@ export function GrillePhotos(proprietes: ProprietesGrillePhotos): ReactNode {
 
         const premier = index === 0;
         return (
-          <label
-            key={`${idBase}-${index}`}
+          <button
+            key={`site-${index}`}
+            type="button"
             className="ui-photo-case ui-photo-case--vide ui-focusable"
             data-site={`photo-${index + 1}`}
-            aria-disabled={libre ? undefined : "true"}
+            disabled={!libre}
+            aria-label={`Ajouter une photo, emplacement ${index + 1}`}
+            onClick={() => champ.current?.click()}
           >
-            <input
-              ref={premier ? champ : undefined}
-              type="file"
-              className="ui-sr-only"
-              accept="image/jpeg,image/png,image/webp"
-              disabled={!libre}
-              onChange={(evenement) => {
-                prendre(evenement.currentTarget.files);
-                evenement.currentTarget.value = "";
-              }}
-            />
             <span className="ui-photo-case-icone" aria-hidden="true">
               <Icone icone={premier ? ImagePlus : Upload} taille={24} />
             </span>
             <span className="ui-photo-case-titre">{premier ? "Ajouter une photo" : `Photo ${index + 1}`}</span>
             <span className="ui-photo-case-aide">{premier ? "Cliquez ou déposez ici" : "Emplacement libre"}</span>
-          </label>
+          </button>
         );
       })}
 
@@ -131,7 +134,16 @@ export function GrillePhotos(proprietes: ProprietesGrillePhotos): ReactNode {
       ) : null}
 
       {proprietes.erreur ? (
-        <p role="alert" style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-erreur)", gridColumn: "1 / -1", padding: `0 ${ESPACEMENT.e1}px` }}>
+        <p
+          role="alert"
+          style={{
+            margin: 0,
+            fontSize: TAILLE_TEXTE.sm,
+            color: "var(--ui-erreur)",
+            gridColumn: "1 / -1",
+            padding: `0 ${ESPACEMENT.e1}px`,
+          }}
+        >
           {proprietes.erreur}
         </p>
       ) : null}

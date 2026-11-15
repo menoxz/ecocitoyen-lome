@@ -1327,12 +1327,16 @@ a:hover {
   border-radius: var(--ui-rayon);
   background: var(--ui-surface);
   box-shadow: var(--ui-ombre-douce);
-  overflow: hidden;
+  /* Pas de `overflow: hidden` ici : un panneau de liste déroulante doit pouvoir déborder de la
+     carte, sinon il est rogné par le parent du formulaire. Les coins arrondis sont portés par la
+     tête et le pied, qui sont les seuls enfants à toucher les bords. */
+  overflow: visible;
 }
 
 .ui-carte-tete {
   padding: 14px 18px;
   border-bottom: 1px solid var(--ui-bordure-douce);
+  border-radius: var(--ui-rayon) var(--ui-rayon) 0 0;
   background: var(--ui-surface-douce);
 }
 
@@ -1351,6 +1355,7 @@ a:hover {
   gap: 12px;
   padding: 14px 18px;
   border-top: 1px solid var(--ui-bordure-douce);
+  border-radius: 0 0 var(--ui-rayon) var(--ui-rayon);
   background: var(--ui-surface-douce);
 }
 
@@ -1692,4 +1697,5 @@ a:hover {
   flex-direction: column;
   gap: 6px;
 }
+
 

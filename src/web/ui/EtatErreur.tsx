@@ -26,7 +26,6 @@ export function EtatErreur(proprietes: ProprietesEtatErreur): ReactNode {
         <Icone icone={TriangleAlert} taille={22} />
       </span>
       <p className="ui-etat-titre">{proprietes.message}</p>
-      {proprietes.code ? <p className="ui-etat-code">{proprietes.code}</p> : null}
       {proprietes.libelleReprise && proprietes.onReprise ? (
         <Bouton variante="secondaire" onClick={proprietes.onReprise}>
           {proprietes.libelleReprise}

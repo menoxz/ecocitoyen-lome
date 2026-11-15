@@ -140,7 +140,9 @@ describe("rendu de chaque etape", () => {
     // La liste est un combobox fermé : les options sont rendues à l ouverture (test du panneau).
     expect(html).toContain('role="combobox"');
     expect(html).toContain("Repère (facultatif)");
-    expect(html).toContain("Position enregistrée");
+    // L état de position se lit avant le texte : puce avec icône, couleur et infobulle.
+    expect(html).toContain("Position GPS enregistrée");
+    expect(html).toContain('data-ton="succes"');
     expect(html).not.toContain("Catégorie");
   });
 
@@ -189,3 +191,4 @@ describe("recu de signalement", () => {
     expect(html).toContain("notifié");
   });
 });
+
