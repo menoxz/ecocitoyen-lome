@@ -204,16 +204,8 @@ export function EcranSignaler(proprietes: ProprietesEcranSignaler): ReactNode {
   );
 }
 
-/** Position du navigateur, ou null si l'utilisateur refuse : le parcours reste utilisable. */
-export function positionDuNavigateur(): Promise<{ latitude: number; longitude: number } | null> {
-  if (typeof navigator === "undefined" || !navigator.geolocation) {
-    return Promise.resolve(null);
-  }
-  return new Promise((resoudre) => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => resoudre({ latitude: position.coords.latitude, longitude: position.coords.longitude }),
-      () => resoudre(null),
-      { enableHighAccuracy: true, timeout: 8000 },
-    );
-  });
-}
+/**
+ * La géolocalisation vit dans `geoloc.ts` : l'écran la ré-exporte pour ses appelants historiques,
+ * mais c'est l'étape « Lieu » qui la déclenche désormais, à la demande.
+ */
+export { positionDuNavigateur } from "./geoloc.ts";

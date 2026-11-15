@@ -1,4 +1,4 @@
-import { useRef, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { ImagePlus, Trash2, Upload } from "lucide-react";
 import { Icone } from "./Icone.tsx";
 import { CLASSES, ESPACEMENT, TAILLE_TEXTE } from "./jetons.ts";
@@ -6,12 +6,13 @@ import { CLASSES, ESPACEMENT, TAILLE_TEXTE } from "./jetons.ts";
 /**
  * Grille de dépôt de photos — l'image parle avant le texte.
  *
- * Trois emplacements fixes, dessinés même vides. Chaque case vide est un **bouton** qui ouvre
- * directement le sélecteur de fichiers : le déclenchement est explicite (`inputRef.click()`) et ne
- * dépend plus de la propagation d'un `<label>`. Le glisser-déposer reste actif sur toute la grille.
+ * Trois emplacements fixes, dessinés même vides. Une case vide est **couverte** par son propre
+ * `<input type="file">` rendu transparent : le clic de l'usager atteint directement le contrôle
+ * natif, donc le navigateur ouvre son sélecteur. La version précédente appelait `input.click()`
+ * depuis un input réduit à 1 px (`sr-only`) : rien ne s'ouvrait.
  *
- * Un seul input pour la grille : le nombre de photos déjà prises décide de ce qui reste acceptable.
- * Les limites (3 photos, 5 Mo, JPEG/PNG/WebP) sont portées par l'appelant.
+ * Le glisser-déposer reste actif sur toute la grille, et le nombre de photos déjà prises décide de
+ * ce qui reste acceptable. Les limites (3 photos, 5 Mo, JPEG/PNG/WebP) sont portées par l'appelant.
  */
 export interface PhotoGrille {
   readonly id: string;
@@ -30,7 +31,6 @@ export interface ProprietesGrillePhotos {
 
 export function GrillePhotos(proprietes: ProprietesGrillePhotos): ReactNode {
   const [survol, setSurvol] = useState(false);
-  const champ = useRef<HTMLInputElement | null>(null);
   const restantes = Math.max(0, proprietes.maximum - proprietes.photos.length);
   const libre = proprietes.desactive !== true && restantes > 0;
 
@@ -58,20 +58,6 @@ export function GrillePhotos(proprietes: ProprietesGrillePhotos): ReactNode {
         prendre(evenement.dataTransfer.files);
       }}
     >
-      <input
-        ref={champ}
-        type="file"
-        className="ui-sr-only"
-        accept="image/jpeg,image/png,image/webp"
-        multiple={restantes > 1}
-        tabIndex={-1}
-        aria-hidden="true"
-        onChange={(evenement) => {
-          prendre(evenement.currentTarget.files);
-          evenement.currentTarget.value = "";
-        }}
-      />
-
       {Array.from({ length: proprietes.maximum }, (_, index) => {
         const photo = proprietes.photos[index];
 
@@ -109,21 +95,30 @@ export function GrillePhotos(proprietes: ProprietesGrillePhotos): ReactNode {
 
         const premier = index === 0;
         return (
-          <button
+          <div
             key={`site-${index}`}
-            type="button"
-            className="ui-photo-case ui-photo-case--vide ui-focusable"
+            className="ui-photo-case ui-photo-case--vide"
             data-site={`photo-${index + 1}`}
-            disabled={!libre}
-            aria-label={`Ajouter une photo, emplacement ${index + 1}`}
-            onClick={() => champ.current?.click()}
+            data-desactive={libre ? undefined : "true"}
           >
+            <input
+              type="file"
+              className="ui-photo-input ui-focusable"
+              accept="image/jpeg,image/png,image/webp"
+              multiple={restantes > 1}
+              disabled={!libre}
+              aria-label={`Ajouter une photo, emplacement ${index + 1}`}
+              onChange={(evenement) => {
+                prendre(evenement.currentTarget.files);
+                evenement.currentTarget.value = "";
+              }}
+            />
             <span className="ui-photo-case-icone" aria-hidden="true">
               <Icone icone={premier ? ImagePlus : Upload} taille={24} />
             </span>
             <span className="ui-photo-case-titre">{premier ? "Ajouter une photo" : `Photo ${index + 1}`}</span>
             <span className="ui-photo-case-aide">{premier ? "Cliquez ou déposez ici" : "Emplacement libre"}</span>
-          </button>
+          </div>
         );
       })}
 

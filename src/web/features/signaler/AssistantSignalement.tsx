@@ -8,6 +8,7 @@ import type { OptionSelect } from "../../ui/ChampSelect.tsx";
 import type { ErreurApi, Resultat, SignalementApi } from "../../api/client.ts";
 import { RecuSignalement } from "./RecuSignalement.tsx";
 import { EtapeLieu } from "./EtapeLieu.tsx";
+import { positionDuNavigateur } from "./geoloc.ts";
 import { EtapeProbleme } from "./EtapeProbleme.tsx";
 import {
   BROUILLON_INITIAL,
@@ -55,6 +56,7 @@ export function AssistantSignalement(proprietes: ProprietesAssistant): ReactNode
     position: proprietes.positionInitiale ?? null,
   });
   const [erreurProgression, setErreurProgression] = useState<string | null>(null);
+  const [localisation, setLocalisation] = useState<"inactif" | "enCours" | "refusee">("inactif");
   const [erreurServeur, setErreurServeur] = useState<ErreurApi | null>(null);
   const [envoiEnCours, setEnvoiEnCours] = useState(false);
   const [recu, setRecu] = useState<SignalementApi | null>(null);
@@ -77,6 +79,20 @@ export function AssistantSignalement(proprietes: ProprietesAssistant): ReactNode
     });
     if (retenues.length > 0) {
       maj({ photos: [...brouillon.photos, ...retenues], sansPhoto: false });
+      setErreurProgression(null);
+    }
+  };
+
+  /**
+   * Demande la position au moment du clic, pas au démarrage de l'application : une autorisation
+   * accordée plus tard était auparavant ignorée pour toute la session.
+   */
+  const localiser = async (): Promise<void> => {
+    setLocalisation("enCours");
+    const position = await positionDuNavigateur();
+    setLocalisation(position ? "inactif" : "refusee");
+    if (position) {
+      maj({ position, positionManuelle: false });
       setErreurProgression(null);
     }
   };
@@ -150,7 +166,15 @@ export function AssistantSignalement(proprietes: ProprietesAssistant): ReactNode
           />
         ) : null}
 
-        {etape === "lieu" ? <EtapeLieu brouillon={brouillon} quartiers={proprietes.quartiers} onMaj={maj} /> : null}
+        {etape === "lieu" ? (
+          <EtapeLieu
+            brouillon={brouillon}
+            quartiers={proprietes.quartiers}
+            onMaj={maj}
+            localisation={localisation}
+            onLocaliser={() => void localiser()}
+          />
+        ) : null}
 
         {etape === "probleme" ? (
           <EtapeProbleme brouillon={brouillon} categories={proprietes.categories} onMaj={maj} />
@@ -184,4 +208,5 @@ export function AssistantSignalement(proprietes: ProprietesAssistant): ReactNode
     </section>
   );
 }
+
 

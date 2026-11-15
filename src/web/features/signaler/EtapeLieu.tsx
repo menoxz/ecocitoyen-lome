@@ -11,17 +11,23 @@ import type { Brouillon } from "./etapes.ts";
  * Étape « Lieu » — position et quartier.
  *
  * L'état de la position se lit avant le texte : une puce avec icône, couleur et infobulle dit
- * « GPS enregistré », « approximatif » ou « aucune position ». Le paragraphe qui suit explique
- * seulement les conséquences, il ne porte plus l'information à lui seul.
+ * « GPS enregistré », « approximatif » ou « aucune position ».
+ *
+ * La position est demandée **ici**, au clic, et non au démarrage de l'application : un citoyen qui
+ * autorise la localisation après le chargement de la page restait sinon bloqué sur « aucune
+ * position » pour toute la session. Le bouton peut être pressé à nouveau si le refus a changé.
  */
 export interface ProprietesEtapeLieu {
   readonly brouillon: Brouillon;
   readonly quartiers: readonly OptionSelect[];
   readonly onMaj: (partiel: Partial<Brouillon>) => void;
+  readonly localisation?: "inactif" | "enCours" | "refusee";
+  readonly onLocaliser?: () => void;
 }
 
 export function EtapeLieu(proprietes: ProprietesEtapeLieu): ReactNode {
   const { brouillon } = proprietes;
+  const enCours = proprietes.localisation === "enCours";
 
   const puce: PuceEtat = brouillon.position
     ? {
@@ -37,12 +43,19 @@ export function EtapeLieu(proprietes: ProprietesEtapeLieu): ReactNode {
           ton: "alerte",
           aide: "Le centre du quartier choisi sera transmis : la position est indicative, pas relevée.",
         }
-      : {
-          icone: MapPinOff,
-          libelle: "Aucune position",
-          ton: "erreur",
-          aide: "Sans position ni quartier, le service ne peut pas envoyer d équipe.",
-        };
+      : enCours
+        ? {
+            icone: LocateFixed,
+            libelle: "Localisation en cours…",
+            ton: "info",
+            aide: "Le navigateur cherche votre position. Autorisez l accès si la demande apparaît.",
+          }
+        : {
+            icone: MapPinOff,
+            libelle: "Aucune position",
+            ton: "erreur",
+            aide: "Sans position ni quartier, le service ne peut pas envoyer d équipe.",
+          };
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
@@ -56,12 +69,25 @@ export function EtapeLieu(proprietes: ProprietesEtapeLieu): ReactNode {
             : "Activez la localisation, ou situez le problème au centre de son quartier."}
       </p>
 
-      {!brouillon.position && !brouillon.positionManuelle ? (
-        <div>
-          <Bouton variante="secondaire" onClick={() => proprietes.onMaj({ positionManuelle: true })}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: ESPACEMENT.e2 }}>
+        {proprietes.onLocaliser ? (
+          <Bouton variante={brouillon.position ? "texte" : "secondaire"} enChargement={enCours} onClick={proprietes.onLocaliser}>
+            {brouillon.position ? "Actualiser ma position" : "Utiliser ma position"}
+          </Bouton>
+        ) : null}
+
+        {!brouillon.position && !brouillon.positionManuelle ? (
+          <Bouton variante="texte" onClick={() => proprietes.onMaj({ positionManuelle: true })}>
             Utiliser le centre du quartier
           </Bouton>
-        </div>
+        ) : null}
+      </div>
+
+      {proprietes.localisation === "refusee" ? (
+        <p role="status" style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-alerte)" }}>
+          Position indisponible : autorisez la localisation dans votre navigateur, puis réessayez — ou
+          situez le problème au centre de son quartier.
+        </p>
       ) : null}
 
       <ChampSelect

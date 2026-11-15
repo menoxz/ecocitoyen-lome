@@ -1730,3 +1730,37 @@ a:focus-visible {
   outline-offset: 2px;
   border-radius: var(--ui-rayon-sm);
 }
+
+/* ——— Case photo : l'input natif couvre la case ———
+   Le clic de l'usager atteint directement le contrôle de fichier, donc le navigateur ouvre son
+   sélecteur. Un input réduit à 1 px déclenché par programme n'ouvrait rien. */
+.ui-photo-input {
+  position: absolute;
+  /* Pas de width/height : ils écraseaient le calcul d'`inset` et laissaient 2 px de case sans
+     input, donc un clic sur le liseré tombait sur le conteneur et n'ouvrait rien. `inset` seul
+     couvre la bordure (1 px de chaque côté) plus une marge. */
+  inset: -2px;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  cursor: pointer;
+  border: 0;
+  font-size: 0;
+}
+
+.ui-photo-input:disabled {
+  cursor: not-allowed;
+}
+
+.ui-photo-case--vide[data-desactive="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Le contour de focus doit rester visible sur la case, pas sur l'input transparent. */
+.ui-photo-case--vide:focus-within {
+  outline: 2px solid var(--ui-focus);
+  outline-offset: 2px;
+}
+
+
