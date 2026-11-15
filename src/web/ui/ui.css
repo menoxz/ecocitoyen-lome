@@ -1,0 +1,91 @@
+/* Feuille d'états du design system. Aucune couleur littérale : tout vient des variables posées
+   par les composants à partir de jetons.ts (docs/design/DESIGN.md §2). */
+
+.ui-focusable:focus-visible {
+  outline: 2px solid var(--ui-focus, #0f766e);
+  outline-offset: 2px;
+}
+
+.ui-bouton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-weight: 600;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease, opacity 120ms ease;
+  min-height: 44px;
+  padding: 0 16px;
+}
+
+.ui-bouton:hover:not(:disabled) {
+  filter: brightness(0.94);
+}
+
+.ui-bouton:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.ui-bouton:disabled,
+.ui-bouton[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ui-bouton[aria-busy="true"] {
+  cursor: progress;
+}
+
+.ui-champ {
+  width: 100%;
+  min-height: 44px;
+  font-family: inherit;
+  font-size: 16px;
+  border-radius: 8px;
+  padding: 10px 12px;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.ui-champ:focus-visible {
+  outline: 2px solid var(--ui-focus, #0f766e);
+  outline-offset: 1px;
+}
+
+.ui-champ--erreur {
+  border-width: 2px;
+}
+
+.ui-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 6px 10px;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.ui-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-bouton,
+  .ui-champ {
+    transition: none;
+  }
+}
