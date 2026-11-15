@@ -7,10 +7,11 @@ import { EtatErreur } from "../../ui/EtatErreur.tsx";
 import { EtatVide } from "../../ui/EtatVide.tsx";
 import { PucesEtat, type PuceEtat } from "../../ui/PucesEtat.tsx";
 import { ageRelatif } from "../../ui/CarteSignalement.tsx";
-import { ESPACEMENT, RAYON, TAILLE_TEXTE } from "../../ui/jetons.ts";
+import { ESPACEMENT, TAILLE_TEXTE } from "../../ui/jetons.ts";
 import type { ClientApi, ErreurApi, EtapeHistoriqueApi, SignalementApi } from "../../api/client.ts";
 import { etapesLisibles, libelleStatut } from "./logique.ts";
 import { BoutonConfirmer } from "./BoutonConfirmer.tsx";
+import { ListeHistorique } from "./ListeHistorique.tsx";
 
 /**
  * Parcours 2 : le citoyen suit son dossier (PARCOURS.md §2), selon la même hiérarchie de
@@ -203,34 +204,7 @@ export function EcranSuivi(proprietes: ProprietesEcranSuivi): ReactNode {
 
       <h2 style={{ margin: 0, fontSize: TAILLE_TEXTE.lg, color: "inherit" }}>Décisions du service</h2>
 
-      {lisibles.length === 0 ? (
-        <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>
-          Aucune étape enregistrée pour l instant.
-        </p>
-      ) : (
-        <ol style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: ESPACEMENT.e2 }}>
-          {lisibles.map((etape, index) => (
-            <li
-              key={`${etape.date}-${index}`}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 4,
-                padding: ESPACEMENT.e3,
-                border: "1px solid var(--ui-bordure)",
-                borderRadius: RAYON.md,
-                backgroundColor: "var(--ui-surface)",
-              }}
-            >
-              <span style={{ fontSize: TAILLE_TEXTE.md, color: "inherit", fontWeight: 600 }}>{etape.titre}</span>
-              {etape.detail ? (
-                <span style={{ fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>{etape.detail}</span>
-              ) : null}
-              <span style={{ fontSize: TAILLE_TEXTE.xs, color: "var(--ui-texte-attenue)" }}>{etape.date}</span>
-            </li>
-          ))}
-        </ol>
-      )}
+      <ListeHistorique etapes={etapes ?? []} lisibles={lisibles} />
 
       <Bouton
         variante="texte"

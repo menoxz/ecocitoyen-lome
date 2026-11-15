@@ -62,30 +62,35 @@ export function volumesOrdonnes(synthese: SyntheseApi): readonly { readonly stat
   }));
 }
 
-/** Lignes de pilotage : un intitulé et sa valeur déjà mise en forme. */
+/** Lignes de pilotage : un intitulé, sa valeur déjà mise en forme, et ce qu elle mesure. */
 export interface LigneIndicateur {
   readonly libelle: string;
   readonly valeur: string;
   readonly mesurable: boolean;
+  /** Ce que l indicateur mesure, en une phrase : c est le détail ouvert au clic. */
+  readonly definition: string;
 }
 
 export function lignesPilotage(synthese: SyntheseApi): readonly LigneIndicateur[] {
-  const ligne = (libelle: string, valeur: string): LigneIndicateur => ({
+  const ligne = (libelle: string, valeur: string, definition: string): LigneIndicateur => ({
     libelle,
     valeur,
     mesurable: valeur !== NON_MESURABLE,
+    definition,
   });
 
   return [
-    ligne("Taux de résolution", formaterPourcentage(synthese.tauxResolution)),
-    ligne("Taux de rejet", formaterPourcentage(synthese.tauxRejet)),
-    ligne("Délai moyen de tri", formaterHeures(synthese.delaiMoyenTriHeures)),
-    ligne("Délai moyen de traitement", formaterHeures(synthese.delaiMoyenTraitementHeures)),
-    ligne("Respect du délai de tri", formaterPourcentage(synthese.respectDelais.tri)),
-    ligne("Respect du délai d'affectation", formaterPourcentage(synthese.respectDelais.affectation)),
-    ligne("Respect du délai de résolution", formaterPourcentage(synthese.respectDelais.resolution)),
-    ligne("Couverture géographique", formaterPourcentage(synthese.couvertureGeographique)),
-    ligne("Accord IA sur la catégorie", formaterPourcentage(synthese.qualiteIa.tauxAccord)),
-    ligne("Score IA moyen", formaterNombre(synthese.qualiteIa.scoreMoyen)),
+    ligne("Taux de résolution", formaterPourcentage(synthese.tauxResolution), "Dossiers résolus rapportés aux dossiers traités sur la période."),
+    ligne("Taux de rejet", formaterPourcentage(synthese.tauxRejet), "Dossiers rejetés rapportés aux dossiers traités sur la période."),
+    ligne("Délai moyen de tri", formaterHeures(synthese.delaiMoyenTriHeures), "Temps moyen écoulé entre le signalement et la décision de tri."),
+    ligne("Délai moyen de traitement", formaterHeures(synthese.delaiMoyenTraitementHeures), "Temps moyen écoulé entre la validation et la résolution sur le terrain."),
+    ligne("Respect du délai de tri", formaterPourcentage(synthese.respectDelais.tri), "Part des dossiers triés dans le délai cible, parmi ceux dont l'échéance est connue."),
+    ligne("Respect du délai d'affectation", formaterPourcentage(synthese.respectDelais.affectation), "Part des dossiers affectés dans le délai cible."),
+    ligne("Respect du délai de résolution", formaterPourcentage(synthese.respectDelais.resolution), "Part des dossiers résolus dans le délai cible."),
+    ligne("Couverture géographique", formaterPourcentage(synthese.couvertureGeographique), "Part des quartiers couverts par au moins un dossier sur la période."),
+    ligne("Accord IA sur la catégorie", formaterPourcentage(synthese.qualiteIa.tauxAccord), "Part des classifications automatiques confirmées sans correction par un agent."),
+    ligne("Score IA moyen", formaterNombre(synthese.qualiteIa.scoreMoyen), "Score de confiance moyen des classifications automatiques sur la période."),
   ];
 }
+
+

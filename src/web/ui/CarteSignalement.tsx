@@ -100,18 +100,10 @@ export function CarteSignalement(proprietes: ProprietesCarteSignalement): ReactN
 
   return (
     <article
-      className={[CLASSES.carte, CLASSES.focusable].join(" ")}
+      className={CLASSES.carte}
       data-id={proprietes.id}
       data-selectionnee={proprietes.selectionnee === true ? "true" : undefined}
       aria-busy={proprietes.enChargement === true ? "true" : undefined}
-      tabIndex={0}
-      onClick={() => proprietes.onOuvrir?.(proprietes.id)}
-      onKeyDown={(evenement) => {
-        if (evenement.key === "Enter" || evenement.key === " ") {
-          evenement.preventDefault();
-          proprietes.onOuvrir?.(proprietes.id);
-        }
-      }}
       style={{
         display: "flex",
         flexDirection: "column",
@@ -119,7 +111,6 @@ export function CarteSignalement(proprietes: ProprietesCarteSignalement): ReactN
         padding: ESPACEMENT.e3,
         borderRadius: RAYON.md,
         backgroundColor: "var(--ui-surface)",
-        cursor: "pointer",
       }}
     >
       {proprietes.photoUrl ? (
@@ -138,6 +129,17 @@ export function CarteSignalement(proprietes: ProprietesCarteSignalement): ReactN
 
       {proprietes.enChargement === true ? (
         <p style={{ margin: 0, fontSize: TAILLE_TEXTE.xs, color: "var(--ui-texte-attenue)" }}>chargement…</p>
+      ) : null}
+
+      {proprietes.onOuvrir ? (
+        <button
+          type="button"
+          className={[CLASSES.bouton, "ui-bouton--texte", CLASSES.focusable].join(" ")}
+          aria-label={`Ouvrir le dossier ${proprietes.quartier}`}
+          onClick={() => proprietes.onOuvrir?.(proprietes.id)}
+        >
+          Ouvrir le dossier
+        </button>
       ) : null}
     </article>
   );

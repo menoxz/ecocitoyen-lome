@@ -5,9 +5,10 @@ import { Bouton } from "../../ui/Bouton.tsx";
 import { EnTeteVue } from "../../ui/EnTeteVue.tsx";
 import { EtatChargement } from "../../ui/EtatChargement.tsx";
 import { EtatErreur } from "../../ui/EtatErreur.tsx";
-import { ESPACEMENT, RAYON, TAILLE_TEXTE } from "../../ui/jetons.ts";
+import { ESPACEMENT, TAILLE_TEXTE } from "../../ui/jetons.ts";
 import type { ClientApi, ErreurApi, SyntheseApi } from "../../api/client.ts";
 import { NON_MESURABLE, libelleStatutIndicateur, lignesPilotage, volumesOrdonnes } from "./logique.ts";
+import { ListeIndicateurs } from "./ListeIndicateurs.tsx";
 
 /**
  * Parcours 6 : pilotage par les indicateurs (PARCOURS.md §7, CDC §13).
@@ -122,34 +123,7 @@ export function EcranIndicateurs(proprietes: ProprietesEcranIndicateurs): ReactN
         ]}
       />
 
-      <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: ESPACEMENT.e2 }}>
-        {lignes.map((ligne) => (
-          <li
-            key={ligne.libelle}
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "baseline",
-              gap: ESPACEMENT.e3,
-              padding: `${ESPACEMENT.e2}px ${ESPACEMENT.e3}px`,
-              border: "1px solid var(--ui-bordure)",
-              borderRadius: RAYON.md,
-              backgroundColor: "var(--ui-surface)",
-            }}
-          >
-            <span style={{ fontSize: TAILLE_TEXTE.sm, color: "inherit" }}>{ligne.libelle}</span>
-            <strong
-              style={{
-                fontSize: TAILLE_TEXTE.md,
-                color: ligne.mesurable ? "var(--ui-texte)" : "var(--ui-texte-attenue)",
-                fontStyle: ligne.mesurable ? "normal" : "italic",
-              }}
-            >
-              {ligne.valeur}
-            </strong>
-          </li>
-        ))}
-      </ul>
+      <ListeIndicateurs lignes={lignes} />
 
       <h2 style={{ margin: 0, fontSize: TAILLE_TEXTE.lg, color: "inherit" }}>Dossiers par statut</h2>
       <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "inherit" }}>
