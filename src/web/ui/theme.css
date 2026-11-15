@@ -1841,3 +1841,96 @@ a:focus-visible {
   font-size: 12px;
   color: var(--ui-texte-attenue);
 }
+
+/* ——— Panneau de dossier : dimensions bornées et responsives ———
+   L écran ouvert depuis « Ouvrir le dossier » ne doit pas s étirer sur 1920 px : la largeur est
+   plafonnée, centrée, et le panneau garde les mêmes marges sur mobile. */
+.ui-panneau-dossier {
+  width: 100%;
+  max-width: 720px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 22px;
+  border: 1px solid var(--ui-bordure-douce);
+  border-radius: var(--ui-rayon);
+  background: var(--ui-surface);
+  box-shadow: var(--ui-ombre-douce);
+}
+
+@media (max-width: 520px) {
+  .ui-panneau-dossier {
+    padding: 14px;
+    gap: 14px;
+  }
+}
+
+/* ——— Décision du superviseur : champs alignés, actions calibrées ——— */
+.ui-decision {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.ui-decision-bloc {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--ui-bordure-douce);
+  border-radius: var(--ui-rayon-sm);
+  background: var(--ui-surface-douce);
+}
+
+.ui-decision-titre {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--ui-texte);
+}
+
+.ui-decision-note {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ui-texte-attenue);
+}
+
+/* Les champs courts côte à côte, le texte long sur toute la ligne. */
+.ui-decision-champs {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+}
+
+@media (min-width: 620px) {
+  .ui-decision-champs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.ui-decision-champ-large {
+  grid-column: 1 / -1;
+}
+
+/* Actions bornées : un bouton ne s étire pas sur toute la largeur du panneau. */
+.ui-decision-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.ui-decision-actions .ui-bouton {
+  min-height: 48px;
+  min-width: 210px;
+}
+
+@media (max-width: 520px) {
+  .ui-decision-actions .ui-bouton {
+    min-width: 0;
+    width: 100%;
+  }
+}

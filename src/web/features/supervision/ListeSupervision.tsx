@@ -96,7 +96,7 @@ export function ListeSupervision(proprietes: ProprietesListeSupervision): ReactN
           }}
         />
       ) : (
-        <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: ESPACEMENT.e2 }}>
+        <ul className="ui-grille-cartes">
           {visibles.map((dossier) => (
             <li key={dossier.id_signalement}>
               <CarteSignalement
@@ -119,3 +119,4 @@ export function ListeSupervision(proprietes: ProprietesListeSupervision): ReactN
     </section>
   );
 }
+

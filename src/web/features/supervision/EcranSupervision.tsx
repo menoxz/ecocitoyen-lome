@@ -191,7 +191,7 @@ export function EcranSupervision(proprietes: ProprietesEcranSupervision): ReactN
           libelleFermeture="Fermer la décision"
           onFermer={() => setOuvert(null)}
         >
-          <article style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
+          <div className="ui-panneau-dossier">
           <CarteSignalement
             id={dossierOuvert.id_signalement}
             statut={dossierOuvert.statut}
@@ -219,7 +219,7 @@ export function EcranSupervision(proprietes: ProprietesEcranSupervision): ReactN
           <Bouton variante="texte" onClick={() => setOuvert(null)}>
             Revenir à la file
           </Bouton>
-          </article>
+          </div>
         </Modale>
       ) : (
         <ListeSupervision file={file} maintenantIso={proprietes.maintenantIso} onOuvrir={setOuvert} />
@@ -227,3 +227,4 @@ export function EcranSupervision(proprietes: ProprietesEcranSupervision): ReactN
     </section>
   );
 }
+
