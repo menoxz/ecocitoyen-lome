@@ -1,20 +1,23 @@
 import type { ReactNode } from "react";
-import { CLASSES, COULEURS, CIBLE_TACTILE, RAYON, TAILLE_TEXTE } from "./jetons.ts";
+import { CLASSES, CIBLE_TACTILE, TAILLE_TEXTE } from "./jetons.ts";
 
 /**
  * Bouton — états couverts : repos, survol, focus clavier, actif, désactivé, chargement.
- * (survol/actif/focus vivent dans `ui.css`, la présence des classes est testée)
+ *
+ * Les couleurs et les états vivent dans `ui.css`, pas ici : une couleur posée en style inline
+ * gagne sur la feuille et gèle le composant en thème clair. C'est ce qui empêchait le mode sombre
+ * d'atteindre les boutons.
  *
  * Règles (docs/design/DESIGN.md §3.1) : une seule variante `primaire` par écran ; en chargement
  * le libellé est conservé et la largeur ne bouge pas ; désactivé reste dans le DOM pour que le
- * clavier puisse l''atteindre et lire pourquoi.
+ * clavier puisse l'atteindre et lire pourquoi.
  */
 export type VarianteBouton = "primaire" | "secondaire" | "texte" | "danger";
 export type TailleBouton = "sm" | "md" | "lg";
 
 export interface ProprietesBouton {
   readonly children: ReactNode;
-  /** Verbe à l''infinitif : « Envoyer », « Valider », « Clôturer ». */
+  /** Verbe à l'infinitif : « Envoyer », « Valider », « Clôturer ». */
   readonly libelleAccessible?: string;
   readonly variante?: VarianteBouton;
   readonly taille?: TailleBouton;
@@ -32,30 +35,22 @@ const TAILLE_POLICE: Readonly<Record<TailleBouton, number>> = {
   lg: TAILLE_TEXTE.lg,
 };
 
-function styleDeVariante(variante: VarianteBouton): { couleur: string; fond: string; bordure: string } {
-  if (variante === "primaire") {
-    return { couleur: "#ffffff", fond: COULEURS.primaire, bordure: COULEURS.primaire };
-  }
-  if (variante === "danger") {
-    return { couleur: "#ffffff", fond: COULEURS.erreur, bordure: COULEURS.erreur };
-  }
-  if (variante === "texte") {
-    return { couleur: COULEURS.primaire, fond: "transparent", bordure: "transparent" };
-  }
-  return { couleur: COULEURS.texte, fond: COULEURS.surface, bordure: COULEURS.bordure };
-}
+const CLASSE_DE_VARIANTE: Readonly<Record<VarianteBouton, string>> = {
+  primaire: CLASSES.boutonPrimaire,
+  secondaire: CLASSES.secondaire,
+  danger: CLASSES.danger,
+  texte: "ui-bouton--texte",
+};
 
 export function Bouton(proprietes: ProprietesBouton): ReactNode {
   const variante = proprietes.variante ?? "secondaire";
   const taille = proprietes.taille ?? "md";
-  const style = styleDeVariante(variante);
   const inactif = proprietes.desactive === true || proprietes.enChargement === true;
 
   const classes = [
     CLASSES.bouton,
     CLASSES.focusable,
-    variante === "primaire" ? CLASSES.boutonPrimaire : "",
-    variante === "danger" ? CLASSES.danger : "",
+    CLASSE_DE_VARIANTE[variante],
     proprietes.pleineLargeur ? "ui-bouton--large" : "",
   ]
     .filter(Boolean)
@@ -75,11 +70,6 @@ export function Bouton(proprietes: ProprietesBouton): ReactNode {
         height: HAUTEUR[taille],
         width: proprietes.pleineLargeur ? "100%" : undefined,
         fontSize: TAILLE_POLICE[taille],
-        color: style.couleur,
-        backgroundColor: style.fond,
-        borderColor: style.bordure,
-        borderRadius: RAYON.md,
-        opacity: inactif ? 0.5 : 1,
       }}
     >
       <span>{proprietes.children}</span>

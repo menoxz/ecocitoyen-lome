@@ -6,6 +6,9 @@ import { CLASSES, PRIORITES, type ClePriorite } from "./jetons.ts";
  *
  * Le score suggéré est affiché à côté du niveau : un superviseur doit voir sur quoi la
  * proposition repose, pas seulement sa conclusion.
+ *
+ * La teinte vient de `ui.css` via `data-priorite`, comme le badge de statut : plus aucune couleur
+ * en dur, donc le badge suit le thème clair ou sombre sans code supplémentaire.
  */
 export interface ProprietesBadgePriorite {
   readonly priorite: ClePriorite | string;
@@ -13,17 +16,12 @@ export interface ProprietesBadgePriorite {
 }
 
 export function BadgePriorite(proprietes: ProprietesBadgePriorite): ReactNode {
-  const teinte = (PRIORITES as Record<string, { texte: string; fond: string; bordure: string; libelle: string }>)[
-    proprietes.priorite
-  ];
+  const teinte = (PRIORITES as Record<string, { readonly libelle: string }>)[proprietes.priorite];
   const libelle = teinte ? teinte.libelle : String(proprietes.priorite);
-  const texte = teinte ? teinte.texte : "#374151";
-  const fond = teinte ? teinte.fond : "#f3f4f6";
-  const bordure = teinte ? teinte.bordure : "#d1d5db";
   const score = typeof proprietes.score === "number" && Number.isFinite(proprietes.score) ? proprietes.score : null;
 
   return (
-    <span className={CLASSES.badge} style={{ color: texte, backgroundColor: fond, borderColor: bordure }}>
+    <span className={CLASSES.badge} data-priorite={proprietes.priorite}>
       <span>Priorité {libelle}</span>
       {score !== null ? <span aria-label={`score ${score}`}>{score}</span> : null}
     </span>

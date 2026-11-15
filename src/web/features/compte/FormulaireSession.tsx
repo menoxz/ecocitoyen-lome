@@ -69,15 +69,18 @@ export function FormulaireSession(proprietes: ProprietesFormulaireSession): Reac
   };
 
   return (
-    <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
-      <h2 style={{ margin: 0, fontSize: TAILLE_TEXTE.lg, color: COULEURS.texte }}>
-        {mode === "inscription"
-          ? "Créer un compte citoyen"
-          : (proprietes.titre ?? "Se connecter pour signaler")}
-      </h2>
-      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: COULEURS.texteAttenue }}>
-        {proprietes.explication ?? "Votre compte sert à vous notifier chaque décision du service. Aucune donnée n'est publiée."}
-      </p>
+    <div className="ui-session">
+      <section className="ui-session-carte">
+        <div style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e2 }}>
+          <h2 className="ui-session-titre">
+            {mode === "inscription"
+              ? "Créer un compte citoyen"
+              : (proprietes.titre ?? "Se connecter pour signaler")}
+          </h2>
+          <p className="ui-session-detail">
+            {proprietes.explication ?? "Votre compte sert à vous notifier chaque décision du service. Aucune donnée n'est publiée."}
+          </p>
+        </div>
 
       <ChampTexte
         id="identifiant"
@@ -136,6 +139,7 @@ export function FormulaireSession(proprietes: ProprietesFormulaireSession): Reac
           {mode === "connexion" ? "Je n ai pas de compte" : "J ai déjà un compte"}
         </Bouton>
       </div>
-    </section>
+      </section>
+    </div>
   );
 }

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { CLASSES, COULEURS, RAYON, TAILLE_TEXTE } from "./jetons.ts";
+import { CLASSES, COULEURS, TAILLE_TEXTE } from "./jetons.ts";
 
 /**
  * Champ texte — états couverts : repos, survol, focus clavier, désactivé, erreur.
@@ -47,12 +47,6 @@ export function ChampTexte(proprietes: ProprietesChampTexte): ReactNode {
         placeholder={proprietes.exemple}
         aria-invalid={enErreur ? "true" : undefined}
         aria-describedby={enErreur ? idErreur : proprietes.aide ? idAide : undefined}
-        style={{
-          color: COULEURS.texte,
-          backgroundColor: proprietes.desactive ? COULEURS.surfaceAlt : COULEURS.surface,
-          borderColor: enErreur ? COULEURS.erreur : COULEURS.bordure,
-          borderRadius: RAYON.md,
-        }}
       />
 
       {enErreur ? (

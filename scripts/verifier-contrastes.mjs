@@ -38,6 +38,15 @@ const PAIRES = [
   ['erreur sur surface', '#b91c1c', '#ffffff', 4.5],
   ['succes sur surface', '#15803d', '#ffffff', 4.5],
   ['bordure focus (3:1 non textuel)', '#0f766e', '#ffffff', 3],
+
+  // Mode sombre — mêmes exigences, variables de theme.css sous `prefers-color-scheme: dark`.
+  ['sombre texte sur surface', '#e6ebf2', '#131c2b', 4.5],
+  ['sombre texte attenue sur surface', '#a7b2c4', '#131c2b', 4.5],
+  ['sombre texte sur fond', '#e6ebf2', '#0a1120', 4.5],
+  ['sombre texte attenue sur fond', '#a7b2c4', '#0a1120', 4.5],
+  ['sombre sur-primaire sur primaire', '#06231f', '#2dd4bf', 4.5],
+  ['sombre primaire sur surface (lien)', '#2dd4bf', '#131c2b', 4.5],
+  ['sombre focus sur fond (3:1 non textuel)', '#2dd4bf', '#0a1120', 3],
 ];
 
 let echecs = 0;

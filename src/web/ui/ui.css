@@ -1,62 +1,152 @@
-/* Feuille d'états du design system. Aucune couleur littérale : tout vient des variables posées
-   par les composants à partir de jetons.ts (docs/design/DESIGN.md §2). */
+/* Feuille des composants : couleurs ET états.
+   Les composants ne posent plus de couleur en dur — tout passe par les variables de theme.css,
+   sinon le mode sombre s'arrête à la porte des formulaires. Transitions et états (survol, actif,
+   focus, désactivé, erreur) vivent ici, au même endroit que les couleurs qu'elles font varier. */
 
 .ui-focusable:focus-visible {
   outline: 2px solid var(--ui-focus, #0f766e);
   outline-offset: 2px;
 }
 
+/* ——— Boutons ——— */
+
 .ui-bouton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: inherit;
+  font-size: 15px;
   font-weight: 600;
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: var(--ui-rayon-sm, 8px);
   cursor: pointer;
-  transition: background-color 120ms ease, border-color 120ms ease, opacity 120ms ease;
   min-height: 44px;
-  padding: 0 16px;
+  padding: 0 18px;
+  transition: background-color var(--ui-duree-rapide, 120ms) var(--ui-courbe, ease),
+    border-color var(--ui-duree-rapide, 120ms) var(--ui-courbe, ease),
+    color var(--ui-duree-rapide, 120ms) var(--ui-courbe, ease),
+    box-shadow var(--ui-duree-rapide, 120ms) var(--ui-courbe, ease),
+    transform var(--ui-duree-rapide, 120ms) var(--ui-courbe, ease);
 }
 
-.ui-bouton:hover:not(:disabled) {
-  filter: brightness(0.94);
+.ui-bouton--primaire {
+  background-color: var(--ui-primaire, #0f766e);
+  border-color: var(--ui-primaire, #0f766e);
+  color: var(--ui-sur-primaire, #ffffff);
+  box-shadow: var(--ui-ombre-douce, none);
+}
+
+.ui-bouton--primaire:hover:not(:disabled) {
+  background-color: var(--ui-primaire-fonce, #115e59);
+  border-color: var(--ui-primaire-fonce, #115e59);
+  color: var(--ui-sur-primaire, #ffffff);
+  transform: translateY(-1px);
+  box-shadow: var(--ui-ombre-survol, none);
+}
+
+.ui-bouton--secondaire {
+  background-color: var(--ui-surface, #ffffff);
+  border-color: var(--ui-primaire, #0f766e);
+  color: var(--ui-primaire, #0f766e);
+}
+
+.ui-bouton--secondaire:hover:not(:disabled) {
+  background-color: var(--ui-primaire-voile, rgba(15, 118, 110, 0.08));
+  border-color: var(--ui-primaire-fonce, #115e59);
+  color: var(--ui-primaire-fonce, #115e59);
+  transform: translateY(-1px);
+}
+
+.ui-bouton--danger {
+  background-color: transparent;
+  border-color: var(--ui-erreur, #b91c1c);
+  color: var(--ui-erreur, #b91c1c);
+}
+
+.ui-bouton--danger:hover:not(:disabled) {
+  background-color: var(--ui-erreur-voile, rgba(185, 28, 28, 0.08));
+  transform: translateY(-1px);
+}
+
+.ui-bouton--texte {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--ui-primaire, #0f766e);
+  min-height: 40px;
+  padding: 0 10px;
+}
+
+.ui-bouton--texte:hover:not(:disabled) {
+  background-color: var(--ui-primaire-voile, rgba(15, 118, 110, 0.08));
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .ui-bouton:active:not(:disabled) {
-  transform: translateY(1px);
+  transform: translateY(0) scale(0.985);
+  box-shadow: var(--ui-ombre-douce, none);
+}
+
+.ui-bouton--large {
+  width: 100%;
 }
 
 .ui-bouton:disabled,
 .ui-bouton[aria-disabled="true"] {
   opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
 }
 
 .ui-bouton[aria-busy="true"] {
   cursor: progress;
 }
 
+/* ——— Champs ——— */
+
 .ui-champ {
   width: 100%;
   min-height: 44px;
   font-family: inherit;
   font-size: 16px;
-  border-radius: 8px;
+  border-radius: var(--ui-rayon-sm, 8px);
   padding: 10px 12px;
-  transition: border-color 120ms ease, box-shadow 120ms ease;
+  color: var(--ui-texte, #111827);
+  background-color: var(--ui-surface, #ffffff);
+  border: 1px solid var(--ui-bordure, #d1d5db);
+  transition: border-color var(--ui-duree-rapide, 120ms) var(--ui-courbe, ease),
+    box-shadow var(--ui-duree-rapide, 120ms) var(--ui-courbe, ease),
+    background-color var(--ui-duree, 200ms) var(--ui-courbe, ease);
+}
+
+.ui-champ::placeholder {
+  color: var(--ui-texte-attenue, #4b5563);
+  opacity: 0.75;
+}
+
+.ui-champ:hover:not(:disabled):not(:focus-visible) {
+  border-color: var(--ui-primaire, #0f766e);
 }
 
 .ui-champ:focus-visible {
   outline: 2px solid var(--ui-focus, #0f766e);
   outline-offset: 1px;
+  border-color: var(--ui-focus, #0f766e);
+}
+
+.ui-champ:disabled {
+  background-color: var(--ui-surface-douce, #f6f7f9);
+  color: var(--ui-texte-attenue, #4b5563);
+  cursor: not-allowed;
 }
 
 .ui-champ--erreur {
   border-width: 2px;
+  border-color: var(--ui-erreur, #b91c1c);
 }
+
+/* ——— Badges : le libellé porte l'information, la couleur la renforce ——— */
 
 .ui-badge {
   display: inline-flex;
@@ -67,8 +157,57 @@
   line-height: 1;
   padding: 6px 10px;
   border-radius: 9999px;
-  border: 1px solid transparent;
+  border: 1px solid var(--ui-bordure, #d1d5db);
+  color: var(--ui-texte, #111827);
+  background-color: var(--ui-surface-douce, #f6f7f9);
   white-space: nowrap;
+  transition: background-color var(--ui-duree, 200ms) var(--ui-courbe, ease),
+    border-color var(--ui-duree, 200ms) var(--ui-courbe, ease), color var(--ui-duree, 200ms) var(--ui-courbe, ease);
+}
+
+.ui-badge[data-statut="NOUVEAU"] {
+  color: var(--ui-statut-nouveau-texte);
+  background-color: var(--ui-statut-nouveau-fond);
+  border-color: var(--ui-statut-nouveau-bordure);
+}
+
+.ui-badge[data-statut="VALIDE"] {
+  color: var(--ui-statut-valide-texte);
+  background-color: var(--ui-statut-valide-fond);
+  border-color: var(--ui-statut-valide-bordure);
+}
+
+.ui-badge[data-statut="EN_COURS"] {
+  color: var(--ui-statut-encours-texte);
+  background-color: var(--ui-statut-encours-fond);
+  border-color: var(--ui-statut-encours-bordure);
+}
+
+.ui-badge[data-statut="RESOLU"] {
+  color: var(--ui-statut-resolu-texte);
+  background-color: var(--ui-statut-resolu-fond);
+  border-color: var(--ui-statut-resolu-bordure);
+}
+
+.ui-badge[data-statut="REJETE"] {
+  color: var(--ui-statut-rejete-texte);
+  background-color: var(--ui-statut-rejete-fond);
+  border-color: var(--ui-statut-rejete-bordure);
+}
+
+.ui-badge[data-statut="ROUVERT"] {
+  color: var(--ui-statut-rouvert-texte);
+  background-color: var(--ui-statut-rouvert-fond);
+  border-color: var(--ui-statut-rouvert-bordure);
+}
+
+.ui-badge[data-priorite="BASSE"],
+.ui-badge[data-priorite="NORMALE"],
+.ui-badge[data-priorite="HAUTE"],
+.ui-badge[data-priorite="URGENTE"] {
+  color: var(--ui-texte, #111827);
+  background-color: var(--ui-surface-douce, #f6f7f9);
+  border-color: var(--ui-bordure, #d1d5db);
 }
 
 .ui-sr-only {
@@ -85,7 +224,13 @@
 
 @media (prefers-reduced-motion: reduce) {
   .ui-bouton,
-  .ui-champ {
+  .ui-champ,
+  .ui-badge {
     transition: none;
+  }
+
+  .ui-bouton:hover:not(:disabled),
+  .ui-bouton:active:not(:disabled) {
+    transform: none;
   }
 }

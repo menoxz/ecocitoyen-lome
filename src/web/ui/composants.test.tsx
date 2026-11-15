@@ -7,7 +7,7 @@ import { ChampTexte } from "./ChampTexte.tsx";
 import { EtatChargement } from "./EtatChargement.tsx";
 import { EtatErreur } from "./EtatErreur.tsx";
 import { EtatVide } from "./EtatVide.tsx";
-import { CIBLE_TACTILE, CLASSES, COULEURS, STATUTS } from "./jetons.ts";
+import { CIBLE_TACTILE, CLASSES, STATUTS } from "./jetons.ts";
 
 const rendu = (element: Parameters<typeof renderToStaticMarkup>[0]): string => renderToStaticMarkup(element);
 
@@ -21,10 +21,11 @@ describe("Bouton (6 états)", () => {
     expect(html).toContain(`min-height:${CIBLE_TACTILE}px`);
   });
 
-  test("primaire porte la couleur d'action, secondaire reste neutre", () => {
-    expect(rendu(<Bouton variante="primaire">Valider</Bouton>)).toContain(`background-color:${COULEURS.primaire}`);
-    expect(rendu(<Bouton variante="secondaire">Annuler</Bouton>)).toContain(`background-color:${COULEURS.surface}`);
-    expect(rendu(<Bouton variante="danger">Rejeter</Bouton>)).toContain(`background-color:${COULEURS.erreur}`);
+  test("chaque variante porte sa classe : la couleur vient de la feuille, pas du composant", () => {
+    expect(rendu(<Bouton variante="primaire">Valider</Bouton>)).toContain(CLASSES.boutonPrimaire);
+    expect(rendu(<Bouton variante="secondaire">Annuler</Bouton>)).toContain(CLASSES.secondaire);
+    expect(rendu(<Bouton variante="danger">Rejeter</Bouton>)).toContain(CLASSES.danger);
+    expect(rendu(<Bouton variante="texte">Filtrer</Bouton>)).toContain("ui-bouton--texte");
   });
 
   test("désactivé : reste dans le DOM, annoncé, clic neutralisé", () => {
@@ -72,7 +73,7 @@ describe("BadgeStatut (6 statuts + inconnu)", () => {
       const html = rendu(<BadgeStatut statut={cle} />);
       expect(html).toContain(definition.libelle);
       expect(html).toContain(`data-statut="${cle}"`);
-      expect(html).toContain(definition.texte);
+      expect(html).toContain(CLASSES.badge);
     }
   });
 
@@ -87,7 +88,8 @@ describe("BadgeStatut (6 statuts + inconnu)", () => {
     const html = rendu(<BadgeStatut statut="ARCHIVE" />);
 
     expect(html).toContain("ARCHIVE");
-    expect(html).toContain(`background-color:${"#f3f4f6"}`);
+    expect(html).toContain('data-statut="ARCHIVE"');
+    expect(html).not.toContain("background-color");
   });
 });
 
@@ -146,7 +148,8 @@ describe("ChampTexte (libellé, aide, erreur)", () => {
     const html = rendu(<ChampTexte {...base} desactive />);
 
     expect(html).toContain("disabled");
-    expect(html).toContain(`background-color:${COULEURS.surfaceAlt}`);
+    expect(html).toContain(CLASSES.champ);
+    expect(html).not.toContain("background-color");
   });
 
   test("champ de recherche typé et borné", () => {

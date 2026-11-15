@@ -1,0 +1,606 @@
+/* Thème applicatif — la couche qui manquait.
+   Il porte la PAGE : fond, typographie, rythme, surfaces, en-tête, animations, états interactifs
+   et mode sombre. Les couleurs métier restent dans jetons.ts ; ici seulement les variables du
+   design system, posées une fois. Contrastes vérifiés par `scripts/verifier-contrastes.mjs`. */
+
+:root {
+  --ui-fond: #eef1f4;
+  --ui-surface: #ffffff;
+  --ui-surface-douce: #f6f7f9;
+  --ui-texte: #111827;
+  --ui-texte-attenue: #4b5563;
+  --ui-bordure: #d1d5db;
+  --ui-bordure-douce: #e5e7eb;
+  --ui-primaire: #0f766e;
+  --ui-primaire-fonce: #115e59;
+  --ui-sur-primaire: #ffffff;
+  --ui-primaire-voile: rgba(15, 118, 110, 0.08);
+  --ui-focus: #0f766e;
+  --ui-ombre: 0 1px 2px rgba(17, 24, 39, 0.06), 0 10px 30px rgba(17, 24, 39, 0.07);
+  --ui-ombre-douce: 0 1px 2px rgba(17, 24, 39, 0.05);
+  --ui-ombre-survol: 0 2px 6px rgba(17, 24, 39, 0.08), 0 16px 36px rgba(17, 24, 39, 0.10);
+  --ui-degrade-heros: radial-gradient(120% 140% at 100% 0%, #d7ece9 0%, rgba(215, 236, 233, 0) 55%);
+  --ui-rayon: 12px;
+  --ui-rayon-sm: 8px;
+  --ui-largeur: 1040px;
+  --ui-police: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --ui-duree-rapide: 120ms;
+  --ui-duree: 200ms;
+  --ui-duree-entree: 280ms;
+  --ui-courbe: cubic-bezier(0.2, 0.7, 0.3, 1);
+  --ui-erreur: #b91c1c;
+  --ui-erreur-voile: rgba(185, 28, 28, 0.08);
+  --ui-statut-nouveau-texte: #1d4ed8;
+  --ui-statut-nouveau-fond: #eff6ff;
+  --ui-statut-nouveau-bordure: #bfdbfe;
+  --ui-statut-valide-texte: #6d28d9;
+  --ui-statut-valide-fond: #f5f3ff;
+  --ui-statut-valide-bordure: #ddd6fe;
+  --ui-statut-encours-texte: #b45309;
+  --ui-statut-encours-fond: #fffbeb;
+  --ui-statut-encours-bordure: #fde68a;
+  --ui-statut-resolu-texte: #15803d;
+  --ui-statut-resolu-fond: #f0fdf4;
+  --ui-statut-resolu-bordure: #bbf7d0;
+  --ui-statut-rejete-texte: #b91c1c;
+  --ui-statut-rejete-fond: #fef2f2;
+  --ui-statut-rejete-bordure: #fecaca;
+  --ui-statut-rouvert-texte: #c2410c;
+  --ui-statut-rouvert-fond: #fff7ed;
+  --ui-statut-rouvert-bordure: #fed7aa;
+  color-scheme: light;
+}
+
+/* Mode sombre : automatique selon le système, ou forcé par le sélecteur de thème. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="clair"]) {
+    --ui-fond: #0a1120;
+    --ui-surface: #131c2b;
+    --ui-surface-douce: #182233;
+    --ui-texte: #e6ebf2;
+    --ui-texte-attenue: #a7b2c4;
+    --ui-bordure: #2b3648;
+    --ui-bordure-douce: #202b3c;
+    --ui-primaire: #2dd4bf;
+    --ui-primaire-fonce: #5eead4;
+    --ui-sur-primaire: #06231f;
+    --ui-primaire-voile: rgba(45, 212, 191, 0.14);
+    --ui-focus: #2dd4bf;
+    --ui-ombre: 0 1px 2px rgba(0, 0, 0, 0.5), 0 12px 32px rgba(0, 0, 0, 0.45);
+    --ui-ombre-douce: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --ui-ombre-survol: 0 2px 8px rgba(0, 0, 0, 0.55), 0 20px 44px rgba(0, 0, 0, 0.5);
+    --ui-degrade-heros: radial-gradient(120% 140% at 100% 0%, rgba(45, 212, 191, 0.16) 0%, rgba(45, 212, 191, 0) 55%);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="sombre"] {
+  --ui-fond: #0a1120;
+  --ui-surface: #131c2b;
+  --ui-surface-douce: #182233;
+  --ui-texte: #e6ebf2;
+  --ui-texte-attenue: #a7b2c4;
+  --ui-bordure: #2b3648;
+  --ui-bordure-douce: #202b3c;
+  --ui-primaire: #2dd4bf;
+  --ui-primaire-fonce: #5eead4;
+  --ui-sur-primaire: #06231f;
+  --ui-primaire-voile: rgba(45, 212, 191, 0.14);
+  --ui-focus: #2dd4bf;
+  --ui-ombre: 0 1px 2px rgba(0, 0, 0, 0.5), 0 12px 32px rgba(0, 0, 0, 0.45);
+  --ui-ombre-douce: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --ui-ombre-survol: 0 2px 8px rgba(0, 0, 0, 0.55), 0 20px 44px rgba(0, 0, 0, 0.5);
+  --ui-degrade-heros: radial-gradient(120% 140% at 100% 0%, rgba(45, 212, 191, 0.16) 0%, rgba(45, 212, 191, 0) 55%);
+  --ui-erreur: #fca5a5;
+  --ui-erreur-voile: rgba(252, 165, 165, 0.14);
+  --ui-statut-nouveau-texte: #93c5fd;
+  --ui-statut-nouveau-fond: #172554;
+  --ui-statut-nouveau-bordure: #1e40af;
+  --ui-statut-valide-texte: #c4b5fd;
+  --ui-statut-valide-fond: #2e1065;
+  --ui-statut-valide-bordure: #5b21b6;
+  --ui-statut-encours-texte: #fcd34d;
+  --ui-statut-encours-fond: #451a03;
+  --ui-statut-encours-bordure: #92400e;
+  --ui-statut-resolu-texte: #86efac;
+  --ui-statut-resolu-fond: #052e16;
+  --ui-statut-resolu-bordure: #166534;
+  --ui-statut-rejete-texte: #fca5a5;
+  --ui-statut-rejete-fond: #450a0a;
+  --ui-statut-rejete-bordure: #991b1b;
+  --ui-statut-rouvert-texte: #fdba74;
+  --ui-statut-rouvert-fond: #431407;
+  --ui-statut-rouvert-bordure: #9a3412;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--ui-fond);
+  color: var(--ui-texte);
+  font-family: var(--ui-police);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color var(--ui-duree) var(--ui-courbe), color var(--ui-duree) var(--ui-courbe);
+}
+
+h1,
+h2,
+h3,
+p,
+figure {
+  margin: 0;
+}
+
+a {
+  color: var(--ui-primaire);
+  text-underline-offset: 3px;
+  transition: color var(--ui-duree-rapide) var(--ui-courbe);
+}
+
+a:hover {
+  color: var(--ui-primaire-fonce);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ui-focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ——— Animations ——— */
+
+@keyframes ui-apparition {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes ui-respire {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes ui-voile {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.ui-contenu {
+  animation: ui-voile var(--ui-duree-entree) var(--ui-courbe) both;
+}
+
+.ui-carte,
+.ui-heros,
+.ui-session-carte {
+  animation: ui-apparition var(--ui-duree-entree) var(--ui-courbe) both;
+}
+
+.ui-grille-acces .ui-acces,
+.ui-etapes li {
+  animation: ui-apparition var(--ui-duree-entree) var(--ui-courbe) both;
+}
+
+.ui-grille-acces .ui-acces:nth-child(2),
+.ui-etapes li:nth-child(2) {
+  animation-delay: 60ms;
+}
+
+.ui-grille-acces .ui-acces:nth-child(3),
+.ui-etapes li:nth-child(3) {
+  animation-delay: 120ms;
+}
+
+.ui-grille-acces .ui-acces:nth-child(4) {
+  animation-delay: 180ms;
+}
+
+/* ——— Ossature de page ——— */
+
+.ui-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.ui-entete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 14px 24px;
+  background: var(--ui-surface);
+  border-bottom: 1px solid var(--ui-bordure-douce);
+  transition: background-color var(--ui-duree) var(--ui-courbe), border-color var(--ui-duree) var(--ui-courbe);
+}
+
+.ui-marque {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ui-texte);
+  text-decoration: none;
+}
+
+.ui-marque::before {
+  content: "";
+  width: 10px;
+  height: 26px;
+  border-radius: 9999px;
+  background: var(--ui-primaire);
+  transition: background-color var(--ui-duree) var(--ui-courbe);
+}
+
+.ui-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.ui-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ui-texte-attenue);
+  text-decoration: none;
+  transition: background-color var(--ui-duree-rapide) var(--ui-courbe),
+    color var(--ui-duree-rapide) var(--ui-courbe), transform var(--ui-duree-rapide) var(--ui-courbe);
+}
+
+.ui-nav a:hover {
+  background: var(--ui-surface-douce);
+  color: var(--ui-primaire);
+}
+
+.ui-nav a:active {
+  transform: scale(0.97);
+}
+
+.ui-contenu {
+  flex: 1;
+  width: 100%;
+  max-width: var(--ui-largeur);
+  margin: 0 auto;
+  padding: 32px 24px 56px;
+}
+
+.ui-pied {
+  padding: 20px 24px 28px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--ui-texte-attenue);
+}
+
+/* ——— Blocs de contenu ——— */
+
+.ui-carte {
+  background: var(--ui-surface);
+  border: 1px solid var(--ui-bordure-douce);
+  border-radius: var(--ui-rayon);
+  box-shadow: var(--ui-ombre-douce);
+  padding: 24px;
+  transition: background-color var(--ui-duree) var(--ui-courbe), border-color var(--ui-duree) var(--ui-courbe),
+    box-shadow var(--ui-duree) var(--ui-courbe);
+}
+
+.ui-carte--elevee {
+  box-shadow: var(--ui-ombre);
+}
+
+.ui-titre-page {
+  font-size: 30px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ui-texte);
+}
+
+.ui-sous-titre {
+  font-size: 16px;
+  color: var(--ui-texte-attenue);
+  max-width: 62ch;
+}
+
+.ui-section-titre {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ui-texte-attenue);
+}
+
+/* ——— Accueil ——— */
+
+.ui-heros {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 40px 32px;
+  border-radius: var(--ui-rayon);
+  background: var(--ui-degrade-heros), var(--ui-surface);
+  border: 1px solid var(--ui-bordure-douce);
+  box-shadow: var(--ui-ombre);
+  transition: background-color var(--ui-duree) var(--ui-courbe), border-color var(--ui-duree) var(--ui-courbe);
+}
+
+.ui-heros .ui-titre-page {
+  font-size: 34px;
+  max-width: 22ch;
+}
+
+.ui-actions-principales {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.ui-lien-bouton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: var(--ui-rayon-sm);
+  background: var(--ui-primaire);
+  color: var(--ui-sur-primaire);
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  border: 1px solid transparent;
+  box-shadow: var(--ui-ombre-douce);
+  transition: background-color var(--ui-duree-rapide) var(--ui-courbe),
+    transform var(--ui-duree-rapide) var(--ui-courbe), box-shadow var(--ui-duree-rapide) var(--ui-courbe);
+}
+
+.ui-lien-bouton:hover {
+  background: var(--ui-primaire-fonce);
+  color: var(--ui-sur-primaire);
+  transform: translateY(-1px);
+  box-shadow: var(--ui-ombre-survol);
+}
+
+.ui-lien-bouton:active {
+  transform: translateY(0) scale(0.99);
+  box-shadow: var(--ui-ombre-douce);
+}
+
+.ui-lien-bouton--secondaire {
+  background: transparent;
+  color: var(--ui-primaire);
+  border-color: var(--ui-primaire);
+  box-shadow: none;
+}
+
+.ui-lien-bouton--secondaire:hover {
+  background: var(--ui-primaire-voile);
+  color: var(--ui-primaire);
+}
+
+.ui-grille-acces {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.ui-acces {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px 20px;
+  border-radius: var(--ui-rayon);
+  background: var(--ui-surface);
+  border: 1px solid var(--ui-bordure-douce);
+  text-decoration: none;
+  color: var(--ui-texte);
+  transition: border-color var(--ui-duree-rapide) var(--ui-courbe),
+    box-shadow var(--ui-duree-rapide) var(--ui-courbe), transform var(--ui-duree-rapide) var(--ui-courbe),
+    background-color var(--ui-duree) var(--ui-courbe);
+}
+
+.ui-acces:hover {
+  border-color: var(--ui-primaire);
+  box-shadow: var(--ui-ombre-survol);
+  transform: translateY(-2px);
+}
+
+.ui-acces:active {
+  transform: translateY(0);
+  box-shadow: var(--ui-ombre-douce);
+}
+
+.ui-acces-titre {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.ui-acces-detail {
+  font-size: 14px;
+  color: var(--ui-texte-attenue);
+}
+
+.ui-etapes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: etape;
+}
+
+.ui-etapes li {
+  position: relative;
+  padding: 14px 16px 14px 44px;
+  border-radius: var(--ui-rayon-sm);
+  background: var(--ui-surface-douce);
+  font-size: 14px;
+  color: var(--ui-texte);
+  counter-increment: etape;
+  transition: background-color var(--ui-duree) var(--ui-courbe);
+}
+
+.ui-etapes li::before {
+  content: counter(etape);
+  position: absolute;
+  left: 14px;
+  top: 14px;
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  background: var(--ui-primaire);
+  color: var(--ui-sur-primaire);
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ——— Page de session : carte centrée ——— */
+
+.ui-session {
+  display: flex;
+  justify-content: center;
+  padding-top: 8px;
+}
+
+.ui-session-carte {
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 32px;
+  background: var(--ui-surface);
+  border: 1px solid var(--ui-bordure-douce);
+  border-radius: var(--ui-rayon);
+  box-shadow: var(--ui-ombre);
+  transition: background-color var(--ui-duree) var(--ui-courbe), border-color var(--ui-duree) var(--ui-courbe);
+}
+
+.ui-session-titre {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ui-texte);
+}
+
+.ui-session-detail {
+  font-size: 14px;
+  color: var(--ui-texte-attenue);
+}
+
+/* ——— Sélecteur de thème ——— */
+
+.ui-theme {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 9999px;
+  background: var(--ui-surface-douce);
+  border: 1px solid var(--ui-bordure-douce);
+}
+
+.ui-theme button {
+  min-height: 32px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--ui-texte-attenue);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--ui-duree-rapide) var(--ui-courbe),
+    color var(--ui-duree-rapide) var(--ui-courbe), transform var(--ui-duree-rapide) var(--ui-courbe);
+}
+
+.ui-theme button:hover {
+  color: var(--ui-primaire);
+  background: var(--ui-primaire-voile);
+}
+
+.ui-theme button:active {
+  transform: scale(0.96);
+}
+
+.ui-theme button[aria-pressed="true"] {
+  background: var(--ui-surface);
+  color: var(--ui-primaire);
+  box-shadow: var(--ui-ombre-douce);
+}
+
+@media (max-width: 520px) {
+  .ui-contenu {
+    padding: 20px 16px 40px;
+  }
+
+  .ui-heros {
+    padding: 24px 18px;
+  }
+
+  .ui-heros .ui-titre-page {
+    font-size: 26px;
+  }
+
+  .ui-session-carte {
+    padding: 22px;
+  }
+}
+
+/* Accessibilité : aucune animation ni transition quand l'utilisateur les refuse. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .ui-acces:hover,
+  .ui-lien-bouton:hover,
+  .ui-nav a:active,
+  .ui-acces:active,
+  .ui-lien-bouton:active {
+    transform: none;
+  }
+}

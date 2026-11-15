@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 import { useEffect, useState } from "react";
 import { Routeur, fragmentCourant } from "./app/routeur.tsx";
+import { EcranAccueil } from "./features/accueil/EcranAccueil.tsx";
 import { EcranSignaler, positionDuNavigateur } from "./features/signaler/EcranSignaler.tsx";
 import { EcranInterventions } from "./features/interventions/EcranInterventions.tsx";
 import { EcranSupervision } from "./features/supervision/EcranSupervision.tsx";
@@ -10,15 +11,16 @@ import { idDuFragment } from "./features/suivi/logique.ts";
 import { EcranIndicateurs } from "./features/indicateurs/EcranIndicateurs.tsx";
 import { EcranAdministration } from "./features/administration/EcranAdministration.tsx";
 import { creerClient } from "./api/client.ts";
-import { COULEURS, ESPACEMENT, TAILLE_TEXTE } from "./ui/jetons.ts";
+import { MiseEnPage } from "./ui/MiseEnPage.tsx";
+import "./ui/theme.css";
 import "./ui/ui.css";
 
 /**
- * Point d''entrée du nouveau front.
+ * Point d'entrée du front unique.
  *
- * Séparé de `src/main.tsx` (legacy gelé) et servi par `signaler.html` : le prototype reste
- * utilisable pendant la migration (P7 → P8), et la bascule se fait en changeant une entrée HTML,
- * pas en réécrivant l''existant. Retour arrière immédiat.
+ * Une seule ossature (`MiseEnPage`) porte l'en-tête, la largeur de lecture et le pied : les écrans
+ * ne décident plus de leur propre mise en page, sinon chacun rend un document différent — c'était
+ * le défaut constaté à l'écran.
  */
 const client = creerClient("/api/v1");
 
@@ -34,104 +36,11 @@ function Application(): React.ReactNode {
   }, []);
 
   return (
-    <main style={{ maxWidth: 720, margin: "0 auto", padding: ESPACEMENT.e4 }}>
+    <MiseEnPage>
       <Routeur
         fragment={fragment}
         rendu={{
-          accueil: (
-            <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
-              <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: COULEURS.texte }}>EcoCitoyen Lomé</h1>
-              <p style={{ margin: 0, fontSize: TAILLE_TEXTE.md, color: COULEURS.texteAttenue }}>
-                Signalez un dépôt sauvage, un caniveau bouché ou un déchet dangereux : le service
-                municipal décide, vous suivez chaque étape.
-              </p>
-              <a
-                href="#/interventions"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  minHeight: 44,
-                  padding: `0 ${ESPACEMENT.e4}px`,
-                  borderRadius: 8,
-                  border: `1px solid ${COULEURS.primaire}`,
-                  color: COULEURS.primaire,
-                  fontWeight: 600,
-                  textDecoration: "none",
-                }}
-              >
-                Je suis agent : mes interventions
-              </a>
-              <a
-                href="#/supervision"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  minHeight: 44,
-                  padding: `0 ${ESPACEMENT.e4}px`,
-                  borderRadius: 8,
-                  border: `1px solid ${COULEURS.primaire}`,
-                  color: COULEURS.primaire,
-                  fontWeight: 600,
-                  textDecoration: "none",
-                }}
-              >
-                Je suis superviseur : file de tri
-              </a>
-              <a
-                href="#/recette"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  minHeight: 44,
-                  padding: `0 ${ESPACEMENT.e4}px`,
-                  borderRadius: 8,
-                  border: `1px solid ${COULEURS.bordure}`,
-                  color: COULEURS.texteAttenue,
-                  fontWeight: 600,
-                  textDecoration: "none",
-                }}
-              >
-                Recette : les 14 critères et leurs tests
-              </a>
-              <a
-                href="#/indicateurs"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  minHeight: 44,
-                  padding: `0 ${ESPACEMENT.e4}px`,
-                  borderRadius: 8,
-                  border: `1px solid ${COULEURS.bordure}`,
-                  color: COULEURS.texteAttenue,
-                  fontWeight: 600,
-                  textDecoration: "none",
-                }}
-              >
-                Indicateurs de pilotage
-              </a>
-              <a
-                href="#/signaler"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  minHeight: 48,
-                  padding: `0 ${ESPACEMENT.e4}px`,
-                  borderRadius: 8,
-                  backgroundColor: COULEURS.primaire,
-                  color: "#ffffff",
-                  fontWeight: 600,
-                  textDecoration: "none",
-                }}
-              >
-                Signaler un problème
-              </a>
-            </section>
-          ),
+          accueil: <EcranAccueil />,
           signaler: (
             <EcranSignaler
               client={client}
@@ -155,7 +64,7 @@ function Application(): React.ReactNode {
           administration: <EcranAdministration client={client} />,
         }}
       />
-    </main>
+    </MiseEnPage>
   );
 }
 
