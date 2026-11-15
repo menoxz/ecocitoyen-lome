@@ -55,7 +55,7 @@ export function EcranIndicateurs(proprietes: ProprietesEcranIndicateurs): ReactN
   if (session === "absent") {
     return (
       <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e4 }}>
-        <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: COULEURS.texte }}>Indicateurs de pilotage</h1>
+        <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: "inherit" }}>Indicateurs de pilotage</h1>
         <FormulaireSession
           client={proprietes.client}
           onSession={() => setSession("present")}
@@ -79,8 +79,8 @@ export function EcranIndicateurs(proprietes: ProprietesEcranIndicateurs): ReactN
 
   return (
     <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
-      <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: COULEURS.texte }}>Indicateurs de pilotage</h1>
-      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: COULEURS.texteAttenue }}>
+      <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: "inherit" }}>Indicateurs de pilotage</h1>
+      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>
         {synthese.total} dossier(s) sur la période. Un indicateur non calculable est marqué «{" "}
         {NON_MESURABLE} » : il n'est jamais remplacé par une valeur de repli.
       </p>
@@ -97,10 +97,10 @@ export function EcranIndicateurs(proprietes: ProprietesEcranIndicateurs): ReactN
               padding: `${ESPACEMENT.e2}px ${ESPACEMENT.e3}px`,
               border: `1px solid ${COULEURS.bordure}`,
               borderRadius: RAYON.md,
-              backgroundColor: COULEURS.surface,
+              backgroundColor: "var(--ui-surface)",
             }}
           >
-            <span style={{ fontSize: TAILLE_TEXTE.sm, color: COULEURS.texte }}>{ligne.libelle}</span>
+            <span style={{ fontSize: TAILLE_TEXTE.sm, color: "inherit" }}>{ligne.libelle}</span>
             <strong
               style={{
                 fontSize: TAILLE_TEXTE.md,
@@ -114,17 +114,17 @@ export function EcranIndicateurs(proprietes: ProprietesEcranIndicateurs): ReactN
         ))}
       </ul>
 
-      <h2 style={{ margin: 0, fontSize: TAILLE_TEXTE.lg, color: COULEURS.texte }}>Dossiers par statut</h2>
-      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: COULEURS.texte }}>
+      <h2 style={{ margin: 0, fontSize: TAILLE_TEXTE.lg, color: "inherit" }}>Dossiers par statut</h2>
+      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "inherit" }}>
         {volumes.map((volume) => `${libelleStatutIndicateur(volume.statut)} : ${volume.nombre}`).join(" · ")}
       </p>
 
       {synthese.indisponibles.length > 0 ? (
         <>
-          <h2 style={{ margin: 0, fontSize: TAILLE_TEXTE.lg, color: COULEURS.texte }}>
+          <h2 style={{ margin: 0, fontSize: TAILLE_TEXTE.lg, color: "inherit" }}>
             Indicateurs non mesurables, et pourquoi
           </h2>
-          <ul style={{ margin: 0, paddingLeft: ESPACEMENT.e4, fontSize: TAILLE_TEXTE.sm, color: COULEURS.texteAttenue }}>
+          <ul style={{ margin: 0, paddingLeft: ESPACEMENT.e4, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>
             {synthese.indisponibles.map((motif) => (
               <li key={motif}>{motif}</li>
             ))}

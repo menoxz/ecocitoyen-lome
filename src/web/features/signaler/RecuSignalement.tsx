@@ -26,18 +26,18 @@ export function RecuSignalement(proprietes: ProprietesRecuSignalement): ReactNod
       role="status"
       style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3, padding: ESPACEMENT.e4 }}
     >
-      <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: COULEURS.texte }}>Signalement enregistré</h1>
+      <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: "inherit" }}>Signalement enregistré</h1>
 
-      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.md, color: COULEURS.texte }}>
+      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.md, color: "inherit" }}>
         Numéro de dossier : <strong>{proprietes.idSignalement}</strong>
       </p>
 
-      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.md, color: COULEURS.texteAttenue }}>
+      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.md, color: "var(--ui-texte-attenue)" }}>
         Statut actuel : {proprietes.statut}. Vous serez notifié à chaque décision du service.
       </p>
 
       {proprietes.dateSignalement ? (
-        <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: COULEURS.texteAttenue }}>
+        <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>
           Enregistré le {proprietes.dateSignalement}.
         </p>
       ) : null}

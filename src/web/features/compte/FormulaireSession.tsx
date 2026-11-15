@@ -115,7 +115,7 @@ export function FormulaireSession(proprietes: ProprietesFormulaireSession): Reac
       />
 
       {mode === "inscription" ? (
-        <label style={{ display: "flex", gap: ESPACEMENT.e2, fontSize: TAILLE_TEXTE.sm, color: COULEURS.texte }}>
+        <label style={{ display: "flex", gap: ESPACEMENT.e2, fontSize: TAILLE_TEXTE.sm, color: "inherit" }}>
           <input
             type="checkbox"
             checked={consentement}

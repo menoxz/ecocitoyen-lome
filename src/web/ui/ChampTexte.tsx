@@ -29,7 +29,7 @@ export function ChampTexte(proprietes: ProprietesChampTexte): ReactNode {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-      <label htmlFor={proprietes.id} style={{ fontSize: TAILLE_TEXTE.sm, fontWeight: 600, color: COULEURS.texte }}>
+      <label htmlFor={proprietes.id} style={{ fontSize: TAILLE_TEXTE.sm, fontWeight: 600, color: "inherit" }}>
         {proprietes.libelle}
         {proprietes.requis ? <span aria-hidden="true"> *</span> : null}
       </label>
@@ -50,11 +50,11 @@ export function ChampTexte(proprietes: ProprietesChampTexte): ReactNode {
       />
 
       {enErreur ? (
-        <p id={idErreur} role="alert" style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: COULEURS.erreur }}>
+        <p id={idErreur} role="alert" style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-erreur)" }}>
           {proprietes.erreur}
         </p>
       ) : proprietes.aide ? (
-        <p id={idAide} style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: COULEURS.texteAttenue }}>
+        <p id={idAide} style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>
           {proprietes.aide}
         </p>
       ) : null}

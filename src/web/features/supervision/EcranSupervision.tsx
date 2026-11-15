@@ -97,7 +97,7 @@ export function EcranSupervision(proprietes: ProprietesEcranSupervision): ReactN
   if (session === "absent") {
     return (
       <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e4 }}>
-        <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: COULEURS.texte }}>File de tri</h1>
+        <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: "inherit" }}>File de tri</h1>
         <FormulaireSession
           client={proprietes.client}
           onSession={() => setSession("present")}
@@ -120,23 +120,23 @@ export function EcranSupervision(proprietes: ProprietesEcranSupervision): ReactN
 
   return (
     <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
-      <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: COULEURS.texte }}>File de tri</h1>
-      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: COULEURS.texteAttenue }}>
+      <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: "inherit" }}>File de tri</h1>
+      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>
         {file.length} signalement(s) en attente de décision, les plus urgents et les plus anciens d'abord.
       </p>
 
       {message ? (
-        <p role="status" style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: COULEURS.succes }}>
+        <p role="status" style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-succes)" }}>
           {message}
         </p>
       ) : null}
 
       {dossierOuvert ? (
         <article style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
-          <p style={{ margin: 0, fontSize: TAILLE_TEXTE.md, color: COULEURS.texte }}>
+          <p style={{ margin: 0, fontSize: TAILLE_TEXTE.md, color: "inherit" }}>
             {dossierOuvert.description ?? `Dossier ${dossierOuvert.id_signalement}`}
           </p>
-          <p style={{ margin: 0, fontSize: TAILLE_TEXTE.xs, color: COULEURS.texteAttenue }}>
+          <p style={{ margin: 0, fontSize: TAILLE_TEXTE.xs, color: "var(--ui-texte-attenue)" }}>
             {dossierOuvert.quartier_nom ?? dossierOuvert.id_quartier} · priorité proposée :{" "}
             {libellePriorite(dossierOuvert.niveau_priorite)}
           </p>

@@ -54,14 +54,17 @@ export function EcranSuivi(proprietes: ProprietesEcranSuivi): ReactNode {
 
   if (!id) {
     return (
-      <EtatVide
-        titre="Aucun dossier désigné"
-        explication="Cette adresse ne correspond à aucun dossier. Reprenez le numéro affiché sur votre reçu."
-        libelleAction="Signaler un problème"
-        onAction={() => {
-          window.location.hash = "#/signaler";
-        }}
-      />
+      <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
+        <h1 className="ui-titre-page">Suivi du dossier</h1>
+        <EtatVide
+          titre="Aucun dossier désigné"
+          explication="Cette adresse ne correspond à aucun dossier. Reprenez le numéro affiché sur votre reçu."
+          libelleAction="Signaler un problème"
+          onAction={() => {
+            window.location.hash = "#/signaler";
+          }}
+        />
+      </section>
     );
   }
 
@@ -90,24 +93,24 @@ export function EcranSuivi(proprietes: ProprietesEcranSuivi): ReactNode {
 
   return (
     <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
-      <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: COULEURS.texte }}>Suivi du dossier</h1>
+      <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: "inherit" }}>Suivi du dossier</h1>
 
-      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: COULEURS.texteAttenue }}>
+      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>
         Numéro : <strong>{dossier.id_signalement}</strong>
       </p>
 
       <div style={{ display: "flex", gap: ESPACEMENT.e2, alignItems: "center", flexWrap: "wrap" }}>
         <BadgeStatut statut={dossier.statut} />
-        <span style={{ fontSize: TAILLE_TEXTE.sm, color: COULEURS.texte }}>
+        <span style={{ fontSize: TAILLE_TEXTE.sm, color: "inherit" }}>
           Priorité : {libelleStatut(dossier.niveau_priorite)}
         </span>
       </div>
 
       {dossier.description ? (
-        <p style={{ margin: 0, fontSize: TAILLE_TEXTE.md, color: COULEURS.texte }}>{dossier.description}</p>
+        <p style={{ margin: 0, fontSize: TAILLE_TEXTE.md, color: "inherit" }}>{dossier.description}</p>
       ) : null}
 
-      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.xs, color: COULEURS.texteAttenue }}>
+      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.xs, color: "var(--ui-texte-attenue)" }}>
         {dossier.quartier_nom ?? dossier.id_quartier} · signalé le {dossier.date_signalement}
         {dossier.motif_rejet ? ` · motif : ${dossier.motif_rejet}` : ""}
       </p>
@@ -119,10 +122,10 @@ export function EcranSuivi(proprietes: ProprietesEcranSuivi): ReactNode {
         statut={dossier.statut}
       />
 
-      <h2 style={{ margin: 0, fontSize: TAILLE_TEXTE.lg, color: COULEURS.texte }}>Décisions du service</h2>
+      <h2 style={{ margin: 0, fontSize: TAILLE_TEXTE.lg, color: "inherit" }}>Décisions du service</h2>
 
       {lisibles.length === 0 ? (
-        <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: COULEURS.texteAttenue }}>
+        <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>
           Aucune étape enregistrée pour l'instant.
         </p>
       ) : (
@@ -137,14 +140,14 @@ export function EcranSuivi(proprietes: ProprietesEcranSuivi): ReactNode {
                 padding: ESPACEMENT.e3,
                 border: `1px solid ${COULEURS.bordure}`,
                 borderRadius: RAYON.md,
-                backgroundColor: COULEURS.surface,
+                backgroundColor: "var(--ui-surface)",
               }}
             >
-              <span style={{ fontSize: TAILLE_TEXTE.md, color: COULEURS.texte, fontWeight: 600 }}>{etape.titre}</span>
+              <span style={{ fontSize: TAILLE_TEXTE.md, color: "inherit", fontWeight: 600 }}>{etape.titre}</span>
               {etape.detail ? (
-                <span style={{ fontSize: TAILLE_TEXTE.sm, color: COULEURS.texteAttenue }}>{etape.detail}</span>
+                <span style={{ fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>{etape.detail}</span>
               ) : null}
-              <span style={{ fontSize: TAILLE_TEXTE.xs, color: COULEURS.texteAttenue }}>{etape.date}</span>
+              <span style={{ fontSize: TAILLE_TEXTE.xs, color: "var(--ui-texte-attenue)" }}>{etape.date}</span>
             </li>
           ))}
         </ol>

@@ -63,7 +63,7 @@ export function Modale(proprietes: ProprietesModale): ReactNode {
           width: proprietes.pleineLargeur ? "100%" : "min(560px, 100%)",
           maxHeight: "90vh",
           overflowY: "auto",
-          backgroundColor: COULEURS.surface,
+          backgroundColor: "var(--ui-surface)",
           borderRadius: RAYON.md,
           padding: ESPACEMENT.e4,
           display: "flex",
@@ -72,7 +72,7 @@ export function Modale(proprietes: ProprietesModale): ReactNode {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: ESPACEMENT.e2 }}>
-          <h2 id="ui-modale-titre" style={{ margin: 0, fontSize: TAILLE_TEXTE.lg, color: COULEURS.texte }}>
+          <h2 id="ui-modale-titre" style={{ margin: 0, fontSize: TAILLE_TEXTE.lg, color: "inherit" }}>
             {proprietes.titre}
           </h2>
           <Bouton variante="texte" taille="sm" libelleAccessible={proprietes.libelleFermeture ?? "Fermer"} onClick={proprietes.onFermer}>

@@ -109,7 +109,7 @@ export function AssistantSignalement(proprietes: ProprietesAssistant): ReactNode
 
       {etape === "lieu" ? (
         <div style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
-          <p style={{ margin: 0, fontSize: TAILLE_TEXTE.md, color: COULEURS.texte }}>
+          <p style={{ margin: 0, fontSize: TAILLE_TEXTE.md, color: "inherit" }}>
             {brouillon.position
               ? `Position enregistrée : ${brouillon.position.latitude.toFixed(4)}, ${brouillon.position.longitude.toFixed(4)}`
               : brouillon.positionManuelle

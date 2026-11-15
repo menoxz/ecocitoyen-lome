@@ -73,7 +73,7 @@ export function EcranInterventions(proprietes: ProprietesEcranInterventions): Re
   if (session === "absent") {
     return (
       <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e4 }}>
-        <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: COULEURS.texte }}>Mes interventions</h1>
+        <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: "inherit" }}>Mes interventions</h1>
         <FormulaireSession
           client={proprietes.client}
           onSession={() => setSession("present")}
@@ -109,13 +109,13 @@ export function EcranInterventions(proprietes: ProprietesEcranInterventions): Re
 
   return (
     <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
-      <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: COULEURS.texte }}>Mes interventions</h1>
-      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: COULEURS.texteAttenue }}>
+      <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: "inherit" }}>Mes interventions</h1>
+      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>
         {dossiers.length} dossier(s) à traiter, triés par priorité puis par ancienneté.
       </p>
 
       {message ? (
-        <p role="status" style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: COULEURS.succes }}>{message}</p>
+        <p role="status" style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-succes)" }}>{message}</p>
       ) : null}
 
       {!dossierOuvert ? (
@@ -194,7 +194,7 @@ export function EcranInterventions(proprietes: ProprietesEcranInterventions): Re
               />
 
               <div style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e1 }}>
-                <label htmlFor="photo-preuve" style={{ fontSize: TAILLE_TEXTE.sm, fontWeight: 600, color: COULEURS.texte }}>
+                <label htmlFor="photo-preuve" style={{ fontSize: TAILLE_TEXTE.sm, fontWeight: 600, color: "inherit" }}>
                   Photographie du site nettoyé (obligatoire)
                 </label>
                 <input
@@ -212,14 +212,14 @@ export function EcranInterventions(proprietes: ProprietesEcranInterventions): Re
                   style={{ minHeight: 44, fontSize: TAILLE_TEXTE.sm }}
                 />
                 {photo ? (
-                  <p style={{ margin: 0, fontSize: TAILLE_TEXTE.xs, color: COULEURS.texteAttenue }}>
+                  <p style={{ margin: 0, fontSize: TAILLE_TEXTE.xs, color: "var(--ui-texte-attenue)" }}>
                     {photo.nom} — {Math.max(1, Math.round(photo.octets.size / 1024))} Ko
                   </p>
                 ) : null}
               </div>
 
               {!photo ? (
-                <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: COULEURS.alerte }}>
+                <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-alerte)" }}>
                   Sans photographie, la clôture sera refusée par le service : c est la preuve du travail.
                 </p>
               ) : null}

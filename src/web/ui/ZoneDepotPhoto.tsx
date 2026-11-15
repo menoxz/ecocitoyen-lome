@@ -42,15 +42,15 @@ export function ZoneDepotPhoto(proprietes: ProprietesZoneDepotPhoto): ReactNode 
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e2 }}>
-      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, fontWeight: 600, color: COULEURS.texte }}>
+      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, fontWeight: 600, color: "inherit" }}>
         Photos du problème ({proprietes.photos.length}/{maximum})
       </p>
-      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: COULEURS.texteAttenue }}>
+      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>
         JPEG, PNG ou WebP · {TAILLE_MAX_MO} Mo maximum par photo · la première photo sert à la vérification.
       </p>
 
       {proprietes.photos.length === 0 && !proprietes.sansPhoto ? (
-        <p style={{ margin: 0, fontSize: TAILLE_TEXTE.md, color: COULEURS.texte }}>
+        <p style={{ margin: 0, fontSize: TAILLE_TEXTE.md, color: "inherit" }}>
           Aucune photo pour le moment : commencez par en ajouter une.
         </p>
       ) : null}
@@ -68,7 +68,7 @@ export function ZoneDepotPhoto(proprietes: ProprietesZoneDepotPhoto): ReactNode 
               borderRadius: RAYON.sm,
             }}
           >
-            <span style={{ fontSize: TAILLE_TEXTE.xs, color: COULEURS.texte }}>{photo.nom}</span>
+            <span style={{ fontSize: TAILLE_TEXTE.xs, color: "inherit" }}>{photo.nom}</span>
             <Bouton
               variante="texte"
               taille="sm"
@@ -83,13 +83,13 @@ export function ZoneDepotPhoto(proprietes: ProprietesZoneDepotPhoto): ReactNode 
       </ul>
 
       {proprietes.sansPhoto === true ? (
-        <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: COULEURS.alerte }}>
+        <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-alerte)" }}>
           Déclaré sans photo (mode dégradé) : le signalement sera soumis à vérification humaine.
         </p>
       ) : null}
 
       {enErreur ? (
-        <p role="alert" style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: COULEURS.erreur }}>
+        <p role="alert" style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-erreur)" }}>
           {proprietes.erreur}
         </p>
       ) : null}

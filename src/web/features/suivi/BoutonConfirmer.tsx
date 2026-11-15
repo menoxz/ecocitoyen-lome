@@ -40,18 +40,18 @@ export function BoutonConfirmer(proprietes: ProprietesBoutonConfirmer): ReactNod
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e2 }}>
-      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: COULEURS.texteAttenue }}>
+      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>
         {compte === 0
           ? "Personne n'a encore confirmé ce problème."
           : `${compte} personne(s) ont confirmé ce problème.`}
       </p>
 
       {confirme ? (
-        <p role="status" style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: COULEURS.succes }}>
+        <p role="status" style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-succes)" }}>
           Merci, votre confirmation est enregistrée.
         </p>
       ) : clos ? (
-        <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: COULEURS.texteAttenue }}>
+        <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>
           Ce dossier est clos : il n'est plus corroborable.
         </p>
       ) : (
@@ -61,7 +61,7 @@ export function BoutonConfirmer(proprietes: ProprietesBoutonConfirmer): ReactNod
       )}
 
       {erreur ? (
-        <p role="alert" style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: COULEURS.erreur }}>
+        <p role="alert" style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-erreur)" }}>
           {erreur.message}
         </p>
       ) : null}

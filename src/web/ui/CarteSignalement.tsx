@@ -64,7 +64,7 @@ export function CarteSignalement(proprietes: ProprietesCarteSignalement): ReactN
         padding: ESPACEMENT.e3,
         border: `1px solid ${proprietes.selectionnee ? COULEURS.primaire : COULEURS.bordure}`,
         borderRadius: RAYON.md,
-        backgroundColor: COULEURS.surface,
+        backgroundColor: "var(--ui-surface)",
         cursor: "pointer",
       }}
     >
@@ -81,7 +81,7 @@ export function CarteSignalement(proprietes: ProprietesCarteSignalement): ReactN
           style={{
             margin: 0,
             fontSize: TAILLE_TEXTE.xs,
-            color: COULEURS.texteAttenue,
+            color: "var(--ui-texte-attenue)",
             padding: `${ESPACEMENT.e2}px 0`,
           }}
         >
@@ -94,9 +94,9 @@ export function CarteSignalement(proprietes: ProprietesCarteSignalement): ReactN
         <BadgePriorite priorite={proprietes.priorite} score={proprietes.scorePriorite ?? null} />
       </div>
 
-      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.md, color: COULEURS.texte }}>{descriptionCourte}</p>
+      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.md, color: "inherit" }}>{descriptionCourte}</p>
 
-      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.xs, color: COULEURS.texteAttenue }}>
+      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.xs, color: "var(--ui-texte-attenue)" }}>
         {proprietes.quartier} · {age}
         {proprietes.nbConfirmations > 0 ? ` · ${proprietes.nbConfirmations} confirmation(s)` : ""}
         {proprietes.enChargement === true ? " · chargement…" : ""}

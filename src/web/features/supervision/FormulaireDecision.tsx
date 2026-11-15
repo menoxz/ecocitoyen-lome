@@ -72,7 +72,7 @@ export function FormulaireDecision(proprietes: ProprietesFormulaireDecision): Re
           borderTop: `1px solid ${COULEURS.bordure}`,
         }}
       >
-        <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: COULEURS.texteAttenue }}>
+        <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>
           Rejeter ferme le dossier : le citoyen reçoit le motif.
         </p>
         <ChampSelect

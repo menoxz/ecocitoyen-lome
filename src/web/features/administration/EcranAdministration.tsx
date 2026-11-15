@@ -78,7 +78,7 @@ export function EcranAdministration(proprietes: ProprietesEcranAdministration): 
   if (session === "absent") {
     return (
       <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e4 }}>
-        <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: COULEURS.texte }}>Administration des comptes</h1>
+        <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: "inherit" }}>Administration des comptes</h1>
         <FormulaireSession
           client={proprietes.client}
           onSession={() => setSession("present")}
@@ -99,17 +99,17 @@ export function EcranAdministration(proprietes: ProprietesEcranAdministration): 
 
   return (
     <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
-      <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: COULEURS.texte }}>Administration des comptes</h1>
-      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: COULEURS.texteAttenue }}>
+      <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: "inherit" }}>Administration des comptes</h1>
+      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>
         {comptes.length} compte(s). Le dernier administrateur actif ne peut être ni rétrogradé ni désactivé.
       </p>
 
       {message ? (
-        <p role="status" style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: COULEURS.succes }}>{message}</p>
+        <p role="status" style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-succes)" }}>{message}</p>
       ) : null}
 
       {erreur ? (
-        <p role="alert" style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: COULEURS.erreur }}>
+        <p role="alert" style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-erreur)" }}>
           {erreur.message}
         </p>
       ) : null}
@@ -128,10 +128,10 @@ export function EcranAdministration(proprietes: ProprietesEcranAdministration): 
               backgroundColor: compte.actif === false ? COULEURS.surfaceAlt : COULEURS.surface,
             }}
           >
-            <span style={{ fontSize: TAILLE_TEXTE.md, color: COULEURS.texte, fontWeight: 600 }}>
+            <span style={{ fontSize: TAILLE_TEXTE.md, color: "inherit", fontWeight: 600 }}>
               {nomAffichable(compte)}
             </span>
-            <span style={{ fontSize: TAILLE_TEXTE.xs, color: COULEURS.texteAttenue }}>
+            <span style={{ fontSize: TAILLE_TEXTE.xs, color: "var(--ui-texte-attenue)" }}>
               {compte.email} · {compte.actif === false ? "désactivé" : "actif"}
             </span>
 

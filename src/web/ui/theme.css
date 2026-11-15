@@ -31,6 +31,8 @@
   --ui-erreur: #b91c1c;
   --ui-erreur-voile: rgba(185, 28, 28, 0.08);
   --ui-erreur-fond: #fef2f2;
+  --ui-succes: #15803d;
+  --ui-alerte: #b45309;
   --ui-statut-nouveau-texte: #1d4ed8;
   --ui-statut-nouveau-fond: #eff6ff;
   --ui-statut-nouveau-bordure: #bfdbfe;
@@ -95,6 +97,8 @@
   --ui-erreur: #fca5a5;
   --ui-erreur-voile: rgba(252, 165, 165, 0.14);
   --ui-erreur-fond: #450a0a;
+  --ui-succes: #86efac;
+  --ui-alerte: #fcd34d;
   --ui-statut-nouveau-texte: #93c5fd;
   --ui-statut-nouveau-fond: #172554;
   --ui-statut-nouveau-bordure: #1e40af;
