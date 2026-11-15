@@ -8,7 +8,13 @@ import { EtatErreur } from "../../ui/EtatErreur.tsx";
 import { EtatVide } from "../../ui/EtatVide.tsx";
 import { COULEURS, ESPACEMENT, TAILLE_TEXTE } from "../../ui/jetons.ts";
 import type { ClientApi, ErreurApi, SignalementApi } from "../../api/client.ts";
-import { actionPossible, dossiersActionnables, peutCloturer } from "./logique.ts";
+import {
+  actionPossible,
+  construireEntreeCloture,
+  dossiersActionnables,
+  peutCloturer,
+  type PhotoPreuve,
+} from "./logique.ts";
 
 /**
  * Parcours agent (PARCOURS.md §6) : la liste est l'écran d'ouverture, la clôture tient en un
@@ -33,7 +39,8 @@ export function EcranInterventions(proprietes: ProprietesEcranInterventions): Re
   const [ouvert, setOuvert] = useState<string | null>(proprietes.idInitial ?? null);
   const [demarree, setDemarree] = useState(false);
   const [commentaire, setCommentaire] = useState("");
-  const [aPhoto, setAPhoto] = useState(false);
+  // La preuve est le fichier lui-même : un booléen déclaratif ne prouve rien (leçon du prototype).
+  const [photo, setPhoto] = useState<PhotoPreuve | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -93,7 +100,7 @@ export function EcranInterventions(proprietes: ProprietesEcranInterventions): Re
 
   const dossierOuvert = dossiers.find((dossier) => dossier.id_signalement === ouvert) ?? null;
   const action = dossierOuvert ? actionPossible(dossierOuvert, demarree) : "aucune";
-  const decision = peutCloturer(commentaire, aPhoto);
+  const decision = peutCloturer(commentaire, photo);
 
   return (
     <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
@@ -181,12 +188,32 @@ export function EcranInterventions(proprietes: ProprietesEcranInterventions): Re
                 requis
               />
 
-              <label style={{ display: "flex", gap: ESPACEMENT.e2, alignItems: "center", fontSize: TAILLE_TEXTE.sm, color: COULEURS.texte }}>
-                <input type="checkbox" checked={aPhoto} onChange={(evenement) => setAPhoto(evenement.currentTarget.checked)} style={{ width: 20, height: 20 }} />
-                <span>J ai joint la photographie du site nettoyé (obligatoire)</span>
-              </label>
+              <div style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e1 }}>
+                <label htmlFor="photo-preuve" style={{ fontSize: TAILLE_TEXTE.sm, fontWeight: 600, color: COULEURS.texte }}>
+                  Photographie du site nettoyé (obligatoire)
+                </label>
+                <input
+                  id="photo-preuve"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={(evenement) => {
+                    const fichier = evenement.currentTarget.files?.[0];
+                    setPhoto(
+                      fichier
+                        ? { octets: fichier, nom: fichier.name, typeMime: fichier.type || "image/jpeg" }
+                        : null,
+                    );
+                  }}
+                  style={{ minHeight: 44, fontSize: TAILLE_TEXTE.sm }}
+                />
+                {photo ? (
+                  <p style={{ margin: 0, fontSize: TAILLE_TEXTE.xs, color: COULEURS.texteAttenue }}>
+                    {photo.nom} — {Math.max(1, Math.round(photo.octets.size / 1024))} Ko
+                  </p>
+                ) : null}
+              </div>
 
-              {!aPhoto ? (
+              {!photo ? (
                 <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: COULEURS.alerte }}>
                   Sans photographie, la clôture sera refusée par le service : c est la preuve du travail.
                 </p>
@@ -197,14 +224,34 @@ export function EcranInterventions(proprietes: ProprietesEcranInterventions): Re
                 desactive={!decision.ok}
                 onClick={() => {
                   void (async () => {
-                    const resultat = await proprietes.client.resoudre(dossierOuvert.id_signalement, {
-                      commentaire,
-                      photo: {
-                        chemin: `2026/11/${dossierOuvert.id_signalement}-apres.webp`,
-                        mime: "image/webp",
-                        taille_octets: 1,
-                      },
-                    });
+                    if (!photo) {
+                      setErreur({
+                        code: "PHOTO_MANQUANTE",
+                        message: "Ajoutez la photographie du site nettoyé avant de clôturer.",
+                      });
+                      return;
+                    }
+
+                    // 1. le fichier part réellement au serveur (binaire, jamais en JSON)
+                    const envoi = await proprietes.client.envoyerPhoto(
+                      dossierOuvert.id_signalement,
+                      photo.octets,
+                      photo.typeMime,
+                    );
+                    if (!envoi.ok) {
+                      setErreur(envoi.erreur);
+                      return;
+                    }
+
+                    // 2. la clôture reprend le chemin renvoyé par le serveur, jamais un chemin forgé
+                    const resultat = await proprietes.client.resoudre(
+                      dossierOuvert.id_signalement,
+                      construireEntreeCloture(commentaire, {
+                        chemin: envoi.valeur.media.chemin,
+                        mime: photo.typeMime,
+                        tailleOctets: photo.octets.size,
+                      }),
+                    );
                     if (!resultat.ok) {
                       setErreur(resultat.erreur);
                       return;
@@ -212,7 +259,7 @@ export function EcranInterventions(proprietes: ProprietesEcranInterventions): Re
                     setMessage("Intervention clôturée. La preuve est enregistrée et le citoyen est notifié.");
                     setOuvert(null);
                     setCommentaire("");
-                    setAPhoto(false);
+                    setPhoto(null);
                     setDemarree(false);
                     void charger();
                   })();
