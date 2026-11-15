@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { CLASSES, COULEURS, ESPACEMENT, RAYON, TAILLE_TEXTE, STATUTS, type CleStatut } from "./jetons.ts";
+import { CLASSES, ESPACEMENT, RAYON, TAILLE_TEXTE, STATUTS, type CleStatut } from "./jetons.ts";
 
 /**
  * Onglets de filtrage par statut — états couverts : repos, survol, focus clavier, actif,
@@ -49,10 +49,10 @@ export function OngletsFiltres(proprietes: ProprietesOngletsFiltres): ReactNode 
             style={{
               minHeight: 44,
               padding: `0 ${ESPACEMENT.e3}px`,
-              border: `1px solid ${selectionne ? "var(--ui-primaire)" : COULEURS.bordure}`,
+              border: `1px solid ${selectionne ? "var(--ui-primaire)" : "var(--ui-bordure)"}`,
               borderRadius: RAYON.pilule,
               backgroundColor: selectionne ? "var(--ui-primaire)" : "var(--ui-surface)",
-              color: selectionne ? "#ffffff" : COULEURS.texte,
+              color: selectionne ? "var(--ui-sur-primaire)" : "var(--ui-texte)",
               fontSize: TAILLE_TEXTE.sm,
               fontWeight: selectionne ? 700 : 500,
               cursor: "pointer",

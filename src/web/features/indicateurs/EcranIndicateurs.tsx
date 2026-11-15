@@ -3,7 +3,7 @@ import { FormulaireSession } from "../compte/FormulaireSession.tsx";
 import { Bouton } from "../../ui/Bouton.tsx";
 import { EtatChargement } from "../../ui/EtatChargement.tsx";
 import { EtatErreur } from "../../ui/EtatErreur.tsx";
-import { COULEURS, ESPACEMENT, RAYON, TAILLE_TEXTE } from "../../ui/jetons.ts";
+import { ESPACEMENT, RAYON, TAILLE_TEXTE } from "../../ui/jetons.ts";
 import type { ClientApi, ErreurApi, SyntheseApi } from "../../api/client.ts";
 import { NON_MESURABLE, libelleStatutIndicateur, lignesPilotage, volumesOrdonnes } from "./logique.ts";
 
@@ -95,7 +95,7 @@ export function EcranIndicateurs(proprietes: ProprietesEcranIndicateurs): ReactN
               alignItems: "baseline",
               gap: ESPACEMENT.e3,
               padding: `${ESPACEMENT.e2}px ${ESPACEMENT.e3}px`,
-              border: `1px solid ${COULEURS.bordure}`,
+              border: "1px solid var(--ui-bordure)",
               borderRadius: RAYON.md,
               backgroundColor: "var(--ui-surface)",
             }}
@@ -104,7 +104,7 @@ export function EcranIndicateurs(proprietes: ProprietesEcranIndicateurs): ReactN
             <strong
               style={{
                 fontSize: TAILLE_TEXTE.md,
-                color: ligne.mesurable ? COULEURS.texte : COULEURS.texteAttenue,
+                color: ligne.mesurable ? "var(--ui-texte)" : "var(--ui-texte-attenue)",
                 fontStyle: ligne.mesurable ? "normal" : "italic",
               }}
             >

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { COULEURS, ESPACEMENT, TAILLE_TEXTE } from "./jetons.ts";
+import { ESPACEMENT, TAILLE_TEXTE } from "./jetons.ts";
 
 /**
  * Fil de parcours — états couverts : étape faite, étape courante, étape à venir.
@@ -43,7 +43,7 @@ export function FilParcours(proprietes: ProprietesFilParcours): ReactNode {
               gap: ESPACEMENT.e1,
               fontSize: TAILLE_TEXTE.sm,
               fontWeight: courante ? 700 : 500,
-              color: courante ? COULEURS.texte : COULEURS.texteAttenue,
+              color: courante ? "var(--ui-texte)" : "var(--ui-texte-attenue)",
             }}
           >
             <span
@@ -56,9 +56,9 @@ export function FilParcours(proprietes: ProprietesFilParcours): ReactNode {
                 height: 24,
                 borderRadius: 9999,
                 fontSize: TAILLE_TEXTE.xs,
-                color: courante ? "#ffffff" : COULEURS.texteAttenue,
+                color: courante ? "var(--ui-sur-primaire)" : "var(--ui-texte-attenue)",
                 backgroundColor: courante ? "var(--ui-primaire)" : faite ? "var(--ui-succes)" : "var(--ui-surface-douce)",
-                border: `1px solid ${courante ? "var(--ui-primaire)" : COULEURS.bordure}`,
+                border: `1px solid ${courante ? "var(--ui-primaire)" : "var(--ui-bordure)"}`,
               }}
             >
               {faite && !courante ? "✓" : index + 1}

@@ -4,7 +4,7 @@ import { Bouton } from "../../ui/Bouton.tsx";
 import { ChampSelect } from "../../ui/ChampSelect.tsx";
 import { EtatChargement } from "../../ui/EtatChargement.tsx";
 import { EtatErreur } from "../../ui/EtatErreur.tsx";
-import { COULEURS, ESPACEMENT, RAYON, TAILLE_TEXTE } from "../../ui/jetons.ts";
+import { ESPACEMENT, RAYON, TAILLE_TEXTE } from "../../ui/jetons.ts";
 import type { ClientApi, CompteApi, ErreurApi } from "../../api/client.ts";
 import { basculerActivation, comptesTries, libelleRole, nomAffichable } from "./logique.ts";
 
@@ -123,7 +123,7 @@ export function EcranAdministration(proprietes: ProprietesEcranAdministration): 
               flexDirection: "column",
               gap: ESPACEMENT.e2,
               padding: ESPACEMENT.e3,
-              border: `1px solid ${COULEURS.bordure}`,
+              border: "1px solid var(--ui-bordure)",
               borderRadius: RAYON.md,
               backgroundColor: compte.actif === false ? "var(--ui-surface-douce)" : "var(--ui-surface)",
             }}

@@ -7,7 +7,7 @@ import { EtatErreur } from "../../ui/EtatErreur.tsx";
 import { RecuSignalement } from "./RecuSignalement.tsx";
 import { FilParcours } from "../../ui/FilParcours.tsx";
 import { ZoneDepotPhoto, type PhotoChoisie } from "../../ui/ZoneDepotPhoto.tsx";
-import { COULEURS, ESPACEMENT, TAILLE_TEXTE } from "../../ui/jetons.ts";
+import { ESPACEMENT, TAILLE_TEXTE } from "../../ui/jetons.ts";
 import type { ErreurApi, Resultat, SignalementApi } from "../../api/client.ts";
 import {
   BROUILLON_INITIAL,

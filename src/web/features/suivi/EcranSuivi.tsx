@@ -4,7 +4,7 @@ import { Bouton } from "../../ui/Bouton.tsx";
 import { EtatChargement } from "../../ui/EtatChargement.tsx";
 import { EtatErreur } from "../../ui/EtatErreur.tsx";
 import { EtatVide } from "../../ui/EtatVide.tsx";
-import { COULEURS, ESPACEMENT, RAYON, TAILLE_TEXTE } from "../../ui/jetons.ts";
+import { ESPACEMENT, RAYON, TAILLE_TEXTE } from "../../ui/jetons.ts";
 import type { ClientApi, ErreurApi, EtapeHistoriqueApi, SignalementApi } from "../../api/client.ts";
 import { etapesLisibles, libelleStatut } from "./logique.ts";
 import { BoutonConfirmer } from "./BoutonConfirmer.tsx";
@@ -138,7 +138,7 @@ export function EcranSuivi(proprietes: ProprietesEcranSuivi): ReactNode {
                 flexDirection: "column",
                 gap: 4,
                 padding: ESPACEMENT.e3,
-                border: `1px solid ${COULEURS.bordure}`,
+                border: "1px solid var(--ui-bordure)",
                 borderRadius: RAYON.md,
                 backgroundColor: "var(--ui-surface)",
               }}

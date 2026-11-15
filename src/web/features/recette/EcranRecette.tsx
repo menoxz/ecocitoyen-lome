@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { COULEURS, ESPACEMENT, RAYON, TAILLE_TEXTE } from "../../ui/jetons.ts";
+import { ESPACEMENT, RAYON, TAILLE_TEXTE } from "../../ui/jetons.ts";
 import { PREUVES_RECETTE } from "../../recette/preuves.ts";
 
 /**
@@ -29,7 +29,7 @@ export function EcranRecette(): ReactNode {
               flexDirection: "column",
               gap: ESPACEMENT.e1,
               padding: ESPACEMENT.e3,
-              border: `1px solid ${COULEURS.bordure}`,
+              border: "1px solid var(--ui-bordure)",
               borderRadius: RAYON.md,
               backgroundColor: "var(--ui-surface)",
             }}

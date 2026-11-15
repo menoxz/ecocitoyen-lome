@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, type ReactNode } from "react";
 import { Bouton } from "./Bouton.tsx";
-import { COULEURS, ESPACEMENT, RAYON, TAILLE_TEXTE } from "./jetons.ts";
+import { ESPACEMENT, RAYON, TAILLE_TEXTE } from "./jetons.ts";
 
 /**
  * Fenêtre modale — états couverts : repos, focus piégé, fermeture par Échap, fermeture par

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { BadgePriorite } from "./BadgePriorite.tsx";
 import { BadgeStatut } from "./BadgeStatut.tsx";
-import { CLASSES, COULEURS, ESPACEMENT, RAYON, TAILLE_TEXTE, type ClePriorite, type CleStatut } from "./jetons.ts";
+import { CLASSES, ESPACEMENT, RAYON, TAILLE_TEXTE, type ClePriorite, type CleStatut } from "./jetons.ts";
 
 /**
  * Carte d'un signalement — états couverts : repos, survol, focus clavier, actif, chargement,
@@ -62,7 +62,7 @@ export function CarteSignalement(proprietes: ProprietesCarteSignalement): ReactN
         flexDirection: "column",
         gap: ESPACEMENT.e2,
         padding: ESPACEMENT.e3,
-        border: `1px solid ${proprietes.selectionnee ? COULEURS.primaire : COULEURS.bordure}`,
+        border: `1px solid ${proprietes.selectionnee ? "var(--ui-primaire)" : "var(--ui-bordure)"}`,
         borderRadius: RAYON.md,
         backgroundColor: "var(--ui-surface)",
         cursor: "pointer",

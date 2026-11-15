@@ -5,7 +5,7 @@ import { CarteSignalement } from "../../ui/CarteSignalement.tsx";
 import { EtatChargement } from "../../ui/EtatChargement.tsx";
 import { EtatErreur } from "../../ui/EtatErreur.tsx";
 import { EtatVide } from "../../ui/EtatVide.tsx";
-import { COULEURS, ESPACEMENT, TAILLE_TEXTE } from "../../ui/jetons.ts";
+import { ESPACEMENT, TAILLE_TEXTE } from "../../ui/jetons.ts";
 import type { ClientApi, ErreurApi, SignalementApi } from "../../api/client.ts";
 import { FormulaireDecision } from "./FormulaireDecision.tsx";
 import { construireRejet, construireValidation, dossiersATrier, libellePriorite } from "./logique.ts";

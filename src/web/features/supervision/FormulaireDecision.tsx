@@ -2,7 +2,7 @@ import { useState, type ReactNode } from "react";
 import { Bouton } from "../../ui/Bouton.tsx";
 import { ChampSelect } from "../../ui/ChampSelect.tsx";
 import { ChampZoneTexte } from "../../ui/ChampZoneTexte.tsx";
-import { COULEURS, ESPACEMENT, TAILLE_TEXTE } from "../../ui/jetons.ts";
+import { ESPACEMENT, TAILLE_TEXTE } from "../../ui/jetons.ts";
 import type { SignalementApi } from "../../api/client.ts";
 import { libellePriorite, peutRejeter, peutValider } from "./logique.ts";
 
@@ -69,7 +69,7 @@ export function FormulaireDecision(proprietes: ProprietesFormulaireDecision): Re
           flexDirection: "column",
           gap: ESPACEMENT.e2,
           paddingTop: ESPACEMENT.e3,
-          borderTop: `1px solid ${COULEURS.bordure}`,
+          borderTop: "1px solid var(--ui-bordure)",
         }}
       >
         <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>

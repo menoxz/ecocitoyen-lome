@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { CLASSES, COULEURS, RAYON, TAILLE_TEXTE } from "./jetons.ts";
+import { CLASSES, RAYON, TAILLE_TEXTE } from "./jetons.ts";
 
 /**
  * Liste déroulante — états couverts : repos, survol, focus clavier, actif, désactivé,
@@ -51,7 +51,7 @@ export function ChampSelect(proprietes: ProprietesChampSelect): ReactNode {
         style={{
           color: "inherit",
           backgroundColor: proprietes.desactive || sansOption ? "var(--ui-surface-douce)" : "var(--ui-surface)",
-          borderColor: enErreur ? COULEURS.erreur : COULEURS.bordure,
+          borderColor: enErreur ? "var(--ui-erreur)" : "var(--ui-bordure)",
           borderRadius: RAYON.md,
         }}
       >

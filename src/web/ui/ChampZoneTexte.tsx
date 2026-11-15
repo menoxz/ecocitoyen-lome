@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { CLASSES, COULEURS, RAYON, TAILLE_TEXTE } from "./jetons.ts";
+import { CLASSES, RAYON, TAILLE_TEXTE } from "./jetons.ts";
 
 /**
  * Zone de texte comptée — états couverts : repos, focus, désactivé, erreur, compteur hors bornes.
@@ -55,7 +55,7 @@ export function ChampZoneTexte(proprietes: ProprietesChampZoneTexte): ReactNode 
         style={{
           color: "inherit",
           backgroundColor: proprietes.desactive ? "var(--ui-surface-douce)" : "var(--ui-surface)",
-          borderColor: enErreur ? COULEURS.erreur : COULEURS.bordure,
+          borderColor: enErreur ? "var(--ui-erreur)" : "var(--ui-bordure)",
           borderRadius: RAYON.md,
           fontFamily: "inherit",
           fontSize: TAILLE_TEXTE.md,
@@ -69,7 +69,7 @@ export function ChampZoneTexte(proprietes: ProprietesChampZoneTexte): ReactNode 
         style={{
           margin: 0,
           fontSize: TAILLE_TEXTE.xs,
-          color: horsBornes ? COULEURS.alerte : COULEURS.texteAttenue,
+          color: horsBornes ? "var(--ui-alerte)" : "var(--ui-texte-attenue)",
         }}
       >
         {longueur}/{maximum} caractères{longueur > 0 && longueur < minimum ? ` (${minimum} minimum)` : ""}

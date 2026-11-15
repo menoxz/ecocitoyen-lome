@@ -3,7 +3,7 @@ import { AssistantSignalement } from "./AssistantSignalement.tsx";
 import { EtatChargement } from "../../ui/EtatChargement.tsx";
 import { EtatErreur } from "../../ui/EtatErreur.tsx";
 import { FormulaireSession } from "../compte/FormulaireSession.tsx";
-import { COULEURS, ESPACEMENT, TAILLE_TEXTE } from "../../ui/jetons.ts";
+import { ESPACEMENT, TAILLE_TEXTE } from "../../ui/jetons.ts";
 import type { CategorieApi, ClientApi, ErreurApi, QuartierApi } from "../../api/client.ts";
 import { construireDemande } from "./etapes.ts";
 

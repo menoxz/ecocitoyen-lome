@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Bouton } from "../../ui/Bouton.tsx";
-import { COULEURS, ESPACEMENT, TAILLE_TEXTE } from "../../ui/jetons.ts";
+import { ESPACEMENT, TAILLE_TEXTE } from "../../ui/jetons.ts";
 
 /**
  * Reçu de signalement (quatrième vue du parcours 1).

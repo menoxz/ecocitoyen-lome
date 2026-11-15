@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Bouton } from "./Bouton.tsx";
-import { COULEURS, ESPACEMENT, RAYON, TAILLE_TEXTE } from "./jetons.ts";
+import { ESPACEMENT, RAYON, TAILLE_TEXTE } from "./jetons.ts";
 
 /**
  * Dépôt de photos — états couverts : vide (invite), avec photos, erreur de fichier, désactivé,
@@ -64,7 +64,7 @@ export function ZoneDepotPhoto(proprietes: ProprietesZoneDepotPhoto): ReactNode 
               alignItems: "center",
               gap: ESPACEMENT.e1,
               padding: ESPACEMENT.e1,
-              border: `1px solid ${COULEURS.bordure}`,
+              border: "1px solid var(--ui-bordure)",
               borderRadius: RAYON.sm,
             }}
           >
