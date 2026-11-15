@@ -40,6 +40,23 @@ function Application(): React.ReactNode {
                 municipal décide, vous suivez chaque étape.
               </p>
               <a
+                href="#/interventions"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  minHeight: 44,
+                  padding: `0 ${ESPACEMENT.e4}px`,
+                  borderRadius: 8,
+                  border: `1px solid ${COULEURS.primaire}`,
+                  color: COULEURS.primaire,
+                  fontWeight: 600,
+                  textDecoration: "none",
+                }}
+              >
+                Je suis agent : mes interventions
+              </a>
+              <a
                 href="#/signaler"
                 style={{
                   display: "inline-flex",

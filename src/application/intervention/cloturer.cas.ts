@@ -62,17 +62,26 @@ export function cloturer(
   const maintenant = deps.horloge.maintenant();
   const ligne = ligneDe(lignes, active);
 
-  deps.signalements.ajouterMedia({
-    idMedia: deps.identifiants.nouveau("med"),
-    idSignalement,
-    idIntervention: ligne ? ligne.idIntervention : null,
-    type: "RESOLUTION",
-    chemin: commande.photo.chemin,
-    mime: commande.photo.mime,
-    tailleOctets: commande.photo.tailleOctets,
-    masque: false,
-    dateAjout: maintenant,
-  });
+  // La photo de preuve arrive par /photos (elle est déjà écrite sur le disque et rattachée au
+  // dossier). Réenregistrer un média ici créait un doublon du même chemin, avec le mime et la
+  // taille annoncés par le client au lieu de ceux mesurés par le serveur.
+  const preuve = deps.signalements
+    .mediasDe(idSignalement)
+    .find((media) => media.type === "RESOLUTION" && media.chemin === commande.photo?.chemin);
+
+  if (!preuve) {
+    deps.signalements.ajouterMedia({
+      idMedia: deps.identifiants.nouveau("med"),
+      idSignalement,
+      idIntervention: ligne ? ligne.idIntervention : null,
+      type: "RESOLUTION",
+      chemin: commande.photo.chemin,
+      mime: commande.photo.mime,
+      tailleOctets: commande.photo.tailleOctets,
+      masque: false,
+      dateAjout: maintenant,
+    });
+  }
 
   if (ligne) {
     deps.signalements.majIntervention({

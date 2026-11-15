@@ -1,5 +1,14 @@
 import { describe, expect, test } from "bun:test";
+import sharp from "sharp";
 import { appelJson, creerCompte, demarrerBanc, type Banc } from "./aide.ts";
+
+/** Un JPEG réel : le stockage mesure le type et la taille, il ne croit pas le client. */
+async function photoJpeg(): Promise<Buffer> {
+  return sharp({ create: { width: 64, height: 64, channels: 3, background: { r: 90, g: 140, b: 70 } } })
+    .jpeg({ quality: 70 })
+    .toBuffer();
+}
+
 
 const POSITION = { latitude: 6.1255, longitude: 1.2222 };
 const DESCRIPTION = "Tas de déchets plastiques devant le marché, signalé ce matin par un riverain";
@@ -102,6 +111,52 @@ describe("parcours nominal §12.1", () => {
     expect(actions).toContain("intervention.affectation");
     expect(actions).toContain("intervention.demarrage");
     expect(actions).toContain("intervention.cloture");
+
+    await banc.fermer();
+  });
+
+  test("l'agent joint lui-même la preuve et la clôture ne la duplique pas", async () => {
+    const banc = await demarrerBanc();
+    const equipe = await acteurs(banc);
+    const id = await dossierAffecte(banc, equipe);
+
+    await appelJson(`${banc.url}/signalements/${id}/demarrer`, {
+      methode: "POST",
+      cookie: equipe.agent.cookie,
+    });
+
+    // L'agent n'est pas l'auteur du signalement : le prototype refusait cette photo, donc CR8
+    // était impossible à tenir pour lui.
+    const envoi = await fetch(`${banc.url}/signalements/${id}/photos`, {
+      method: "POST",
+      headers: { "content-type": "image/jpeg", cookie: equipe.agent.cookie },
+      body: new Uint8Array(await photoJpeg()),
+    });
+    expect(envoi.status).toBe(201);
+    const enregistree = (await envoi.json()) as { media: { chemin: string; mime: string; taille_octets: number } };
+
+    const cloture = await appelJson(`${banc.url}/signalements/${id}/resoudre`, {
+      methode: "POST",
+      cookie: equipe.agent.cookie,
+      corps: {
+        photo: {
+          chemin: enregistree.media.chemin,
+          mime: enregistree.media.mime,
+          taille_octets: enregistree.media.taille_octets,
+        },
+        commentaire: "Caniveau curé et déchets évacués, chaussée rendue à la circulation",
+      },
+    });
+
+    expect(cloture.statut).toBe(200);
+    expect(cloture.corps.statut).toBe("RESOLU");
+
+    // Une seule preuve, et c'est celle que le serveur a mesurée : pas de second média créé par
+    // la clôture avec le mime et la taille annoncés par le client.
+    const preuves = banc.deps.signalements.mediasDe(id).filter((media) => media.type === "RESOLUTION");
+    expect(preuves.length).toBe(1);
+    expect(preuves[0].chemin).toBe(enregistree.media.chemin);
+    expect(preuves[0].mime).toBe("image/webp");
 
     await banc.fermer();
   });

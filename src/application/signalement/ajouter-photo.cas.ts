@@ -1,7 +1,10 @@
 import { ErreurMetier } from "@domaine/erreurs.ts";
+import { deciderTypePhoto } from "@domaine/intervention/preuve.regle.ts";
+import { interventionActive } from "@domaine/intervention/unicite-active.regle.ts";
 import type { MediaLu } from "@ports/depot-signalements.port.ts";
 import type { Acteur, Dependances } from "../dependances.type.ts";
 import { journaliser } from "../compte/inscrire.cas.ts";
+import { ligneDe, versIntervention } from "../intervention/adaptation.ts";
 import { chargerDossier } from "./commun.ts";
 
 export interface ResultatPhoto {
@@ -11,6 +14,10 @@ export interface ResultatPhoto {
 
 /**
  * Ajout d'une photo à un dossier existant.
+ *
+ * Deux photos, deux droits : le citoyen auteur joint des vues du dépôt, l'agent de l'équipe
+ * affectée joint la preuve de résolution exigée par CR8. La règle qui tranche vit dans
+ * `domaine/intervention/preuve.regle.ts` ; ici on ne fait que l'appliquer.
  *
  * L'écriture de la photo ne dépend pas de l'IA (CR13) : la classification est mise en file après
  * l'enregistrement, et le dossier reste utilisable si elle échoue. Aucun contenu binaire ne passe
@@ -24,27 +31,29 @@ export async function ajouterPhoto(
   deps: Dependances,
 ): Promise<ResultatPhoto> {
   const dossier = chargerDossier(idSignalement, deps);
+  const lignes = deps.signalements.interventionsDe(idSignalement);
+  const active = interventionActive(lignes.map(versIntervention));
+  const medias = deps.signalements.mediasDe(idSignalement);
 
-  if (dossier.idAuteur !== acteur.idUtilisateur) {
-    throw new ErreurMetier("DROIT_REFUSE", { raison: "non_auteur" });
-  }
-  if (dossier.statut === "RESOLU" || dossier.statut === "REJETE") {
-    throw new ErreurMetier("STATUT_INCOMPATIBLE", { statut: dossier.statut });
-  }
-
-  const existantes = deps.signalements.mediasDe(idSignalement).filter((m) => m.type === "SIGNALEMENT");
-  if (existantes.length >= 3) {
-    throw new ErreurMetier("CONTRAT_INVALIDE", { champ: "photos", maximum: 3 });
-  }
+  const type = deciderTypePhoto({
+    role: acteur.role,
+    estAuteur: dossier.idAuteur === acteur.idUtilisateur,
+    idEquipeAgent: acteur.idEquipe,
+    idEquipeAffectee: active ? active.idEquipe : null,
+    statut: dossier.statut,
+    photosSignalement: medias.filter((media) => media.type === "SIGNALEMENT").length,
+    photosResolution: medias.filter((media) => media.type === "RESOLUTION").length,
+  });
 
   const enregistree = await deps.stockagePhotos.enregistrer(octets, mimeAnnonce);
   const maintenant = deps.horloge.maintenant();
+  const ligneIntervention = type === "RESOLUTION" ? ligneDe(lignes, active) : null;
 
   const media: MediaLu = {
     idMedia: deps.identifiants.nouveau("med"),
     idSignalement,
-    idIntervention: null,
-    type: "SIGNALEMENT",
+    idIntervention: ligneIntervention ? ligneIntervention.idIntervention : null,
+    type,
     chemin: enregistree.chemin,
     mime: enregistree.mime,
     tailleOctets: enregistree.tailleOctets,
@@ -53,8 +62,9 @@ export async function ajouterPhoto(
   };
   deps.signalements.ajouterMedia(media);
 
+  // Une preuve de résolution n'a rien à faire classer par l'IA : ce n'est pas un dépôt à qualifier.
   let classificationEnfilee = false;
-  if (dossier.modeIa === "AUCUN") {
+  if (type === "SIGNALEMENT" && dossier.modeIa === "AUCUN") {
     deps.travaux.enfiler({
       idTache: deps.identifiants.nouveau("tache"),
       type: "classification_ia",
@@ -64,6 +74,14 @@ export async function ajouterPhoto(
     classificationEnfilee = true;
   }
 
-  journaliser(deps, acteur, "signalement.photo", idSignalement, null, media.chemin);
+  journaliser(deps, acteur, `signalement.photo.${type.toLowerCase()}`, idSignalement, null, media.chemin);
   return { media, classificationEnfilee };
+}
+
+/** Le refus doit dire pourquoi : « rôle » et « pas l'auteur » ne sont pas le même reproche. */
+export function expliquerRefusPhoto(erreur: ErreurMetier): string | null {
+  if (erreur.code !== "DROIT_REFUSE") {
+    return null;
+  }
+  return "Seul l'auteur du signalement ou un agent de l'équipe affectée peut joindre une photo.";
 }
