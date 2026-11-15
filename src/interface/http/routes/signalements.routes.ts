@@ -5,6 +5,7 @@ import { exigerSession, type RequeteActeur } from "../middlewares/session.ts";
 import { projeter, projeterHistorique } from "../presentation/vers-signalement.ts";
 import { consulter, lister, type FiltresLecture } from "@application/signalement/lister.cas.ts";
 import { historique } from "@application/signalement/historique.cas.ts";
+import { confirmer } from "@application/signalement/confirmer.cas.ts";
 import { creer, type CommandeCreation } from "@application/signalement/creer.cas.ts";
 import { valider } from "@application/signalement/valider.cas.ts";
 import { rejeter } from "@application/signalement/rejeter.cas.ts";
@@ -54,6 +55,16 @@ export function routesSignalements(deps: Dependances): Router {
     const acteur = acteurDe(req);
     res.json(projeterHistorique(historique(req.params.id, acteur, deps)));
   });
+
+  /** « Moi aussi » : une seule confirmation par personne, refusée sur son propre dossier. */
+  routeur.post(
+    "/:id/confirmer",
+    rbac("confirmerSignalement"),
+    attraper(async (req, res) => {
+      const acteur = exigerSession(req);
+      res.json(confirmer(req.params.id, acteur, deps));
+    }),
+  );
 
   routeur.post(
     "/",

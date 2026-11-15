@@ -7,6 +7,7 @@ import { EtatVide } from "../../ui/EtatVide.tsx";
 import { COULEURS, ESPACEMENT, RAYON, TAILLE_TEXTE } from "../../ui/jetons.ts";
 import type { ClientApi, ErreurApi, EtapeHistoriqueApi, SignalementApi } from "../../api/client.ts";
 import { etapesLisibles, libelleStatut } from "./logique.ts";
+import { BoutonConfirmer } from "./BoutonConfirmer.tsx";
 
 /**
  * Parcours 2 : le citoyen suit son dossier (PARCOURS.md §2).
@@ -110,6 +111,13 @@ export function EcranSuivi(proprietes: ProprietesEcranSuivi): ReactNode {
         {dossier.quartier_nom ?? dossier.id_quartier} · signalé le {dossier.date_signalement}
         {dossier.motif_rejet ? ` · motif : ${dossier.motif_rejet}` : ""}
       </p>
+
+      <BoutonConfirmer
+        client={proprietes.client}
+        idSignalement={dossier.id_signalement}
+        nbConfirmations={dossier.nb_confirmations}
+        statut={dossier.statut}
+      />
 
       <h2 style={{ margin: 0, fontSize: TAILLE_TEXTE.lg, color: COULEURS.texte }}>Décisions du service</h2>
 

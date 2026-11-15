@@ -100,6 +100,8 @@ export interface ClientApi {
   motifsRejet(): Promise<Resultat<readonly string[]>>;
   /** Étapes du dossier, telles que le serveur les a enregistrées. */
   historique(idSignalement: string): Promise<Resultat<readonly EtapeHistoriqueApi[]>>;
+  /** « Moi aussi » : le compte renvoyé est celui du serveur, jamais un incrément local. */
+  confirmer(idSignalement: string): Promise<Resultat<{ confirme: boolean; nb_confirmations: number }>>;
   valider(
     idSignalement: string,
     entree: { id_categorie?: string; niveau_priorite?: string; commentaire?: string },
@@ -182,6 +184,10 @@ export function creerClient(base: string): ClientApi {
     priorites: () => appeler<readonly string[]>("/referentiels/priorites"),
     motifsRejet: () => appeler<readonly string[]>("/referentiels/motifs-rejet"),
     historique: (idSignalement) => appeler<readonly EtapeHistoriqueApi[]>(`/signalements/${idSignalement}/historique`),
+    confirmer: (idSignalement) =>
+      appeler<{ confirme: boolean; nb_confirmations: number }>(`/signalements/${idSignalement}/confirmer`, {
+        method: "POST",
+      }),
     valider: (idSignalement, entree) =>
       appeler<SignalementApi>(`/signalements/${idSignalement}/valider`, json("POST", entree)),
     rejeter: (idSignalement, entree) =>
