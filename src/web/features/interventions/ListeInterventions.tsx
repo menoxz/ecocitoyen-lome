@@ -5,7 +5,8 @@ import { EtatVide } from "../../ui/EtatVide.tsx";
 import { Facettes, type Facette } from "../../ui/Facettes.tsx";
 import { ESPACEMENT } from "../../ui/jetons.ts";
 import { compterPar, filtrerParTexte, trierPar } from "../../ui/liste.ts";
-import type { SignalementApi } from "../../api/client.ts";
+import type { ClientApi, SignalementApi } from "../../api/client.ts";
+import { ClotureIntervention } from "./ClotureIntervention.tsx";
 
 /**
  * Niveaux 2 et 3 de la hiérarchie de découverte pour la file de l'agent : la liste se cherche,
@@ -17,9 +18,11 @@ import type { SignalementApi } from "../../api/client.ts";
 export interface ProprietesListeInterventions {
   readonly dossiers: readonly SignalementApi[];
   readonly maintenantIso: string;
-  readonly onOuvrir: (id: string) => void;
+  readonly client: ClientApi;
   readonly onDemarrer: (id: string) => void;
   readonly demarrageEnCours: string | null;
+  readonly onMessage: (message: string) => void;
+  readonly onRecharge: () => void;
 }
 
 const TOUTES = "TOUTES";
@@ -34,6 +37,7 @@ export function ListeInterventions(proprietes: ProprietesListeInterventions): Re
   const [recherche, setRecherche] = useState("");
   const [tri, setTri] = useState<string>("servi");
   const [priorite, setPriorite] = useState<string>(TOUTES);
+  const [clotureId, setClotureId] = useState<string | null>(null);
 
   const parPriorite = compterPar(proprietes.dossiers, (dossier) => dossier.niveau_priorite);
   const facettes: readonly Facette[] = [
@@ -91,7 +95,7 @@ export function ListeInterventions(proprietes: ProprietesListeInterventions): Re
       ) : (
         <ul className="ui-grille-cartes">
           {visibles.map((dossier) => (
-            <li key={dossier.id_signalement}>
+            <li key={dossier.id_signalement} style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e2 }}>
               <CarteSignalement
                 id={dossier.id_signalement}
                 statut={dossier.statut}
@@ -103,10 +107,26 @@ export function ListeInterventions(proprietes: ProprietesListeInterventions): Re
                 maintenantIso={proprietes.maintenantIso}
                 nbConfirmations={dossier.nb_confirmations}
                 sansPhoto={dossier.sans_photo}
-                onOuvrir={proprietes.onOuvrir}
-                onDemarrer={proprietes.onDemarrer}
-                demarrageEnCours={proprietes.demarrageEnCours === dossier.id_signalement}
+                {...(dossier.statut === "EN_COURS"
+                  ? {
+                      onCloturer: (id: string) => setClotureId((precedent) => (precedent === id ? null : id)),
+                      clotureOuverte: clotureId === dossier.id_signalement,
+                    }
+                  : {
+                      onDemarrer: proprietes.onDemarrer,
+                      demarrageEnCours: proprietes.demarrageEnCours === dossier.id_signalement,
+                    })}
               />
+
+              {clotureId === dossier.id_signalement ? (
+                <ClotureIntervention
+                  dossier={dossier}
+                  client={proprietes.client}
+                  onMessage={proprietes.onMessage}
+                  onFermer={() => setClotureId(null)}
+                  onRecharge={proprietes.onRecharge}
+                />
+              ) : null}
             </li>
           ))}
         </ul>
@@ -114,4 +134,5 @@ export function ListeInterventions(proprietes: ProprietesListeInterventions): Re
     </section>
   );
 }
+
 

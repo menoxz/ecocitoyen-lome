@@ -1810,3 +1810,34 @@ a:focus-visible {
     align-items: start;
   }
 }
+
+/* ——— Clôture dépliée dans une carte ———
+   Le formulaire de fin d intervention vit sous la carte concernée : plus d écran intermédiaire qui
+   ne montrait rien de neuf. */
+.ui-cloture {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--ui-bordure);
+  border-radius: var(--ui-rayon-sm);
+  background: var(--ui-surface-douce);
+}
+
+.ui-cloture-libelle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ui-texte);
+}
+
+.ui-cloture-fichier {
+  min-height: 44px;
+  font-size: 14px;
+  color: var(--ui-texte);
+}
+
+.ui-cloture-detail {
+  margin: 0;
+  font-size: 12px;
+  color: var(--ui-texte-attenue);
+}

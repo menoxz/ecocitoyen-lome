@@ -32,6 +32,9 @@ export interface ProprietesCarteSignalement {
   /** Action principale de la file de l'agent : démarrer l'intervention depuis la carte. */
   readonly onDemarrer?: (id: string) => void;
   readonly demarrageEnCours?: boolean;
+  /** Clôture dépliée dans la carte : le geste de fin d intervention, sans écran intermédiaire. */
+  readonly onCloturer?: (id: string) => void;
+  readonly clotureOuverte?: boolean;
 }
 
 /** Âge lisible : « à l'instant », « il y a 3 h », « hier », « il y a 5 j ». */
@@ -134,28 +137,26 @@ export function CarteSignalement(proprietes: ProprietesCarteSignalement): ReactN
         <p style={{ margin: 0, fontSize: TAILLE_TEXTE.xs, color: "var(--ui-texte-attenue)" }}>chargement…</p>
       ) : null}
 
-      {proprietes.onDemarrer ? (
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10 }}>
-          <button
-            type="button"
-            className={[CLASSES.bouton, CLASSES.boutonPrimaire, CLASSES.focusable].join(" ")}
-            aria-label={`Démarrer l intervention du dossier ${proprietes.quartier}`}
-            disabled={proprietes.demarrageEnCours === true}
-            onClick={() => proprietes.onDemarrer?.(proprietes.id)}
-          >
-            {proprietes.demarrageEnCours === true ? "Démarrage…" : "Démarrer l intervention"}
-          </button>
-          {proprietes.onOuvrir ? (
-            <button
-              type="button"
-              className={[CLASSES.bouton, "ui-bouton--texte", CLASSES.focusable].join(" ")}
-              aria-label={`Voir le dossier ${proprietes.quartier}`}
-              onClick={() => proprietes.onOuvrir?.(proprietes.id)}
-            >
-              Voir le dossier
-            </button>
-          ) : null}
-        </div>
+      {proprietes.onCloturer ? (
+        <button
+          type="button"
+          className={[CLASSES.bouton, CLASSES.boutonPrimaire, CLASSES.focusable].join(" ")}
+          aria-label={`Clôturer l intervention du dossier ${proprietes.quartier}`}
+          aria-expanded={proprietes.clotureOuverte === true ? "true" : "false"}
+          onClick={() => proprietes.onCloturer?.(proprietes.id)}
+        >
+          {proprietes.clotureOuverte === true ? "Fermer le compte rendu" : "Clôturer l intervention"}
+        </button>
+      ) : proprietes.onDemarrer ? (
+        <button
+          type="button"
+          className={[CLASSES.bouton, CLASSES.boutonPrimaire, CLASSES.focusable].join(" ")}
+          aria-label={`Démarrer l intervention du dossier ${proprietes.quartier}`}
+          disabled={proprietes.demarrageEnCours === true}
+          onClick={() => proprietes.onDemarrer?.(proprietes.id)}
+        >
+          {proprietes.demarrageEnCours === true ? "Démarrage…" : "Démarrer l intervention"}
+        </button>
       ) : proprietes.onOuvrir ? (
         <button
           type="button"
@@ -169,3 +170,4 @@ export function CarteSignalement(proprietes: ProprietesCarteSignalement): ReactN
     </article>
   );
 }
+

@@ -7,7 +7,6 @@ import { EtatErreur } from "../../ui/EtatErreur.tsx";
 import { EtatVide } from "../../ui/EtatVide.tsx";
 import { ESPACEMENT, TAILLE_TEXTE } from "../../ui/jetons.ts";
 import type { ClientApi, ErreurApi, SignalementApi } from "../../api/client.ts";
-import { DetailIntervention } from "./DetailIntervention.tsx";
 import { ListeInterventions } from "./ListeInterventions.tsx";
 import { dossiersActionnables } from "./logique.ts";
 
@@ -16,15 +15,14 @@ import { dossiersActionnables } from "./logique.ts";
  *   1. la donnée globale — combien de dossiers, combien d'urgents, combien sans photo ;
  *   2. la liste, cherchable, filtrable et triable (`ListeInterventions`) ;
  *   3. l'état de chaque dossier, en icône + couleur + infobulle (`CarteSignalement`) ;
- *   4. le détail et les gestes, au clic (`DetailIntervention`).
+ *   4. les gestes — démarrer, clôturer avec preuve — directement dans la carte.
  *
  * Rien d'administratif ici : ni catégorie à revalider, ni priorité à recalculer. L'agent ne voit
  * que les dossiers que le serveur lui renvoie (équipe affectée) : le périmètre est serveur.
  */
 export interface ProprietesEcranInterventions {
   readonly client: ClientApi;
-  /** Dossier ouvert directement (navigation profonde) ; sinon la liste commande. */
-  readonly idInitial?: string;
+
   readonly maintenantIso: string;
 }
 
@@ -34,7 +32,6 @@ export function EcranInterventions(proprietes: ProprietesEcranInterventions): Re
   const [session, setSession] = useState<Session>("inconnu");
   const [dossiers, setDossiers] = useState<readonly SignalementApi[] | null>(null);
   const [erreur, setErreur] = useState<ErreurApi | null>(null);
-  const [ouvert, setOuvert] = useState<string | null>(proprietes.idInitial ?? null);
   const [message, setMessage] = useState<string | null>(null);
   const [demarrage, setDemarrage] = useState<string | null>(null);
 
@@ -141,7 +138,6 @@ export function EcranInterventions(proprietes: ProprietesEcranInterventions): Re
     );
   }
 
-  const dossierOuvert = dossiers.find((dossier) => dossier.id_signalement === ouvert) ?? null;
   const urgents = dossiers.filter((dossier) => dossier.niveau_priorite === "URGENTE").length;
   const sansPhoto = dossiers.filter((dossier) => dossier.sans_photo).length;
 
@@ -179,29 +175,18 @@ export function EcranInterventions(proprietes: ProprietesEcranInterventions): Re
         </p>
       ) : null}
 
-      {dossierOuvert ? (
-        <DetailIntervention
-          dossier={dossierOuvert}
-          client={proprietes.client}
-          maintenantIso={proprietes.maintenantIso}
-          onFermer={() => setOuvert(null)}
-          onMessage={setMessage}
-          onRecharge={() => void charger()}
-        />
-      ) : (
-        <ListeInterventions
-          dossiers={dossiers}
-          maintenantIso={proprietes.maintenantIso}
-          onOuvrir={(id) => {
-            setOuvert(id);
-            setMessage(null);
-          }}
-          onDemarrer={(id) => void demarrerDossier(id)}
-          demarrageEnCours={demarrage}
-        />
-      )}
+      <ListeInterventions
+        dossiers={dossiers}
+        maintenantIso={proprietes.maintenantIso}
+        client={proprietes.client}
+        onDemarrer={(id) => void demarrerDossier(id)}
+        demarrageEnCours={demarrage}
+        onMessage={setMessage}
+        onRecharge={() => void charger()}
+      />
     </section>
   );
 }
+
 
 
