@@ -48,7 +48,7 @@ export function MiseEnPage(proprietes: ProprietesMiseEnPage): ReactNode {
         <nav className="ui-nav" aria-label="Accès rapides">
           {LIENS_SERVICE.map((lien) => (
             <a key={lien.href} href={lien.href}>
-              <Icone icone={lien.icone} taille={16} />
+              <Icone icone={lien.icone} taille={18} />
               {lien.libelle}
             </a>
           ))}

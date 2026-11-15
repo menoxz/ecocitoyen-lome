@@ -110,7 +110,7 @@ export function EcranSignaler(proprietes: ProprietesEcranSignaler): ReactNode {
   if (session === "inconnu") {
     return (
       <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
-        <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: "inherit" }}>Signaler un problème</h1>
+        <h1 className="ui-titre-page ui-titre-page--centre">Signaler un problème</h1>
         <EtatChargement lignes={2} libelle="Vérification de votre session" />
       </section>
     );
@@ -119,7 +119,7 @@ export function EcranSignaler(proprietes: ProprietesEcranSignaler): ReactNode {
   if (session === "absent") {
     return (
       <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e4 }}>
-        <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: "inherit" }}>Signaler un problème</h1>
+        <h1 className="ui-titre-page ui-titre-page--centre">Signaler un problème</h1>
         <FormulaireSession client={proprietes.client} onSession={() => setSession("present")} />
       </section>
     );
@@ -128,7 +128,7 @@ export function EcranSignaler(proprietes: ProprietesEcranSignaler): ReactNode {
   if (etat.etape === "chargement") {
     return (
       <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
-        <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: "inherit" }}>Signaler un problème</h1>
+        <h1 className="ui-titre-page ui-titre-page--centre">Signaler un problème</h1>
         <EtatChargement lignes={3} libelle="Chargement des catégories et des quartiers" />
       </section>
     );
@@ -137,7 +137,7 @@ export function EcranSignaler(proprietes: ProprietesEcranSignaler): ReactNode {
   if (etat.etape === "erreur") {
     return (
       <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
-        <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: "inherit" }}>Signaler un problème</h1>
+        <h1 className="ui-titre-page ui-titre-page--centre">Signaler un problème</h1>
         <EtatErreur
           message={etat.erreur.message}
           code={etat.erreur.code}
@@ -150,7 +150,7 @@ export function EcranSignaler(proprietes: ProprietesEcranSignaler): ReactNode {
 
   return (
     <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e4 }}>
-      <h1 style={{ margin: 0, fontSize: TAILLE_TEXTE.xl, color: "inherit" }}>Signaler un problème</h1>
+      <h1 className="ui-titre-page ui-titre-page--centre">Signaler un problème</h1>
 
       <AssistantSignalement
         categories={etat.categories}

@@ -275,6 +275,7 @@ a:hover {
 .ui-nav a {
   display: inline-flex;
   align-items: center;
+  gap: 8px;
   min-height: 36px;
   padding: 0 12px;
   border-radius: 9999px;
@@ -496,7 +497,70 @@ a:hover {
   justify-content: center;
 }
 
-/* ——— Page de session : carte centrée ——— */
+/* ——— Champs : structure, marque obligatoire, mot de passe révélable ——— */
+
+.ui-champ-groupe {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ui-champ-libelle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ui-texte);
+}
+
+/* La marque de champ obligatoire prend la couleur d'alerte et suit le thème. */
+.ui-requis {
+  color: var(--ui-erreur);
+  font-weight: 700;
+}
+
+.ui-champ-message {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ui-texte-attenue);
+}
+
+.ui-champ-message--erreur {
+  color: var(--ui-erreur);
+}
+
+.ui-champ-secret {
+  position: relative;
+  display: flex;
+}
+
+.ui-champ--avec-bouton {
+  padding-right: 46px;
+}
+
+.ui-bouton-oeil {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ui-texte-attenue);
+  cursor: pointer;
+  transition: color var(--ui-duree-rapide) var(--ui-courbe),
+    background-color var(--ui-duree-rapide) var(--ui-courbe);
+}
+
+.ui-bouton-oeil:hover {
+  color: var(--ui-texte);
+  background: var(--ui-primaire-voile);
+}
+
+/* ——— Formulaire de session : carte centrée, contenu aligné ——— */
 
 .ui-session {
   display: flex;
@@ -511,11 +575,27 @@ a:hover {
   flex-direction: column;
   gap: 18px;
   padding: 32px;
+  text-align: center;
   background: var(--ui-surface);
   border: 1px solid var(--ui-bordure-douce);
   border-radius: var(--ui-rayon);
   box-shadow: var(--ui-ombre);
   transition: background-color var(--ui-duree) var(--ui-courbe), border-color var(--ui-duree) var(--ui-courbe);
+}
+
+/* Les champs restent alignés à gauche : un libellé centré au-dessus d'un champ se lit mal. */
+.ui-session-carte .ui-champ-groupe {
+  text-align: left;
+}
+
+.ui-session-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ui-titre-page--centre {
+  text-align: center;
 }
 
 .ui-session-titre {
@@ -635,6 +715,9 @@ a:hover {
   padding: 36px 24px 24px;
   background: var(--ui-surface);
   border-top: 1px solid var(--ui-bordure-douce);
+  /* Un pied de page s'aligne sur la gauche : centrer le bloc entier désalignait le logo du
+     paragraphe placé dessous, ce qui se voyait à 144 px près. */
+  text-align: left;
   transition: background-color var(--ui-duree) var(--ui-courbe), border-color var(--ui-duree) var(--ui-courbe);
 }
 
@@ -644,6 +727,8 @@ a:hover {
   gap: 28px;
   max-width: var(--ui-largeur);
   margin: 0 auto;
+  align-items: start;
+  text-align: left;
 }
 
 .ui-pied-marque {
@@ -653,6 +738,7 @@ a:hover {
   font-size: 15px;
   font-weight: 700;
   color: var(--ui-texte);
+  text-align: left;
 }
 
 .ui-pied-mission {
@@ -660,6 +746,7 @@ a:hover {
   font-size: 14px;
   color: var(--ui-texte-attenue);
   max-width: 40ch;
+  text-align: left;
 }
 
 .ui-pied-titre {
@@ -682,6 +769,11 @@ a:hover {
 }
 
 .ui-pied-liste a {
+  /* `inline` laissait l'icône en bloc occuper sa propre ligne : l'écart avec le libellé
+     devenait vertical et anormal. En ligne flexible, icône et texte restent sur un axe. */
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   color: var(--ui-texte);
   text-decoration: none;
   transition: color var(--ui-duree-rapide) var(--ui-courbe);

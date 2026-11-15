@@ -2,7 +2,7 @@ import { useState, type ReactNode } from "react";
 import { Bouton } from "../../ui/Bouton.tsx";
 import { ChampTexte } from "../../ui/ChampTexte.tsx";
 import { EtatErreur } from "../../ui/EtatErreur.tsx";
-import { COULEURS, ESPACEMENT, TAILLE_TEXTE } from "../../ui/jetons.ts";
+import { ESPACEMENT, TAILLE_TEXTE } from "../../ui/jetons.ts";
 import type { ClientApi } from "../../api/client.ts";
 
 /**
@@ -106,7 +106,7 @@ export function FormulaireSession(proprietes: ProprietesFormulaireSession): Reac
       <ChampTexte
         id="mot-de-passe"
         libelle="Mot de passe"
-        type="text"
+        secret
         valeur={motDePasse}
         onChange={setMotDePasse}
         autoComplete={mode === "connexion" ? "current-password" : "new-password"}
@@ -128,12 +128,13 @@ export function FormulaireSession(proprietes: ProprietesFormulaireSession): Reac
 
       {erreur ? <EtatErreur message={erreur.message} code={erreur.code} /> : null}
 
-      <div style={{ display: "flex", gap: ESPACEMENT.e2, flexWrap: "wrap" }}>
-        <Bouton variante="primaire" enChargement={enCours} onClick={() => void valider()}>
+      <div className="ui-session-actions">
+        <Bouton variante="primaire" pleineLargeur enChargement={enCours} onClick={() => void valider()}>
           {mode === "connexion" ? "Se connecter" : "Créer mon compte"}
         </Bouton>
         <Bouton
           variante="texte"
+          pleineLargeur
           onClick={() => setMode(mode === "connexion" ? "inscription" : "connexion")}
         >
           {mode === "connexion" ? "Je n ai pas de compte" : "J ai déjà un compte"}
