@@ -1,0 +1,14 @@
+# Ce qui n'a pas sa place dans l'image : dépendances locales, artefacts, données et secrets.
+node_modules
+dist
+data
+.env
+.env.*
+!.env.example
+.git
+.gitignore
+*.log
+docs
+tests
+.opencode
+.checklists

@@ -1,0 +1,40 @@
+# EcoCitoyen Lomé — exécution en conteneur.
+#
+# Le volume `donnees` est la pièce essentielle : il porte la base SQLite ET les photos. Sans lui,
+# un redéploiement repart d'une base vide et l'application perd signalements et comptes.
+services:
+  app:
+    build: .
+    image: ecocitoyen-lome:local
+    container_name: ecocitoyen
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      # Base de démonstration : comptes et signalements de test, aucune donnée réelle.
+      MODE_DEMO: "true"
+      DB_CHEMIN: /app/data/ecocitoyen.db
+      DOSSIER_PHOTOS: /app/data/photos
+      DOSSIER_STATIQUE: /app/dist
+      APP_URL: "http://localhost:3000"
+      # Sans clé, la classification tourne en mode SIMULATION, étiqueté comme tel.
+      # GEMINI_API_KEY: "…"
+    volumes:
+      - donnees:/app/data
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/api/v1/sante').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 4s
+      start_period: 25s
+      retries: 3
+
+volumes:
+  donnees:
