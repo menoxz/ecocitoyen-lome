@@ -42,6 +42,16 @@ Version 1.0 — 15/11/2026.
 | 5 | Reçu | statut Nouveau + numéro de dossier + « Suivre » | 0 | 5 s |
 
 **Cible** : 3 écrans utiles (preuve, lieu, problème), 6 à 8 gestes, 60 s.
+
+**Mesuré le 15/11/2026** (parcours strictement cliqué, session expirée au départ, géolocalisation refusée) :
+**11 gestes au total, dont 3 d'authentification, soit 8 gestes de signalement** — borne haute de la
+cible. Étapes observées : Photo → Lieu → Problème → reçu, soit 3 étapes et 1 reçu. Aucune photo
+jointe (mode dégradé déclaré), un dossier créé : `sig-66b08161-4c48-4467-84cb-a202cbef671c`, statut
+`NOUVEAU`. Durée non instrumentée à ce jour (voir §12).
+
+Deux gestes couvrent la même intention quand la géolocalisation est refusée : « Utiliser le centre
+du quartier » puis « Quartier ». Les fusionner ramènerait à 7 gestes ; non fait ici, car la décision
+d'utiliser une position approximative mérite d'être explicite tant que l'usager ne l'a pas comprise.
 **Hors périmètre assumé** : pas de pré-sélection de catégorie par l'IA (`Z-04`) ; la suggestion arrive
 après l'envoi et ne rallonge pas le parcours.
 
@@ -152,7 +162,7 @@ n'est pas construit.
 
 | Cible | Comment on la vérifie |
 |---|---|
-| Signaler en ≤ 3 écrans et ≤ 60 s | chronométrage du parcours sur mobile réel, consigné ici |
+| Signaler en ≤ 3 écrans et ≤ 60 s | 3 étapes + 1 reçu **mesurés** au navigateur le 15/11/2026 ; 8 gestes de signalement (cible 6-8, borne haute) ; **durée non mesurée** : l'outillage de pilotage ne fournit ni horodatage fin ni exécution de script dans la page → reste à faire au chronomètre sur mobile réel |
 | Clôture agent en ≤ 2 gestes + 1 photo | comptage des interactions du test de bout en bout |
 | Validation superviseur en ≤ 3 gestes | comptage |
 | Bundle initial < 1 Mo (ENF02) | `bun run build`, taille du chunk d'entrée |
