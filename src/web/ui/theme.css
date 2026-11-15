@@ -1222,3 +1222,97 @@ a:hover {
   }
 }
 
+
+/* ——— Pagination ———
+   Une liste longue se découpe ; le lecteur doit savoir où il est et combien il reste. */
+.ui-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.ui-pagination-bornes {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ui-texte-attenue);
+}
+
+.ui-pagination-pages {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ui-pagination-numero,
+.ui-pagination-fleche {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 10px;
+  border: 1px solid var(--ui-bordure);
+  border-radius: 9999px;
+  background: var(--ui-surface);
+  color: var(--ui-texte);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color var(--ui-duree-rapide) var(--ui-courbe),
+    border-color var(--ui-duree-rapide) var(--ui-courbe), color var(--ui-duree-rapide) var(--ui-courbe);
+}
+
+.ui-pagination-numero:hover:not([aria-current="page"]),
+.ui-pagination-fleche:hover:not(:disabled) {
+  border-color: var(--ui-primaire);
+  color: var(--ui-primaire);
+}
+
+.ui-pagination-numero[aria-current="page"] {
+  background: var(--ui-primaire);
+  border-color: var(--ui-primaire);
+  color: var(--ui-sur-primaire);
+}
+
+.ui-pagination-fleche:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.ui-pagination-vide {
+  padding: 0 2px;
+  color: var(--ui-texte-attenue);
+}
+
+/* ——— Disposition : une colonne ou une grille ———
+   La règle dépend de la densité de l'objet, jamais du hasard :
+   - carte riche (photo, description, puces) → une colonne, pleine largeur ;
+   - objet court (libellé + valeur + état) → grille de deux colonnes dès 1100 px.
+   En dessous de 1100 px, tout repasse en une colonne : la largeur de lecture prime. */
+.ui-grille-objets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
+}
+
+@media (min-width: 1100px) {
+  .ui-grille-objets {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* En-tête de bloc secondaire : même couleur que le reste, jamais une teinte figée. */
+.ui-section-titre {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ui-texte);
+}

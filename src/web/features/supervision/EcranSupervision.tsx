@@ -6,6 +6,7 @@ import { CarteSignalement } from "../../ui/CarteSignalement.tsx";
 import { EnTeteVue } from "../../ui/EnTeteVue.tsx";
 import { EtatChargement } from "../../ui/EtatChargement.tsx";
 import { EtatErreur } from "../../ui/EtatErreur.tsx";
+import { Modale } from "../../ui/Modale.tsx";
 import { ESPACEMENT, TAILLE_TEXTE } from "../../ui/jetons.ts";
 import type { ClientApi, ErreurApi, SignalementApi } from "../../api/client.ts";
 import { FormulaireDecision } from "./FormulaireDecision.tsx";
@@ -183,7 +184,14 @@ export function EcranSupervision(proprietes: ProprietesEcranSupervision): ReactN
       ) : null}
 
       {dossierOuvert ? (
-        <article style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
+        <Modale
+          ouverte
+          pleineLargeur
+          titre={`Décider du dossier ${dossierOuvert.id_signalement}`}
+          libelleFermeture="Fermer la décision"
+          onFermer={() => setOuvert(null)}
+        >
+          <article style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
           <CarteSignalement
             id={dossierOuvert.id_signalement}
             statut={dossierOuvert.statut}
@@ -211,7 +219,8 @@ export function EcranSupervision(proprietes: ProprietesEcranSupervision): ReactN
           <Bouton variante="texte" onClick={() => setOuvert(null)}>
             Revenir à la file
           </Bouton>
-        </article>
+          </article>
+        </Modale>
       ) : (
         <ListeSupervision file={file} maintenantIso={proprietes.maintenantIso} onOuvrir={setOuvert} />
       )}

@@ -165,6 +165,36 @@ deux lignes, quartier, âge relatif. L'identité de l'auteur n'apparaît jamais 
 **`IndicateurKPI`** — un chiffre, une unité, une période, et la formule en info-bulle. Si la valeur est
 `null` : « non mesurable », le motif en dessous, aucune barre tracée.
 
+### 3.2 Disposition des listes et pagination
+
+Une page suit la hiérarchie de découverte : donnée globale, puis liste, puis état de chaque objet,
+puis détail. Ce chapitre fixe comment la liste s''occupe l''écran.
+
+**Colonne ou grille — la règle dépend de la densité de l''objet, jamais du goût :**
+
+| Objet | Disposition | Seuil |
+|---|---|---|
+| Carte riche (photo, description, puces, action) | une colonne, pleine largeur | toujours |
+| Objet court (intitulé + valeur + état) | une colonne | < 1100 px |
+| Objet court | grille de 2 colonnes | ≥ 1100 px |
+
+En dessous de 1100 px, tout repasse en une colonne : la largeur de lecture prime sur la densité.
+La classe `ui-grille-objets` porte cette règle ; un écran ne réécrit pas de `grid-template` local.
+
+**Pagination :**
+
+- 8 objets par page pour les listes de service (`TAILLE_PAGE`).
+- Le compteur « 9–16 sur 23 » est obligatoire : sans lui, le lecteur ne sait pas où il est.
+- Numéros de page en boutons de 44 px minimum ; la fenêtre montre au plus 5 numéros.
+- Une page hors bornes est ramenée dans la liste : jamais une page vide après un filtre.
+- Une recherche ou un changement de facette ramène à la page 1.
+
+**Détail :**
+
+- Le détail d''un objet s''ouvre dans une **modale**, jamais dans un dépliant sous la ligne :
+  il prend le focus, la liste reste intacte derrière, et la fermeture ramène à l''objet d''origine.
+- Une modale porte toujours un titre, une fermeture par bouton et par Échap.
+- Sur mobile, la modale occupe la largeur disponible (`pleineLargeur`) et défile à l''intérieur.
 ## 4. Accessibilité et mobile — contraintes de conception
 
 | Contrainte | Règle | Vérification |
@@ -203,3 +233,4 @@ Un composant ajouté après coup repasse par ce document : pas de style « local
 | Nouveau composant | ligne dans la matrice §3 avec ses huit états, ou il n'entre pas |
 | Modification d'une couleur | relancer `verifier-contrastes.mjs`, ratio consigné dans le tableau |
 | Contrainte non tenable | nouvel ADR ; ce document n'est pas amendé en silence |
+

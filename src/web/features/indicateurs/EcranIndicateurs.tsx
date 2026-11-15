@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react";
-import { ChartColumn } from "lucide-react";
+import { ChartColumn, CircleDot } from "lucide-react";
+import { PucesEtat } from "../../ui/PucesEtat.tsx";
 import { FormulaireSession } from "../compte/FormulaireSession.tsx";
 import { Bouton } from "../../ui/Bouton.tsx";
 import { EnTeteVue } from "../../ui/EnTeteVue.tsx";
@@ -125,16 +126,20 @@ export function EcranIndicateurs(proprietes: ProprietesEcranIndicateurs): ReactN
 
       <ListeIndicateurs lignes={lignes} />
 
-      <h2 style={{ margin: 0, fontSize: TAILLE_TEXTE.lg, color: "inherit" }}>Dossiers par statut</h2>
-      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "inherit" }}>
-        {volumes.map((volume) => `${libelleStatutIndicateur(volume.statut)} : ${volume.nombre}`).join(" · ")}
-      </p>
+      <h2 className="ui-section-titre">Dossiers par statut</h2>
+      <PucesEtat
+        etiquette="Volumes par statut"
+        puces={volumes.map((volume) => ({
+          icone: CircleDot,
+          libelle: `${libelleStatutIndicateur(volume.statut)} ${volume.nombre}`,
+          ton: "statut" as const,
+          aide: `Dossiers au statut ${libelleStatutIndicateur(volume.statut)} sur la période, servis par le serveur.`,
+        }))}
+      />
 
       {synthese.indisponibles.length > 0 ? (
         <>
-          <h2 style={{ margin: 0, fontSize: TAILLE_TEXTE.lg, color: "inherit" }}>
-            Indicateurs non mesurables, et pourquoi
-          </h2>
+          <h2 className="ui-section-titre">Indicateurs non mesurables, et pourquoi</h2>
           <ul style={{ margin: 0, paddingLeft: ESPACEMENT.e4, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>
             {synthese.indisponibles.map((motif) => (
               <li key={motif}>{motif}</li>

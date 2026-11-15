@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { compterPar, correspond, filtrerParTexte, normaliser, trierPar } from "./liste.ts";
+import { bornesPage, compterPar, correspond, filtrerParTexte, nombreDePages, normaliser, paginer, trierPar } from "./liste.ts";
 
 describe("liste — niveau 2 de la hiérarchie de découverte", () => {
   test("la recherche ignore casse et accents dans les deux sens", () => {
@@ -35,5 +35,29 @@ describe("liste — niveau 2 de la hiérarchie de découverte", () => {
     expect(trierPar(elements, (e) => e.rang).map((e) => e.nom)).toEqual(["a", "b", "c"]);
     expect(trierPar(elements, (e) => e.rang, "descendant").map((e) => e.nom)).toEqual(["b", "c", "a"]);
     expect(trierPar(elements, (e) => e.nom).map((e) => e.nom)).toEqual(["a", "b", "c"]);
+  });
+});
+
+describe("pagination — niveau 2, liste longue découpée", () => {
+  const elements = Array.from({ length: 23 }, (_, index) => index + 1);
+
+  test("une page découpe sans perdre ni répéter un élément", () => {
+    expect(paginer(elements, 1, 8)).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
+    expect(paginer(elements, 2, 8)).toEqual([9, 10, 11, 12, 13, 14, 15, 16]);
+    expect(paginer(elements, 3, 8)).toEqual([17, 18, 19, 20, 21, 22, 23]);
+  });
+
+  test("une page hors bornes est ramenée dans la liste, jamais une page vide", () => {
+    expect(paginer(elements, 9, 8)).toEqual([17, 18, 19, 20, 21, 22, 23]);
+    expect(paginer(elements, 0, 8)).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
+    expect(paginer([], 3, 8)).toEqual([]);
+  });
+
+  test("les bornes affichées disent ce qui est visible et sur quoi", () => {
+    expect(nombreDePages(23, 8)).toBe(3);
+    expect(nombreDePages(0, 8)).toBe(1);
+    expect(bornesPage(1, 23, 8)).toEqual({ debut: 1, fin: 8 });
+    expect(bornesPage(3, 23, 8)).toEqual({ debut: 17, fin: 23 });
+    expect(bornesPage(1, 0, 8)).toEqual({ debut: 0, fin: 0 });
   });
 });

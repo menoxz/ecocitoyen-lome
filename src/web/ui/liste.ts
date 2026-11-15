@@ -70,3 +70,31 @@ export function trierPar<T>(
     return String(va).localeCompare(String(vb), "fr") * facteur;
   });
 }
+
+/** Pages : taille par défaut d'une liste d'objets de service. */
+export const TAILLE_PAGE = 8;
+
+/**
+ * Pagination d'une liste côté affichage : on ne rend qu'une page, mais le total reste celui de la
+ * collection reçue. La page demandée est ramenée dans les bornes — une recherche qui réduit la
+ * liste ne doit pas laisser l'utilisateur sur une page vide.
+ */
+export function paginer<T>(elements: readonly T[], page: number, taille: number = TAILLE_PAGE): readonly T[] {
+  const bornee = Math.max(1, Math.min(page, nombreDePages(elements.length, taille)));
+  const debut = (bornee - 1) * taille;
+  return elements.slice(debut, debut + taille);
+}
+
+export function nombreDePages(total: number, taille: number = TAILLE_PAGE): number {
+  return Math.max(1, Math.ceil(total / taille));
+}
+
+/** Bornes affichables : « 9–16 sur 23 ». */
+export function bornesPage(page: number, total: number, taille: number = TAILLE_PAGE): { debut: number; fin: number } {
+  if (total === 0) {
+    return { debut: 0, fin: 0 };
+  }
+  const bornee = Math.max(1, Math.min(page, nombreDePages(total, taille)));
+  const debut = (bornee - 1) * taille + 1;
+  return { debut, fin: Math.min(total, debut + taille - 1) };
+}
