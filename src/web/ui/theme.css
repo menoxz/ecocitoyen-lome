@@ -1844,18 +1844,4 @@ a:focus-visible {
 
 
 
-/* Deuxième chemin d'ouverture, pour comparer avec la case. */
-.ui-photo-actions {
-  grid-column: 1 / -1;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-  padding-top: 4px;
-}
 
-.ui-photo-journal {
-  margin: 0;
-  font-size: 11px;
-  color: var(--ui-texte-attenue);
-}

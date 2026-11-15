@@ -1,23 +1,18 @@
-import { useRef, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { ImagePlus, Trash2 } from "lucide-react";
-import { Bouton } from "./Bouton.tsx";
 import { Icone } from "./Icone.tsx";
 import { CLASSES, ESPACEMENT, TAILLE_TEXTE } from "./jetons.ts";
 
 /**
- * Grille de dépôt de photos, avec deux chemins d'ouverture volontairement différents.
+ * Grille de dépôt de photos — l'image parle avant le texte.
  *
- * Le sélecteur ne s'ouvrait pas au clic sur une case alors que le glisser-déposer fonctionnait.
- * Quatre montages ont été essayés sans preuve concluante. Plutôt que d'en tenter un cinquième à
- * l'aveugle, deux voies coexistent et se comparent :
+ * Le contrôle fichier est **natif et visible** dans chaque case vide : c'est le navigateur qui
+ * ouvre son sélecteur, sans script intermédiaire. Le glisser-déposer reste actif sur la grille.
  *
- *   1. la case contient un `<input type="file">` **visible** — ouverture par comportement natif ;
- *   2. un bouton « Choisir un fichier » ouvre un input masqué par `ref.click()` — ouverture
- *      programmatique.
- *
- * Le compteur « ouvertures » dit laquelle des deux voies réagit. Si seule la seconde répond, le
- * défaut est dans la case (recouvrement, `pointer-events`, empilement) ; si aucune ne répond, le
- * navigateur bloque l'ouverture et c'est le glisser-déposer qui reste la voie d'ajout.
+ * Historique utile : quatre montages ont échoué (label implicite, `ref.click()`, input transparent
+ * superposé, `showPicker()`) et un second bouton de diagnostic avait été ajouté pour isoler la
+ * cause. Il s'est avéré que le défaut venait de l'onglet du navigateur, pas du composant : le
+ * bouton de diagnostic a été retiré, l'input natif est resté.
  */
 export interface PhotoGrille {
   readonly id: string;
@@ -36,8 +31,6 @@ export interface ProprietesGrillePhotos {
 
 export function GrillePhotos(proprietes: ProprietesGrillePhotos): ReactNode {
   const [survol, setSurvol] = useState(false);
-  const [ouvertures, setOuvertures] = useState({ case: 0, bouton: 0 });
-  const champBouton = useRef<HTMLInputElement | null>(null);
   const restantes = Math.max(0, proprietes.maximum - proprietes.photos.length);
   const libre = proprietes.desactive !== true && restantes > 0;
 
@@ -119,7 +112,6 @@ export function GrillePhotos(proprietes: ProprietesGrillePhotos): ReactNode {
               multiple={restantes > 1}
               disabled={!libre}
               aria-label={`Choisir une photo, emplacement ${index + 1}`}
-              onClick={() => setOuvertures((precedent) => ({ ...precedent, case: precedent.case + 1 }))}
               onChange={(evenement) => {
                 prendre(evenement.currentTarget.files);
                 evenement.currentTarget.value = "";
@@ -136,39 +128,19 @@ export function GrillePhotos(proprietes: ProprietesGrillePhotos): ReactNode {
       ) : null}
 
       {proprietes.erreur ? (
-        <p role="alert" style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-erreur)", gridColumn: "1 / -1" }}>
+        <p
+          role="alert"
+          style={{
+            margin: 0,
+            fontSize: TAILLE_TEXTE.sm,
+            color: "var(--ui-erreur)",
+            gridColumn: "1 / -1",
+            padding: `0 ${ESPACEMENT.e1}px`,
+          }}
+        >
           {proprietes.erreur}
         </p>
       ) : null}
-
-      <div className="ui-photo-actions">
-        <input
-          ref={champBouton}
-          type="file"
-          className="ui-sr-only"
-          accept="image/jpeg,image/png,image/webp"
-          multiple={restantes > 1}
-          tabIndex={-1}
-          aria-hidden="true"
-          onChange={(evenement) => {
-            prendre(evenement.currentTarget.files);
-            evenement.currentTarget.value = "";
-          }}
-        />
-        <Bouton
-          variante="secondaire"
-          desactive={!libre}
-          onClick={() => {
-            setOuvertures((precedent) => ({ ...precedent, bouton: precedent.bouton + 1 }));
-            champBouton.current?.click();
-          }}
-        >
-          Choisir un fichier…
-        </Bouton>
-        <p className="ui-photo-journal" role="status">
-          Ouvertures demandées — case : {ouvertures.case} · bouton : {ouvertures.bouton}
-        </p>
-      </div>
 
       <p className={CLASSES.visuellementCache} aria-live="polite">
         {proprietes.photos.length} photo(s) sur {proprietes.maximum}.

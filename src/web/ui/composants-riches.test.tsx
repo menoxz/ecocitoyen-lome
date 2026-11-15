@@ -98,9 +98,10 @@ describe("ZoneDepotPhoto", () => {
     expect(html).toContain('data-site="photo-1"');
     expect(html).toContain('data-site="photo-2"');
     expect(html).toContain('data-site="photo-3"');
-    // Le contrôle natif est visible dans chaque case, et un second chemin existe par bouton.
-    expect((html.match(/type="file"/g) ?? []).length).toBeGreaterThanOrEqual(3);
-    expect(html).toContain("Choisir un fichier");
+    // Le contrôle fichier natif est visible dans chaque case : trois champs, aucun bouton relais.
+    expect((html.match(/type="file"/g) ?? []).length).toBe(3);
+    expect(html).toContain('aria-label="Choisir une photo, emplacement 1"');
+    expect(html).not.toContain("Choisir un fichier");
     expect(html).toContain("Ajouter une photo");
     expect(html).toContain("Je ne peux pas photographier");
     expect(html).toContain("JPEG, PNG ou WebP");
@@ -220,6 +221,7 @@ describe("FilParcours", () => {
     expect((html.match(/data-etat="faite"/g) ?? []).length).toBe(1);
   });
 });
+
 
 
 
