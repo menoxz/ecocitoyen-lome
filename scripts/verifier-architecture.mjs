@@ -52,7 +52,7 @@ const EXTERNES = {
   domaine: [],
   ports: [],
   application: [],
-  infrastructure: ['better-sqlite3', 'argon2', '@google/genai', 'dotenv'],
+  infrastructure: ['better-sqlite3', 'argon2', 'sharp', '@google/genai', 'dotenv'],
   interface: ['express', 'cookie-parser'],
   web: ['react', 'react-dom', 'leaflet', 'lucide-react', 'motion'],
 };

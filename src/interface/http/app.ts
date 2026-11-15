@@ -6,6 +6,7 @@ import { routesReferentiel } from "./routes/referentiel.routes.ts";
 import { routesSignalements } from "./routes/signalements.routes.ts";
 import { routesInterventions } from "./routes/interventions.routes.ts";
 import { routesNotifications } from "./routes/notifications.routes.ts";
+import { routesIa } from "./routes/ia.routes.ts";
 import type { Dependances } from "@application/dependances.type.ts";
 
 /**
@@ -38,6 +39,7 @@ export function creerApp(deps: Dependances, options: { readonly production?: boo
   app.use("/api/v1/signalements", routesSignalements(deps));
   app.use("/api/v1/signalements", routesInterventions(deps));
   app.use("/api/v1/notifications", routesNotifications(deps));
+  app.use("/api/v1/ia", routesIa(deps));
 
   app.use((_req, res) => {
     res.status(404).json({ code: "RESSOURCE_INTROUVABLE", message: "Route inconnue." });

@@ -8,6 +8,9 @@ import type { Identifiants } from "@ports/identifiants.port.ts";
 import type { Journal } from "@ports/journal.port.ts";
 import type { LimiteDebit } from "@ports/limite-debit.port.ts";
 import type { Notificateur } from "@ports/notificateur.port.ts";
+import type { ClassificateurIA } from "@ports/classificateur-ia.port.ts";
+import type { DepotTravaux } from "@ports/depot-travaux.port.ts";
+import type { StockagePhotos } from "@ports/stockage-photos.port.ts";
 
 /**
  * Tout ce dont un cas d''usage a besoin, fourni par la composition root.
@@ -23,6 +26,9 @@ export interface Dependances {
   readonly journal: Journal;
   readonly debit: LimiteDebit;
   readonly notifications: Notificateur;
+  readonly stockagePhotos: StockagePhotos;
+  readonly classificateur: ClassificateurIA;
+  readonly travaux: DepotTravaux;
   readonly hachage: Hachage;
   readonly jetons: EmpreinteJeton;
   readonly identifiants: Identifiants;

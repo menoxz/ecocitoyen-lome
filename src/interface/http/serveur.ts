@@ -9,6 +9,10 @@ import { creerDepotReferentiel } from "@infrastructure/sqlite/depot-referentiel.
 import { creerDepotSessions } from "@infrastructure/sqlite/depot-sessions.sqlite.ts";
 import { creerJournalSqlite } from "@infrastructure/journal/journal-sqlite.ts";
 import { creerNotificateurSqlite } from "@infrastructure/notifications/notificateur-sqlite.ts";
+import { creerDepotTravaux } from "@infrastructure/sqlite/depot-travaux.sqlite.ts";
+import { creerStockageDisque } from "@infrastructure/photos/stockage-disque.ts";
+import { creerClassificateurGemini } from "@infrastructure/gemini/classificateur-gemini.ts";
+import { creerClassificateurSimulation } from "@infrastructure/gemini/classificateur-simulation.ts";
 import { creerLimiteDebitSqlite } from "@infrastructure/limite-debit/limite-sqlite.ts";
 import { creerHachageArgon2, creerEmpreinteJeton } from "@infrastructure/hachage/argon2.ts";
 import { creerHorlogeSysteme } from "@infrastructure/horloge/horloge-systeme.ts";
@@ -24,6 +28,9 @@ import type { Dependances } from "@application/dependances.type.ts";
 export function assembler(cheminBase: string, modeDemo: boolean): { app: ReturnType<typeof creerApp>; base: Base } {
   const base = preparerBase({ chemin: cheminBase });
   const horloge = creerHorlogeSysteme();
+  const identifiants = creerIdentifiantsUuid();
+  const dossierPhotos = process.env.DOSSIER_PHOTOS ?? "data/photos";
+  const cleIa = process.env.GEMINI_API_KEY;
 
   if (modeDemo) {
     seedDemonstration(base, horloge.maintenant());
@@ -37,9 +44,12 @@ export function assembler(cheminBase: string, modeDemo: boolean): { app: ReturnT
     journal: creerJournalSqlite(base),
     debit: creerLimiteDebitSqlite(base),
     notifications: creerNotificateurSqlite(base),
+    stockagePhotos: creerStockageDisque(dossierPhotos, identifiants, horloge),
+    classificateur: cleIa ? creerClassificateurGemini(cleIa) : creerClassificateurSimulation(),
+    travaux: creerDepotTravaux(base),
     hachage: creerHachageArgon2(),
     jetons: creerEmpreinteJeton(),
-    identifiants: creerIdentifiantsUuid(),
+    identifiants,
     horloge,
   };
 

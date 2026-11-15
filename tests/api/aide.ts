@@ -5,6 +5,12 @@ import { creerDepotReferentiel } from "@infrastructure/sqlite/depot-referentiel.
 import { creerDepotSessions } from "@infrastructure/sqlite/depot-sessions.sqlite.ts";
 import { creerJournalSqlite } from "@infrastructure/journal/journal-sqlite.ts";
 import { creerNotificateurSqlite } from "@infrastructure/notifications/notificateur-sqlite.ts";
+import { creerDepotTravaux } from "@infrastructure/sqlite/depot-travaux.sqlite.ts";
+import { creerStockageDisque } from "@infrastructure/photos/stockage-disque.ts";
+import { creerClassificateurSimulation } from "@infrastructure/gemini/classificateur-simulation.ts";
+import { mkdtempSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { creerLimiteDebitSqlite } from "@infrastructure/limite-debit/limite-sqlite.ts";
 import { creerHachageArgon2, creerEmpreinteJeton } from "@infrastructure/hachage/argon2.ts";
 import { creerHorlogeFixe } from "@infrastructure/horloge/horloge-fixe.ts";
@@ -50,6 +56,9 @@ export async function demarrerBanc(options: { readonly avecSeed?: boolean } = {}
     journal: creerJournalSqlite(base),
     debit: creerLimiteDebitSqlite(base),
     notifications: creerNotificateurSqlite(base),
+    stockagePhotos: creerStockageDisque(mkdtempSync(join(tmpdir(), "eco-banc-photos-")), creerIdentifiantsUuid(), horloge),
+    classificateur: creerClassificateurSimulation(),
+    travaux: creerDepotTravaux(base),
     hachage: creerHachageArgon2(),
     jetons: creerEmpreinteJeton(),
     identifiants: creerIdentifiantsUuid(),
