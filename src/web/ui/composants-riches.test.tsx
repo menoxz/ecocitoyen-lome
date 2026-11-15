@@ -91,10 +91,14 @@ describe("ageRelatif", () => {
 });
 
 describe("ZoneDepotPhoto", () => {
-  test("vide : invite explicite + issue de secours pour le mode dégradé", () => {
+  test("vide : trois emplacements dessinés, invite explicite et issue de secours", () => {
     const html = rendu(<ZoneDepotPhoto photos={[]} onDeclarerSansPhoto={() => {}} />);
 
-    expect(html).toContain("Aucune photo pour le moment");
+    // L'absence de photo est montrée par la grille, pas décrite par une phrase.
+    expect(html).toContain('data-site="photo-1"');
+    expect(html).toContain('data-site="photo-2"');
+    expect(html).toContain('data-site="photo-3"');
+    expect(html).toContain("Cliquez ou déposez ici");
     expect(html).toContain("Ajouter une photo");
     expect(html).toContain("Je ne peux pas photographier");
     expect(html).toContain("JPEG, PNG ou WebP");
@@ -111,7 +115,8 @@ describe("ZoneDepotPhoto", () => {
 
     expect(html).toContain(`(3/${PHOTOS_MAX})`);
     expect(html).toContain("Maximum de 3 photos atteint");
-    expect(html).toContain("disabled");
+    // Aucun emplacement libre : la grille n offre plus de cible d ajout du tout.
+    expect(html).not.toContain("data-site");
     expect(html).toContain("Retirer la photo photo-2.jpg");
   });
 
@@ -209,3 +214,5 @@ describe("FilParcours", () => {
     expect(html).toContain("✓");
   });
 });
+
+

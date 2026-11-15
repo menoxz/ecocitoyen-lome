@@ -1,14 +1,14 @@
 import { useState, type ReactNode } from "react";
 import { Bouton } from "../../ui/Bouton.tsx";
-import { ChampSelect, type OptionSelect } from "../../ui/ChampSelect.tsx";
-import { ChampTexte } from "../../ui/ChampTexte.tsx";
-import { ChampZoneTexte } from "../../ui/ChampZoneTexte.tsx";
-import { EtatErreur } from "../../ui/EtatErreur.tsx";
-import { RecuSignalement } from "./RecuSignalement.tsx";
 import { FilParcours } from "../../ui/FilParcours.tsx";
+import { EtatErreur } from "../../ui/EtatErreur.tsx";
 import { ZoneDepotPhoto, type PhotoChoisie } from "../../ui/ZoneDepotPhoto.tsx";
 import { ESPACEMENT, TAILLE_TEXTE } from "../../ui/jetons.ts";
+import type { OptionSelect } from "../../ui/ChampSelect.tsx";
 import type { ErreurApi, Resultat, SignalementApi } from "../../api/client.ts";
+import { RecuSignalement } from "./RecuSignalement.tsx";
+import { EtapeLieu } from "./EtapeLieu.tsx";
+import { EtapeProbleme } from "./EtapeProbleme.tsx";
 import {
   BROUILLON_INITIAL,
   ETAPES,
@@ -23,23 +23,29 @@ import {
 /**
  * Assistant de signalement (parcours 1) — trois étapes et un reçu, conformément à PARCOURS.md §3.
  *
- * Le composant est piloté : il ne fait aucun appel réseau lui-même. `envoyer` et les référentiels
- * sont fournis par l''écran, ce qui rend chaque étape testable en rendu serveur et le composant
- * indépendant du transport.
+ * Les étapes, la section à remplir et le bouton forment **une seule carte** : le fil d'étapes en
+ * tête, le contenu au milieu, le bouton « Continuer » dans le pied de la carte. Le bouton reste
+ * donc visible et fait partie du bloc qu'il valide, au lieu de flotter sous le contenu.
  *
- * Aucune règle métier : la validation de progression est dans `etapes.ts`, les refus définitifs
- * viennent du serveur et sont affichés avec leur code.
+ * Le composant est piloté : il ne fait aucun appel réseau lui-même. `envoyer` et les référentiels
+ * sont fournis par l'écran. Aucune règle métier : la progression est décidée dans `etapes.ts`.
  */
 export interface ProprietesAssistant {
   readonly categories: readonly OptionSelect[];
   readonly quartiers: readonly OptionSelect[];
-  readonly envoyer: (demande: ReturnType<typeof construireDemande>, photos: readonly PhotoChoisie[]) => Promise<Resultat<{ signalement: SignalementApi }>>;
+  readonly envoyer: (
+    demande: ReturnType<typeof construireDemande>,
+    photos: readonly PhotoChoisie[],
+  ) => Promise<Resultat<{ signalement: SignalementApi }>>;
   readonly etapeInitiale?: CleEtape;
   readonly positionInitiale?: { readonly latitude: number; readonly longitude: number } | null;
   readonly centres?: CentresQuartiers;
   readonly onOuvrirDossier?: (idSignalement: string) => void;
   readonly onTerminer?: () => void;
 }
+
+/** Identité locale d'une photo choisie : l'aperçu est une URL d'objet, libérée au retrait. */
+let compteurPhoto = 0;
 
 export function AssistantSignalement(proprietes: ProprietesAssistant): ReactNode {
   const [etape, setEtape] = useState<CleEtape>(proprietes.etapeInitiale ?? "preuve");
@@ -53,6 +59,34 @@ export function AssistantSignalement(proprietes: ProprietesAssistant): ReactNode
   const [recu, setRecu] = useState<SignalementApi | null>(null);
 
   const maj = (partiel: Partial<Brouillon>): void => setBrouillon((precedent) => ({ ...precedent, ...partiel }));
+
+  /** Ajout réel : les fichiers choisis deviennent des photos du brouillon, aperçu compris. */
+  const ajouterPhotos = (fichiers: readonly File[]): void => {
+    const maximum = 3;
+    const restantes = maximum - brouillon.photos.length;
+    const retenues = fichiers.slice(0, Math.max(0, restantes)).map((fichier) => {
+      compteurPhoto += 1;
+      return {
+        id: `photo-${compteurPhoto}`,
+        nom: fichier.name,
+        urlApercu: typeof URL !== "undefined" && "createObjectURL" in URL ? URL.createObjectURL(fichier) : undefined,
+        octets: fichier,
+        typeMime: fichier.type || "image/jpeg",
+      };
+    });
+    if (retenues.length > 0) {
+      maj({ photos: [...brouillon.photos, ...retenues], sansPhoto: false });
+      setErreurProgression(null);
+    }
+  };
+
+  const retirerPhoto = (id: string): void => {
+    const visee = (brouillon.photos as readonly PhotoChoisie[]).find((photo) => photo.id === id);
+    if (visee?.urlApercu && typeof URL !== "undefined" && "revokeObjectURL" in URL) {
+      URL.revokeObjectURL(visee.urlApercu);
+    }
+    maj({ photos: brouillon.photos.filter((photo) => photo.id !== id) });
+  };
 
   const avancer = async (): Promise<void> => {
     const decision = peutAvancer(etape, brouillon);
@@ -94,91 +128,50 @@ export function AssistantSignalement(proprietes: ProprietesAssistant): ReactNode
       />
     );
   }
+
+  const dernier = etape === "probleme";
+
   return (
-    <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e4 }}>
-      <FilParcours etapes={ETAPES} courante={etape} />
-
-      {etape === "preuve" ? (
-        <ZoneDepotPhoto
-          photos={brouillon.photos as readonly PhotoChoisie[]}
-          sansPhoto={brouillon.sansPhoto}
-          onDeclarerSansPhoto={() => maj({ sansPhoto: true, photos: [] })}
-          onRetirer={(id) => maj({ photos: brouillon.photos.filter((photo) => photo.id !== id) })}
-        />
-      ) : null}
-
-      {etape === "lieu" ? (
-        <div style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
-          <p style={{ margin: 0, fontSize: TAILLE_TEXTE.md, color: "inherit" }}>
-            {brouillon.position
-              ? `Position enregistrée : ${brouillon.position.latitude.toFixed(4)}, ${brouillon.position.longitude.toFixed(4)}`
-              : brouillon.positionManuelle
-                ? "Position approximative : le centre du quartier choisi sera transmis au service."
-                : "Aucune position pour le moment : activez la localisation, ou situez le problème au centre de son quartier."}
-          </p>
-
-          {!brouillon.position && !brouillon.positionManuelle ? (
-            <Bouton variante="secondaire" onClick={() => maj({ positionManuelle: true })}>
-              Utiliser le centre du quartier
-            </Bouton>
-          ) : null}
-          <ChampSelect
-            id="quartier"
-            libelle="Quartier"
-            valeur={brouillon.idQuartier}
-            options={proprietes.quartiers}
-            onChange={(valeur) => maj({ idQuartier: valeur })}
-            texteVide="Choisir un quartier…"
-            aide="Le quartier détermine l équipe qui sera envoyée."
-            requis
-          />
-          <ChampTexte
-            id="repere"
-            libelle="Repère (facultatif)"
-            valeur={brouillon.repere}
-            onChange={(valeur) => maj({ repere: valeur })}
-            exemple="Devant la pharmacie, à côté du marché"
-            aide="Un repère connu aide l équipe à trouver le problème."
-          />
-        </div>
-      ) : null}
-
-      {etape === "probleme" ? (
-        <div style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
-          <ChampSelect
-            id="categorie"
-            libelle="Catégorie"
-            valeur={brouillon.idCategorie}
-            options={proprietes.categories}
-            onChange={(valeur) => maj({ idCategorie: valeur })}
-            texteVide="Choisir une catégorie…"
-            aide="Vous êtes le seul à voir le problème : c est vous qui savez de quoi il s agit."
-            requis
-          />
-          <ChampZoneTexte
-            id="description"
-            libelle="Description"
-            valeur={brouillon.description}
-            onChange={(valeur) => maj({ description: valeur })}
-            aide="Décrivez ce que vous voyez : quantité, odeur, risque pour les enfants."
-            requis
-          />
-        </div>
-      ) : null}
-
-      {erreurProgression ? (
-        <EtatErreur message={erreurProgression} code="PROGRESSION_BLOQUEE" />
-      ) : null}
-
-      {erreurServeur ? (
-        <EtatErreur message={erreurServeur.message} code={erreurServeur.code} />
-      ) : null}
-
-      <div style={{ display: "flex", gap: ESPACEMENT.e2 }}>
-        <Bouton variante="primaire" enChargement={envoiEnCours} onClick={() => void avancer()}>
-          {etape === "probleme" ? "Envoyer le signalement" : "Continuer"}
-        </Bouton>
+    <section className="ui-carte-etapes">
+      <div className="ui-carte-tete">
+        <FilParcours etapes={ETAPES} courante={etape} />
       </div>
+
+      <div className="ui-carte-corps">
+        {etape === "preuve" ? (
+          <ZoneDepotPhoto
+            photos={brouillon.photos as readonly PhotoChoisie[]}
+            sansPhoto={brouillon.sansPhoto}
+            onFichiers={ajouterPhotos}
+            onRetirer={retirerPhoto}
+            onDeclarerSansPhoto={() => maj({ sansPhoto: true, photos: [] })}
+          />
+        ) : null}
+
+        {etape === "lieu" ? <EtapeLieu brouillon={brouillon} quartiers={proprietes.quartiers} onMaj={maj} /> : null}
+
+        {etape === "probleme" ? (
+          <EtapeProbleme brouillon={brouillon} categories={proprietes.categories} onMaj={maj} />
+        ) : null}
+
+        {erreurProgression ? <EtatErreur message={erreurProgression} code="PROGRESSION_BLOQUEE" /> : null}
+        {erreurServeur ? <EtatErreur message={erreurServeur.message} code={erreurServeur.code} /> : null}
+      </div>
+
+      <footer className="ui-carte-pied">
+        <p className="ui-carte-pied-note">
+          {etape === "preuve" && brouillon.photos.length === 0 && !brouillon.sansPhoto
+            ? "Ajoutez une photo, ou déclarez que vous ne pouvez pas photographier."
+            : etape === "preuve"
+              ? "Vous pouvez avancer : le service vérifiera la photo."
+              : etape === "lieu"
+                ? "Le quartier détermine l équipe qui sera envoyée."
+                : "Vérifiez avant d envoyer : un signalement envoyé ne se modifie plus."}
+        </p>
+        <Bouton variante="primaire" enChargement={envoiEnCours} onClick={() => void avancer()}>
+          {dernier ? "Envoyer le signalement" : "Continuer"}
+        </Bouton>
+      </footer>
     </section>
   );
 }

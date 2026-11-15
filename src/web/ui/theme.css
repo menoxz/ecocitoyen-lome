@@ -1316,3 +1316,229 @@ a:hover {
   letter-spacing: -0.02em;
   color: var(--ui-texte);
 }
+
+/* ——— Carte d'étapes et pied d'action ———
+   Les étapes, la section à remplir et le bouton forment un seul bloc : le bouton « Continuer »
+   reste visible dans le pied de la carte, jamais flottant sous le contenu. */
+.ui-carte-etapes {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--ui-bordure-douce);
+  border-radius: var(--ui-rayon);
+  background: var(--ui-surface);
+  box-shadow: var(--ui-ombre-douce);
+  overflow: hidden;
+}
+
+.ui-carte-tete {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--ui-bordure-douce);
+  background: var(--ui-surface-douce);
+}
+
+.ui-carte-corps {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px 18px;
+}
+
+.ui-carte-pied {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  border-top: 1px solid var(--ui-bordure-douce);
+  background: var(--ui-surface-douce);
+}
+
+.ui-carte-pied-note {
+  margin: 0;
+  font-size: 13px;
+  color: var(--ui-texte-attenue);
+}
+
+/* ——— Grille de photos ———
+   Trois emplacements dessinés même vides : la cible est visible avant toute lecture. */
+.ui-grille-photos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: 10px;
+  padding: 6px;
+  border: 1px dashed transparent;
+  border-radius: var(--ui-rayon);
+  transition: border-color var(--ui-duree-rapide) var(--ui-courbe),
+    background-color var(--ui-duree-rapide) var(--ui-courbe);
+}
+
+.ui-grille-photos[data-survol="true"] {
+  border-color: var(--ui-primaire);
+  background: var(--ui-primaire-voile);
+}
+
+.ui-photo-case {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0;
+  /* Le format de l'emplacement est décidé ici, une fois : une case vide et une case remplie ont
+     exactement le même espace. La photo l'occupe, elle ne le redimensionne pas. */
+  aspect-ratio: 4 / 3;
+  min-height: 0;
+  padding: 10px;
+  border-radius: var(--ui-rayon-sm);
+  border: 1px dashed var(--ui-bordure);
+  background: var(--ui-fond);
+  color: var(--ui-texte-attenue);
+  text-align: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color var(--ui-duree-rapide) var(--ui-courbe),
+    background-color var(--ui-duree-rapide) var(--ui-courbe), color var(--ui-duree-rapide) var(--ui-courbe);
+}
+
+.ui-photo-case--vide:hover,
+.ui-photo-case--vide:focus-within {
+  border-color: var(--ui-primaire);
+  color: var(--ui-primaire);
+  background: var(--ui-primaire-voile);
+}
+
+.ui-photo-case--vide[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ui-photo-case--pleine {
+  border-style: solid;
+  border-color: var(--ui-bordure);
+  padding: 0;
+  background: var(--ui-surface);
+  cursor: default;
+}
+
+/* L'aperçu remplit l'emplacement créé, sans le déformer : `cover` recadre au centre plutôt que
+   d'étirer. Les trois cases gardent donc le même format, vides ou pleines. */
+.ui-photo-case--pleine {
+  padding: 0;
+  overflow: hidden;
+}
+
+.ui-photo-case--pleine img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 0;
+}
+
+/* Un aperçu qui ne se charge pas montre le nom du fichier au lieu d un carré vide : le repli est
+   masqué tant que l image s affiche, et révélé par le frère cassé (img ~ span). */
+.ui-photo-case-vide-texte[data-apercu-repli] {
+  display: none;
+}
+
+.ui-photo-case--pleine img[data-apercu-casse="true"] {
+  display: none;
+}
+
+.ui-photo-case--pleine img[data-apercu-casse="true"] ~ .ui-photo-case-vide-texte[data-apercu-repli] {
+  display: block;
+  position: absolute;
+  inset: 0;
+  padding: 10px;
+  font-size: 11px;
+  align-content: center;
+}
+
+.ui-photo-case-icone {
+  display: inline-flex;
+  color: var(--ui-accent);
+}
+
+.ui-photo-case-titre {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ui-texte);
+}
+
+.ui-photo-case-aide {
+  font-size: 11px;
+  color: var(--ui-texte-attenue);
+}
+
+.ui-photo-case-vide-texte {
+  font-size: 12px;
+  color: var(--ui-texte-attenue);
+  padding: 8px;
+  word-break: break-all;
+}
+
+.ui-photo-retirer {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 9999px;
+  background: var(--ui-surface);
+  color: var(--ui-erreur);
+  box-shadow: var(--ui-ombre-douce);
+  cursor: pointer;
+}
+
+/* Légende en bandeau bas, sur la zone la moins informative de la vignette. */
+.ui-photo-legende {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ui-sur-primaire);
+  background: color-mix(in srgb, var(--ui-primaire) 78%, transparent);
+  text-align: center;
+}
+
+.ui-grille-photos-depot {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ui-primaire);
+}
+
+/* Trois colonnes tenues jusqu à 360 px : trois vignettes côte à côte disent « trois photos »,
+   deux colonnes laisseraient une case orpheline sur la deuxième ligne. */
+@media (max-width: 520px) {
+  .ui-photo-case {
+    min-height: 92px;
+    padding: 6px;
+  }
+
+  .ui-photo-case-titre {
+    font-size: 11px;
+  }
+
+  .ui-photo-case-aide {
+    display: none;
+  }
+}
+
+
+
+
+

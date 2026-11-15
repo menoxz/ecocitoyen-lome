@@ -1,19 +1,20 @@
 import type { ReactNode } from "react";
 import { Bouton } from "./Bouton.tsx";
-import { ESPACEMENT, RAYON, TAILLE_TEXTE } from "./jetons.ts";
+import { GrillePhotos, type PhotoGrille } from "./GrillePhotos.tsx";
+import { ESPACEMENT, TAILLE_TEXTE } from "./jetons.ts";
 
 /**
- * Dépôt de photos — états couverts : vide (invite), avec photos, erreur de fichier, désactivé,
- * chargement, mode dégradé (sans photo), maximum atteint.
+ * Dépôt de photos — états couverts : vide (grille d'emplacements), avec photos, erreur de fichier,
+ * désactivé, chargement, mode dégradé (sans photo), maximum atteint.
  *
- * Trois photos au plus, 5 Mo par photo, JPEG/PNG/WebP : les limites sont annoncées avant le
- * choix du fichier, pas découvertes après un refus. Le message d''erreur affiché est celui du
- * serveur (`PHOTO_INVALIDE`, motif compris) — le client ne réécrit pas la raison.
+ * La zone ne décrit plus l'absence de photo par une phrase : elle dessine trois emplacements. Le
+ * texte reste, mais il explique ce qui est attendu, il ne remplace pas la cible.
+ *
+ * Trois photos au plus, 5 Mo par photo, JPEG/PNG/WebP : les limites sont annoncées avant le choix
+ * du fichier. Le message d'erreur affiché est celui du serveur (`PHOTO_INVALIDE`, motif compris) —
+ * le client ne réécrit pas la raison.
  */
-export interface PhotoChoisie {
-  readonly id: string;
-  readonly nom: string;
-  readonly urlApercu?: string;
+export interface PhotoChoisie extends PhotoGrille {
   /** Octets réels du fichier. Absents en rendu de démonstration, présents après un vrai choix. */
   readonly octets?: Blob;
   readonly typeMime?: string;
@@ -26,7 +27,7 @@ export interface ProprietesZoneDepotPhoto {
   readonly desactive?: boolean;
   readonly enChargement?: boolean;
   readonly sansPhoto?: boolean;
-  readonly onAjouter?: () => void;
+  readonly onFichiers?: (fichiers: readonly File[]) => void;
   readonly onRetirer?: (id: string) => void;
   readonly onDeclarerSansPhoto?: () => void;
 }
@@ -36,51 +37,27 @@ export const TAILLE_MAX_MO = 5;
 
 export function ZoneDepotPhoto(proprietes: ProprietesZoneDepotPhoto): ReactNode {
   const maximum = proprietes.maximum ?? PHOTOS_MAX;
-  const complet = proprietes.photos.length >= maximum;
-  const enErreur = typeof proprietes.erreur === "string" && proprietes.erreur.length > 0;
   const inactif = proprietes.desactive === true || proprietes.enChargement === true;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e2 }}>
-      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, fontWeight: 600, color: "inherit" }}>
-        Photos du problème ({proprietes.photos.length}/{maximum})
-      </p>
-      <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>
-        JPEG, PNG ou WebP · {TAILLE_MAX_MO} Mo maximum par photo · la première photo sert à la vérification.
-      </p>
-
-      {proprietes.photos.length === 0 && !proprietes.sansPhoto ? (
-        <p style={{ margin: 0, fontSize: TAILLE_TEXTE.md, color: "inherit" }}>
-          Aucune photo pour le moment : commencez par en ajouter une.
+    <div style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        <p style={{ margin: 0, fontSize: TAILLE_TEXTE.md, fontWeight: 700, color: "var(--ui-texte)" }}>
+          Photos du problème ({proprietes.photos.length}/{maximum})
         </p>
-      ) : null}
+        <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>
+          JPEG, PNG ou WebP · {TAILLE_MAX_MO} Mo maximum par photo · la première photo sert à la vérification.
+        </p>
+      </div>
 
-      <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexWrap: "wrap", gap: ESPACEMENT.e2 }}>
-        {proprietes.photos.map((photo) => (
-          <li
-            key={photo.id}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: ESPACEMENT.e1,
-              padding: ESPACEMENT.e1,
-              border: "1px solid var(--ui-bordure)",
-              borderRadius: RAYON.sm,
-            }}
-          >
-            <span style={{ fontSize: TAILLE_TEXTE.xs, color: "inherit" }}>{photo.nom}</span>
-            <Bouton
-              variante="texte"
-              taille="sm"
-              libelleAccessible={`Retirer la photo ${photo.nom}`}
-              desactive={inactif}
-              onClick={() => proprietes.onRetirer?.(photo.id)}
-            >
-              Retirer
-            </Bouton>
-          </li>
-        ))}
-      </ul>
+      <GrillePhotos
+        photos={proprietes.photos}
+        maximum={maximum}
+        desactive={inactif}
+        erreur={proprietes.erreur}
+        onFichiers={(fichiers) => proprietes.onFichiers?.(fichiers)}
+        onRetirer={(id) => proprietes.onRetirer?.(id)}
+      />
 
       {proprietes.sansPhoto === true ? (
         <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-alerte)" }}>
@@ -88,28 +65,19 @@ export function ZoneDepotPhoto(proprietes: ProprietesZoneDepotPhoto): ReactNode 
         </p>
       ) : null}
 
-      {enErreur ? (
-        <p role="alert" style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-erreur)" }}>
-          {proprietes.erreur}
+      {proprietes.photos.length >= maximum ? (
+        <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>
+          Maximum de {maximum} photos atteint : retirez une photo pour en ajouter une autre.
         </p>
       ) : null}
 
-      <div style={{ display: "flex", gap: ESPACEMENT.e2, flexWrap: "wrap" }}>
-        <Bouton
-          variante={proprietes.photos.length === 0 ? "primaire" : "secondaire"}
-          desactive={inactif || complet}
-          enChargement={proprietes.enChargement === true}
-          onClick={proprietes.onAjouter}
-        >
-          {complet ? `Maximum de ${maximum} photos atteint` : "Ajouter une photo"}
-        </Bouton>
-
-        {proprietes.photos.length === 0 && proprietes.onDeclarerSansPhoto ? (
+      {proprietes.photos.length === 0 && proprietes.onDeclarerSansPhoto && proprietes.sansPhoto !== true ? (
+        <div>
           <Bouton variante="texte" desactive={inactif} onClick={proprietes.onDeclarerSansPhoto}>
             Je ne peux pas photographier
           </Bouton>
-        ) : null}
-      </div>
+        </div>
+      ) : null}
     </div>
   );
 }
