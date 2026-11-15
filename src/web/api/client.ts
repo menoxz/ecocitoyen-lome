@@ -100,6 +100,12 @@ export interface CompteApi {
   readonly id_utilisateur: string;
   readonly email: string;
   readonly role: string;
+  /** Champs présents sur la liste d'administration, absents d'une réponse de session minimale. */
+  readonly nom?: string;
+  readonly prenom?: string;
+  readonly telephone?: string | null;
+  readonly id_equipe?: string | null;
+  readonly actif?: boolean;
 }
 
 export interface ClientApi {
@@ -131,6 +137,13 @@ export interface ClientApi {
   confirmer(idSignalement: string): Promise<Resultat<{ confirme: boolean; nb_confirmations: number }>>;
   /** Synthèse des indicateurs ; `null` signifie « non mesurable », jamais zéro. */
   synthese(): Promise<Resultat<SyntheseApi>>;
+  /** Administration : liste des comptes (droit `modifierCompte`, réservé à l'administrateur). */
+  comptes(): Promise<Resultat<readonly CompteApi[]>>;
+  /** Change le rôle ou l'activation ; le compte renvoyé est celui que le serveur a enregistré. */
+  modifierCompte(
+    idUtilisateur: string,
+    entree: { role?: string; actif?: boolean },
+  ): Promise<Resultat<CompteApi>>;
   valider(
     idSignalement: string,
     entree: { id_categorie?: string; niveau_priorite?: string; commentaire?: string },
@@ -218,6 +231,9 @@ export function creerClient(base: string): ClientApi {
         method: "POST",
       }),
     synthese: () => appeler<SyntheseApi>("/indicateurs/synthese"),
+    comptes: () => appeler<readonly CompteApi[]>("/comptes"),
+    modifierCompte: (idUtilisateur, entree) =>
+      appeler<CompteApi>(`/comptes/${idUtilisateur}`, json("PATCH", entree)),
     valider: (idSignalement, entree) =>
       appeler<SignalementApi>(`/signalements/${idSignalement}/valider`, json("POST", entree)),
     rejeter: (idSignalement, entree) =>

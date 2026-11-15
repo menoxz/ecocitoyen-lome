@@ -34,6 +34,7 @@ describe("Routeur", () => {
     recette: <p>Recette</p>,
     dossier: <p>Dossier</p>,
     indicateurs: <p>Indicateurs</p>,
+    administration: <p>Administration</p>,
   };
 
   test("rend la vue correspondant au fragment", () => {
@@ -43,5 +44,6 @@ describe("Routeur", () => {
     expect(rendu(<Routeur fragment="#/recette" rendu={renduDesRoutes} />)).toContain("Recette");
     expect(rendu(<Routeur fragment="#/dossier/sig-1" rendu={renduDesRoutes} />)).toContain("Dossier");
     expect(rendu(<Routeur fragment="#/indicateurs" rendu={renduDesRoutes} />)).toContain("Indicateurs");
+    expect(rendu(<Routeur fragment="#/administration" rendu={renduDesRoutes} />)).toContain("Administration");
   });
 });

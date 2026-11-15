@@ -8,6 +8,7 @@ import { routesInterventions } from "./routes/interventions.routes.ts";
 import { routesNotifications } from "./routes/notifications.routes.ts";
 import { routesIa } from "./routes/ia.routes.ts";
 import { routesIndicateurs } from "./routes/indicateurs.routes.ts";
+import { routesComptes } from "./routes/comptes.routes.ts";
 import type { Dependances } from "@application/dependances.type.ts";
 
 /**
@@ -45,6 +46,7 @@ export function creerApp(
   app.use("/api/v1/notifications", routesNotifications(deps));
   app.use("/api/v1/ia", routesIa(deps));
   app.use("/api/v1/indicateurs", routesIndicateurs(deps));
+  app.use("/api/v1/comptes", routesComptes(deps));
 
   /**
    * Interface servie depuis le même port que l'API, seulement si un dossier de build est fourni.

@@ -56,6 +56,8 @@ function clientFactice(): ClientApi {
     historique: jamais,
     confirmer: jamais,
     synthese: jamais,
+    comptes: jamais,
+    modifierCompte: jamais,
     valider: jamais,
     rejeter: jamais,
   };

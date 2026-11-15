@@ -8,6 +8,7 @@ import { EcranRecette } from "./features/recette/EcranRecette.tsx";
 import { EcranSuivi } from "./features/suivi/EcranSuivi.tsx";
 import { idDuFragment } from "./features/suivi/logique.ts";
 import { EcranIndicateurs } from "./features/indicateurs/EcranIndicateurs.tsx";
+import { EcranAdministration } from "./features/administration/EcranAdministration.tsx";
 import { creerClient } from "./api/client.ts";
 import { COULEURS, ESPACEMENT, TAILLE_TEXTE } from "./ui/jetons.ts";
 import "./ui/ui.css";
@@ -151,6 +152,7 @@ function Application(): React.ReactNode {
             />
           ),
           indicateurs: <EcranIndicateurs client={client} />,
+          administration: <EcranAdministration client={client} />,
         }}
       />
     </main>
