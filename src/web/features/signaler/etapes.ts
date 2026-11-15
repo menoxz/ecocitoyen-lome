@@ -24,16 +24,25 @@ export interface Brouillon {
   readonly photos: readonly { readonly id: string; readonly nom: string }[];
   readonly sansPhoto: boolean;
   readonly position: Position | null;
+  /**
+   * L'usager accepte une position approximative (centre du quartier) quand la géolocalisation
+   * est refusée. Sans cette issue, un refus de localisation rendait le signalement impossible.
+   */
+  readonly positionManuelle: boolean;
   readonly idQuartier: string;
   readonly repere: string;
   readonly idCategorie: string;
   readonly description: string;
 }
 
+/** Centres des quartiers, fournis par le référentiel : seule source d'une position de repli. */
+export type CentresQuartiers = Readonly<Record<string, Position>>;
+
 export const BROUILLON_INITIAL: Brouillon = {
   photos: [],
   sansPhoto: false,
   position: null,
+  positionManuelle: false,
   idQuartier: "",
   repere: "",
   idCategorie: "",
@@ -60,8 +69,12 @@ export function peutAvancer(etape: CleEtape, brouillon: Brouillon): Decision {
   }
 
   if (etape === "lieu") {
-    if (!brouillon.position) {
-      return { ok: false, raison: "La position du problème est nécessaire pour situer l'intervention." };
+    const positionDisponible = brouillon.position !== null || brouillon.positionManuelle;
+    if (!positionDisponible) {
+      return {
+        ok: false,
+        raison: "Activez la localisation, ou choisissez le quartier pour situer le problème au centre de celui-ci.",
+      };
     }
     if (brouillon.idQuartier === "") {
       return { ok: false, raison: "Choisissez le quartier : il détermine l'équipe qui sera envoyée." };
@@ -88,18 +101,29 @@ export function etapeSuivante(etape: CleEtape): CleEtape | null {
   return index >= 0 && index < ETAPES.length - 1 ? ETAPES[index + 1].cle : null;
 }
 
-/** Transforme le brouillon validé en demande conforme au contrat `/signalements`. */
-export function construireDemande(brouillon: Brouillon): DemandeSignalement {
-  if (!brouillon.position) {
+/**
+ * Transforme le brouillon validé en demande conforme au contrat `/signalements`.
+ *
+ * Quand la position vient du centre du quartier, la demande le déclare : le serveur enregistre
+ * une position approximative (`position_manuelle`, précision large) au lieu de faire croire à un
+ * relevé GPS exact. Sans coordonnées du tout, on refuse plutôt que d'envoyer 0,0.
+ */
+export function construireDemande(brouillon: Brouillon, centres: CentresQuartiers = {}): DemandeSignalement {
+  const position = brouillon.position ?? centres[brouillon.idQuartier] ?? null;
+  if (!position) {
     throw new Error("position manquante");
   }
+  const approximative = brouillon.position === null;
+
   return {
     id_categorie: brouillon.idCategorie,
     description: brouillon.description.trim(),
-    latitude: brouillon.position.latitude,
-    longitude: brouillon.position.longitude,
+    latitude: position.latitude,
+    longitude: position.longitude,
     repere: brouillon.repere.trim().length > 0 ? brouillon.repere.trim() : null,
     sans_photo: brouillon.photos.length === 0,
     nombre_photos: brouillon.photos.length,
+    position_manuelle: approximative,
+    precision_gps_m: approximative ? 500 : 15,
   };
 }

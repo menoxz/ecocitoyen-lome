@@ -16,6 +16,7 @@ import {
   etapeSuivante,
   peutAvancer,
   type Brouillon,
+  type CentresQuartiers,
   type CleEtape,
 } from "./etapes.ts";
 
@@ -35,6 +36,7 @@ export interface ProprietesAssistant {
   readonly envoyer: (demande: ReturnType<typeof construireDemande>, photos: readonly PhotoChoisie[]) => Promise<Resultat<{ signalement: SignalementApi }>>;
   readonly etapeInitiale?: CleEtape;
   readonly positionInitiale?: { readonly latitude: number; readonly longitude: number } | null;
+  readonly centres?: CentresQuartiers;
   readonly onOuvrirDossier?: (idSignalement: string) => void;
   readonly onTerminer?: () => void;
 }
@@ -68,7 +70,10 @@ export function AssistantSignalement(proprietes: ProprietesAssistant): ReactNode
 
     setEnvoiEnCours(true);
     try {
-      const resultat = await proprietes.envoyer(construireDemande(brouillon), brouillon.photos as readonly PhotoChoisie[]);
+      const resultat = await proprietes.envoyer(
+        construireDemande(brouillon, proprietes.centres ?? {}),
+        brouillon.photos as readonly PhotoChoisie[],
+      );
       if (!resultat.ok) {
         setErreurServeur(resultat.erreur);
         return;
@@ -107,8 +112,16 @@ export function AssistantSignalement(proprietes: ProprietesAssistant): ReactNode
           <p style={{ margin: 0, fontSize: TAILLE_TEXTE.md, color: COULEURS.texte }}>
             {brouillon.position
               ? `Position enregistrée : ${brouillon.position.latitude.toFixed(4)}, ${brouillon.position.longitude.toFixed(4)}`
-              : "Aucune position pour le moment : activez la localisation ou saisissez le repère."}
+              : brouillon.positionManuelle
+                ? "Position approximative : le centre du quartier choisi sera transmis au service."
+                : "Aucune position pour le moment : activez la localisation, ou situez le problème au centre de son quartier."}
           </p>
+
+          {!brouillon.position && !brouillon.positionManuelle ? (
+            <Bouton variante="secondaire" onClick={() => maj({ positionManuelle: true })}>
+              Utiliser le centre du quartier
+            </Bouton>
+          ) : null}
           <ChampSelect
             id="quartier"
             libelle="Quartier"

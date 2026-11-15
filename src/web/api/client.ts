@@ -34,6 +34,9 @@ export interface DemandeSignalement {
   readonly repere?: string | null;
   readonly sans_photo: boolean;
   readonly nombre_photos: number;
+  /** Vrai quand la position est le centre du quartier, pas un relevé GPS. */
+  readonly position_manuelle?: boolean;
+  readonly precision_gps_m?: number;
 }
 
 export interface SignalementApi {
@@ -52,8 +55,18 @@ export interface DoublonApi {
   readonly distanceMetres: number;
 }
 
+export interface CompteApi {
+  readonly id_utilisateur: string;
+  readonly email: string;
+  readonly role: string;
+}
+
 export interface ClientApi {
   readonly base: string;
+  /** Session courante, ou null si le visiteur n'est pas connecté. */
+  moi(): Promise<Resultat<{ compte: CompteApi | null; role: string }>>;
+  connexion(identifiant: string, motDePasse: string): Promise<Resultat<{ compte: CompteApi }>>;
+  inscription(entree: { nom: string; prenom: string; email: string; motDePasse: string }): Promise<Resultat<{ compte: CompteApi }>>;
   categories(): Promise<Resultat<readonly CategorieApi[]>>;
   quartiers(): Promise<Resultat<readonly QuartierApi[]>>;
   creerSignalement(demande: DemandeSignalement): Promise<Resultat<{ signalement: SignalementApi; doublons: readonly DoublonApi[] }>>;
@@ -102,6 +115,20 @@ export function creerClient(base: string): ClientApi {
 
   return {
     base,
+    moi: () => appeler<{ compte: CompteApi | null; role: string }>("/auth/moi"),
+    connexion: (identifiant, motDePasse) =>
+      appeler<{ compte: CompteApi }>("/auth/connexion", json("POST", { identifiant, mot_de_passe: motDePasse })),
+    inscription: (entree) =>
+      appeler<{ compte: CompteApi }>(
+        "/auth/inscription",
+        json("POST", {
+          nom: entree.nom,
+          prenom: entree.prenom,
+          email: entree.email,
+          mot_de_passe: entree.motDePasse,
+          consentement: true,
+        }),
+      ),
     categories: () => appeler<readonly CategorieApi[]>("/referentiels/categories"),
     quartiers: () => appeler<readonly QuartierApi[]>("/referentiels/quartiers"),
     creerSignalement: (demande) =>

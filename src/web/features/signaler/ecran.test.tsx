@@ -18,6 +18,9 @@ function clientFactice(): ClientApi {
   const jamais = async () => ({ ok: true as const, valeur: [] as never });
   return {
     base: "/api/v1",
+    moi: jamais,
+    connexion: jamais,
+    inscription: jamais,
     categories: jamais,
     quartiers: jamais,
     creerSignalement: jamais,
@@ -48,12 +51,14 @@ describe("versOptions", () => {
 });
 
 describe("EcranSignaler — état initial", () => {
-  test("affiche le titre et un squelette de chargement, pas un écran vide", () => {
+  test("vérifie la session avant toute saisie, et ne montre pas d'écran vide", () => {
     const html = rendu(<EcranSignaler client={clientFactice()} />);
 
     expect(html).toContain("Signaler un problème");
     expect(html).toContain('aria-busy="true"');
-    expect(html).toContain("Chargement des catégories et des quartiers");
+    // Régression mesurée au navigateur : le parcours laissait saisir trois étapes puis refusait
+    // l'envoi par « Une session valide est requise ». La session se vérifie donc à l'entrée.
+    expect(html).toContain("Vérification de votre session");
   });
 
   test("n'affiche ni identité d'auteur ni donnée technique", () => {
