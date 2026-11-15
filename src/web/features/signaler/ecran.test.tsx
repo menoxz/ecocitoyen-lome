@@ -34,6 +34,7 @@ function clientFactice(): ClientApi {
     motifsRejet: jamais,
     historique: jamais,
     confirmer: jamais,
+    synthese: jamais,
     valider: jamais,
     rejeter: jamais,
   };

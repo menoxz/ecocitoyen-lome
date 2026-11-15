@@ -69,6 +69,33 @@ export interface EtapeHistoriqueApi {
   readonly commentaire: string | null;
 }
 
+/**
+ * Synthèse des indicateurs, telle que le serveur la calcule.
+ *
+ * Les propriétés sont en camelCase : c'est l'objet du domaine sérialisé tel quel, pas une
+ * projection renommée. `null` veut dire « non mesurable » et s'accompagne d'un motif dans
+ * `indisponibles` — jamais d'une valeur de repli.
+ */
+export interface SyntheseApi {
+  readonly volumes: Readonly<Record<string, number>>;
+  readonly parCategorie: readonly { readonly idCategorie: string; readonly nom: string; readonly nombre: number }[];
+  readonly parQuartier: readonly { readonly idQuartier: string; readonly nom: string; readonly nombre: number }[];
+  readonly parPriorite: readonly { readonly priorite: string; readonly nombre: number }[];
+  readonly tauxResolution: number | null;
+  readonly tauxRejet: number | null;
+  readonly delaiMoyenTriHeures: number | null;
+  readonly delaiMoyenTraitementHeures: number | null;
+  readonly respectDelais: Readonly<Record<"tri" | "affectation" | "resolution", number | null>>;
+  readonly couvertureGeographique: number | null;
+  readonly qualiteIa: {
+    readonly tauxAccord: number | null;
+    readonly scoreMoyen: number | null;
+    readonly evalues: number;
+  };
+  readonly total: number;
+  readonly indisponibles: readonly string[];
+}
+
 export interface CompteApi {
   readonly id_utilisateur: string;
   readonly email: string;
@@ -102,6 +129,8 @@ export interface ClientApi {
   historique(idSignalement: string): Promise<Resultat<readonly EtapeHistoriqueApi[]>>;
   /** « Moi aussi » : le compte renvoyé est celui du serveur, jamais un incrément local. */
   confirmer(idSignalement: string): Promise<Resultat<{ confirme: boolean; nb_confirmations: number }>>;
+  /** Synthèse des indicateurs ; `null` signifie « non mesurable », jamais zéro. */
+  synthese(): Promise<Resultat<SyntheseApi>>;
   valider(
     idSignalement: string,
     entree: { id_categorie?: string; niveau_priorite?: string; commentaire?: string },
@@ -188,6 +217,7 @@ export function creerClient(base: string): ClientApi {
       appeler<{ confirme: boolean; nb_confirmations: number }>(`/signalements/${idSignalement}/confirmer`, {
         method: "POST",
       }),
+    synthese: () => appeler<SyntheseApi>("/indicateurs/synthese"),
     valider: (idSignalement, entree) =>
       appeler<SignalementApi>(`/signalements/${idSignalement}/valider`, json("POST", entree)),
     rejeter: (idSignalement, entree) =>

@@ -7,6 +7,7 @@ import { EcranSupervision } from "./features/supervision/EcranSupervision.tsx";
 import { EcranRecette } from "./features/recette/EcranRecette.tsx";
 import { EcranSuivi } from "./features/suivi/EcranSuivi.tsx";
 import { idDuFragment } from "./features/suivi/logique.ts";
+import { EcranIndicateurs } from "./features/indicateurs/EcranIndicateurs.tsx";
 import { creerClient } from "./api/client.ts";
 import { COULEURS, ESPACEMENT, TAILLE_TEXTE } from "./ui/jetons.ts";
 import "./ui/ui.css";
@@ -95,6 +96,23 @@ function Application(): React.ReactNode {
                 Recette : les 14 critères et leurs tests
               </a>
               <a
+                href="#/indicateurs"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  minHeight: 44,
+                  padding: `0 ${ESPACEMENT.e4}px`,
+                  borderRadius: 8,
+                  border: `1px solid ${COULEURS.bordure}`,
+                  color: COULEURS.texteAttenue,
+                  fontWeight: 600,
+                  textDecoration: "none",
+                }}
+              >
+                Indicateurs de pilotage
+              </a>
+              <a
                 href="#/signaler"
                 style={{
                   display: "inline-flex",
@@ -132,6 +150,7 @@ function Application(): React.ReactNode {
               maintenantIso={new Date().toISOString()}
             />
           ),
+          indicateurs: <EcranIndicateurs client={client} />,
         }}
       />
     </main>
