@@ -1,0 +1,35 @@
+# Descripteur de déploiement Render (offre gratuite, sans disque persistant).
+#
+# Deux conséquences assumées, propres à cette cible :
+#   1. La base et les photos vivent dans `/tmp`, seul chemin inscriptible sur une instance
+#      gratuite. À chaque redéploiement ou réveil, elles repartent de zéro et le seed recrée
+#      le jeu de démonstration.
+#   2. L'instance gratuite s'endort après inactivité ; la première requête suivante prend
+#      plusieurs dizaines de secondes.
+#
+# Pour des données durables, il faut un disque persistant : voir docs/architecture/DEPLOIEMENT.md.
+services:
+  - type: web
+    name: ecocitoyen-lome
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/v1/sante
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Jeu de démonstration : comptes fictifs, aucune donnée réelle.
+      - key: MODE_DEMO
+        value: "true"
+      # Sans volume : tout ce qui s'écrit va dans /tmp, effacé au redéploiement.
+      - key: DB_CHEMIN
+        value: /tmp/ecocitoyen.db
+      - key: DOSSIER_PHOTOS
+        value: /tmp/photos
+      - key: DOSSIER_STATIQUE
+        value: /app/dist
+      # À renseigner dans le tableau de bord Render, jamais dans ce fichier.
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: APP_URL
+        sync: false

@@ -63,6 +63,33 @@ docker run --rm -v ecocitoyen_donnees:/data -v "$PWD":/sauvegarde alpine \
   tar czf /sauvegarde/ecocitoyen-$(date +%F).tar.gz -C /data .
 ```
 
+## Render, offre gratuite (sans volume) — la cible retenue
+
+Le descripteur `render.yaml` est prêt. Procédure exacte :
+
+1. **Créer le dépôt distant** — il n'en existe aucun (`git remote -v` est vide), donc Render n'a
+   rien à construire. Sur GitHub : nouveau dépôt vide, puis
+   `git remote add origin git@github.com:<compte>/ecocitoyen-lome.git && git push -u origin main`.
+2. **Créer le service** — Render → *New* → *Blueprint* → sélectionner le dépôt. Render lit
+   `render.yaml`, construit le `Dockerfile` et expose `/api/v1/sante` comme sonde.
+3. **Renseigner les variables secrètes** dans le tableau de bord : `APP_URL` (l'URL fournie par
+   Render) et, si tu veux le vrai modèle, `GEMINI_API_KEY`. Sans clé, la classification reste en
+   `SIMULATION`, étiquetée dans l'interface.
+4. **Vérifier** : `curl https://<service>.onrender.com/api/v1/sante` doit répondre
+   `{"statut":"ok","version":"1"}`.
+
+### Ce que cette cible coûte en fonctionnalités
+
+| Point | Conséquence |
+|---|---|
+| Pas de disque persistant | base et photos dans `/tmp` : **tout est perdu** à chaque redéploiement et à chaque réveil |
+| Mise en veille | l'instance gratuite s'endort ; la première requête attend plusieurs dizaines de secondes |
+| Mémoire limitée | `sharp`, `argon2` et `better-sqlite3` sont gourmands : risque d'arrêt sous forte charge |
+| Jeu de démonstration | `MODE_DEMO=true` ; les comptes seedés ont un mot de passe de démonstration commun |
+
+Vérifié localement, avec un conteneur lancé sans volume (`DB_CHEMIN=/tmp/...`,
+`DOSSIER_PHOTOS=/tmp/photos`) : démarrage OK, `/api/v1/sante` répond 200, la base et les photos
+s'écrivent dans `/tmp`.
 ## Sur un hébergeur gratuit
 
 À réserver à la démonstration. Trois points à vérifier avant de choisir :
@@ -81,3 +108,4 @@ Une fois ces points réglés, l'image se déploie telle quelle : les hébergeurs
 - Pas de HTTPS automatique dans l'image : c'est le rôle du reverse proxy.
 - Pas de réplication : SQLite est mono-nœud. Une montée en charge demanderait un autre moteur.
 - Pas de sauvegarde planifiée : la commande ci-dessus est à mettre dans un cron.
+
