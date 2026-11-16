@@ -18,7 +18,10 @@
   font-family: inherit;
   font-size: 15px;
   font-weight: 600;
-  border: 1px solid transparent;
+  /* Bordure solide par défaut : un bouton sans fond coloré ne se distingue pas d'un texte sans
+     contour. Les variantes à fond (primaire) ou qui bordent déjà (secondaire, danger) la
+     redéfinissent pour leur propre couleur. */
+  border: 1px solid var(--ui-bordure, #d1d5db);
   border-radius: var(--ui-rayon-sm, 8px);
   cursor: pointer;
   min-height: 44px;
@@ -77,9 +80,11 @@
 
 .ui-bouton--texte {
   background-color: transparent;
-  border-color: transparent;
+  /* Sans fond, la bordure est le seul contour : transparente, le bouton disparaissait dans le
+     texte voisin et ne se lisait plus comme une cible cliquable. */
+  border-color: var(--ui-bordure, #d1d5db);
   color: var(--ui-primaire, #0f766e);
-  min-height: 40px;
+  min-height: 44px;
   padding: 0 10px;
 }
 

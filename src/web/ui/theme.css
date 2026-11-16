@@ -603,7 +603,8 @@ a:hover {
 
 .ui-theme button {
   appearance: none;
-  border: 0;
+  /* Segment inactif : sans fond, il lui faut un contour pour se lire comme une cible. */
+  border: 1px solid var(--ui-bordure);
   min-height: 44px;
   padding: 0 14px;
   border-radius: var(--ui-rayon-sm);
@@ -626,6 +627,8 @@ a:hover {
 .ui-theme button[aria-pressed="true"] {
   color: var(--ui-sur-primaire);
   background: var(--ui-primaire);
+  /* Segment actif : le fond vert suffit à le distinguer, le contour doublerait le signal. */
+  border-color: transparent;
   box-shadow: var(--ui-ombre-douce);
 }
 
@@ -2540,3 +2543,17 @@ a:focus-visible {
 
 
 
+
+/* ——— Bordure de contour des boutons sans fond coloré ———
+   Un bouton transparent sans bordure ne se distingue pas d'un texte : rien n'indique qu'il est
+   cliquable. Ces quatre commandes n'ont pas de fond (le primaire, lui, porte le vert du thème et
+   n'a besoin d'aucun contour). Les segments du sélecteur de thème sont exclus : ils forment un
+   contrôle unique dont la bordure est portée par le conteneur, et border chaque segment le
+   casserait en trois boutons indépendants. */
+.ui-menu-bouton,
+.ui-deconnexion,
+.ui-modale-fermer,
+.ui-carte-fermer,
+.ui-bouton-oeil {
+  border: 1px solid var(--ui-bordure);
+}
