@@ -32,6 +32,14 @@ export interface EquipeApi {
   readonly zone: string;
 }
 
+/** Preuve jointe à un dossier : décrite par l'API, jamais transportée en base64. */
+export interface PhotoApi {
+  readonly id_media: string;
+  readonly type: "SIGNALEMENT" | "RESOLUTION";
+  readonly mime: string;
+  readonly date_ajout: string;
+}
+
 export interface DemandeSignalement {
   readonly id_categorie: string;
   readonly description: string;
@@ -163,6 +171,10 @@ export interface ClientApi {
     role: string;
     id_equipe: string | null;
   }): Promise<Resultat<{ compte: CompteApi; mot_de_passe_temporaire: string }>>;
+  /** Preuves d'un dossier (photos jointes), lisibles par les rôles internes. */
+  photosDe(idSignalement: string): Promise<Resultat<readonly PhotoApi[]>>;
+  /** URL d'une preuve : l'image est servie par l'API, le cookie de session suit la balise <img>. */
+  urlPhoto(idSignalement: string, idMedia: string): string;
   /** Change son propre mot de passe ; l'ancien est exigé par le serveur. */
   changerMotDePasse(entree: { ancien: string; nouveau: string }): Promise<Resultat<CompteApi>>;
   valider(
@@ -260,6 +272,8 @@ export function creerClient(base: string): ClientApi {
     creerCompteInterne: (entree) =>
       appeler<{ compte: CompteApi; mot_de_passe_temporaire: string }>("/comptes", json("POST", entree)),
     changerMotDePasse: (entree) => appeler<CompteApi>("/auth/mot-de-passe", json("POST", entree)),
+    photosDe: (idSignalement) => appeler<readonly PhotoApi[]>(`/signalements/${idSignalement}/photos`),
+    urlPhoto: (idSignalement, idMedia) => `${base}/signalements/${idSignalement}/photos/${idMedia}`,
     valider: (idSignalement, entree) =>
       appeler<SignalementApi>(`/signalements/${idSignalement}/valider`, json("POST", entree)),
     rejeter: (idSignalement, entree) =>

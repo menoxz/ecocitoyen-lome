@@ -1,9 +1,9 @@
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { CameraOff, CircleDot, Clock, Gauge, Info, MapPin, Users } from "lucide-react";
 import { PucesEtat, type PuceEtat } from "../../ui/PucesEtat.tsx";
 import { ageRelatif } from "../../ui/CarteSignalement.tsx";
 import { ESPACEMENT, TAILLE_TEXTE } from "../../ui/jetons.ts";
-import type { SignalementApi } from "../../api/client.ts";
+import type { ClientApi, PhotoApi, SignalementApi } from "../../api/client.ts";
 
 /**
  * Fiche d'un dossier — niveau 4 de la hiérarchie de découverte.
@@ -16,10 +16,14 @@ import type { SignalementApi } from "../../api/client.ts";
  * La fiche ne décide rien : elle affiche les valeurs du serveur et expose les gestes que l'écran
  * appelant lui transmet. L'identité de l'auteur n'est jamais affichée (RG28), même si elle
  * existait côté données.
+ *
+ * Les preuves sont chargées ici et affichées : la carte annonçait « photo jointe » sans qu'aucune
+ * vue ne permette de la regarder, ce qui revenait à demander de décider sans preuve.
  */
 export interface ProprietesDetailDossier {
   readonly dossier: SignalementApi;
   readonly maintenantIso: string;
+  readonly client: ClientApi;
   readonly onDemarrer?: (id: string) => void;
   readonly demarrageEnCours?: boolean;
   readonly onCloturer?: (id: string) => void;
@@ -39,6 +43,30 @@ function dateLisible(iso: string): string {
 export function DetailDossier(proprietes: ProprietesDetailDossier): ReactNode {
   const dossier = proprietes.dossier;
   const quartier = dossier.quartier_nom ?? dossier.id_quartier;
+
+  const [photos, setPhotos] = useState<readonly PhotoApi[] | null>(null);
+  const [erreurPhotos, setErreurPhotos] = useState<string | null>(null);
+
+  useEffect(() => {
+    let actif = true;
+    setPhotos(null);
+    setErreurPhotos(null);
+    void proprietes.client.photosDe(dossier.id_signalement).then((resultat) => {
+      if (!actif) {
+        return;
+      }
+      if (resultat.ok) {
+        setPhotos(resultat.valeur);
+        return;
+      }
+      setPhotos([]);
+      setErreurPhotos(resultat.erreur.message);
+    });
+    return () => {
+      actif = false;
+    };
+  }, [proprietes.client, dossier.id_signalement]);
+
   const puces: PuceEtat[] = [
     { icone: CircleDot, libelle: `Statut ${String(dossier.statut).toLowerCase()}`, ton: "statut", aide: "Statut du dossier." },
     {
@@ -93,6 +121,44 @@ export function DetailDossier(proprietes: ProprietesDetailDossier): ReactNode {
             </dd>
           </div>
         </dl>
+      </section>
+
+      <section>
+        <h3 className="ui-detail-titre">Preuves photographiques</h3>
+        {photos === null ? (
+          <p className="ui-detail-note" style={{ fontSize: TAILLE_TEXTE.sm }}>
+            Chargement des preuves…
+          </p>
+        ) : photos.length === 0 ? (
+          <p className="ui-detail-note" style={{ fontSize: TAILLE_TEXTE.sm }}>
+            {erreurPhotos
+              ? `Preuves indisponibles : ${erreurPhotos}`
+              : "Aucune photo n'est jointe à ce dossier. La clôture en exigera une."}
+          </p>
+        ) : (
+          <ul className="ui-preuves">
+            {photos.map((photo, index) => (
+              <li key={photo.id_media}>
+                <a
+                  href={proprietes.client.urlPhoto(dossier.id_signalement, photo.id_media)}
+                  target="_blank"
+                  rel="noreferrer"
+                  title="Ouvrir la preuve en grand"
+                >
+                  <img
+                    className="ui-preuve"
+                    src={proprietes.client.urlPhoto(dossier.id_signalement, photo.id_media)}
+                    alt={`Preuve ${index + 1} du signalement, ${photo.type === "RESOLUTION" ? "après intervention" : "à la déclaration"}`}
+                    loading="lazy"
+                  />
+                </a>
+                <span className="ui-preuve-legende">
+                  {photo.type === "RESOLUTION" ? "Après intervention" : "À la déclaration"}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
 
       <section className="ui-detail-attendu">

@@ -46,6 +46,8 @@ function clientFactice(): ClientApi {
     equipes: jamais,
     creerCompteInterne: jamais,
     changerMotDePasse: jamais,
+    photosDe: jamais,
+    urlPhoto: () => "",
     categories: jamais,
     quartiers: jamais,
     creerSignalement: jamais,

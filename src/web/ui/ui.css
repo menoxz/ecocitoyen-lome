@@ -115,7 +115,7 @@
   font-family: inherit;
   font-size: 16px;
   border-radius: var(--ui-rayon-sm, 7px);
-  padding: 4px 6px;
+  padding: 10px 12px;
   color: var(--ui-texte, #111827);
   background-color: var(--ui-surface, #ffffff);
   border: 1px solid var(--ui-bordure, #d1d5db);

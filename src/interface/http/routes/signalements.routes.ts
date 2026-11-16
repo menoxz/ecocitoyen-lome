@@ -10,6 +10,7 @@ import { creer, type CommandeCreation } from "@application/signalement/creer.cas
 import { valider } from "@application/signalement/valider.cas.ts";
 import { rejeter } from "@application/signalement/rejeter.cas.ts";
 import { ajouterPhoto } from "@application/signalement/ajouter-photo.cas.ts";
+import { listerPhotos, lirePhoto } from "@application/signalement/lister-photos.cas.ts";
 import type { Acteur, Dependances } from "@application/dependances.type.ts";
 import type { MotifRejet, Priorite, Statut } from "@domaine/signalement/signalement.type.ts";
 
@@ -173,6 +174,36 @@ export function routesSignalements(deps: Dependances): Router {
       simulation_notice: simulation ? "Classification simulée — démonstration" : null,
     });
   });
+
+  /**
+   * Preuves d'un dossier : la fiche annonçait « photo jointe » sans qu'aucune route ne permette de
+   * la voir. Lecture réservée aux rôles qui voient tous les signalements ; une photo masquée n'est
+   * jamais renvoyée, ni dans la liste ni dans les octets.
+   */
+  routeur.get(
+    "/:id/photos",
+    rbac("voirTousSignalements"),
+    attraper(async (req, res) => {
+      const acteur: Acteur = exigerSession(req);
+      res.json(listerPhotos(req.params.id, acteur, deps));
+    }),
+  );
+
+  routeur.get(
+    "/:id/photos/:idMedia",
+    rbac("voirTousSignalements"),
+    attraper(async (req, res) => {
+      const acteur: Acteur = exigerSession(req);
+      const photo = await lirePhoto(req.params.id, req.params.idMedia, acteur, deps);
+      if (!photo) {
+        res.status(404).json({ code: "RESSOURCE_INTROUVABLE", message: "Photo introuvable.", details: { ressource: "media" } });
+        return;
+      }
+      res.setHeader("content-type", photo.mime);
+      res.setHeader("cache-control", "private, max-age=300");
+      res.send(photo.octets);
+    }),
+  );
 
   return routeur;
 }

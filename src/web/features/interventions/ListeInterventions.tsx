@@ -147,6 +147,7 @@ export function ListeInterventions(proprietes: ProprietesListeInterventions): Re
           <DetailDossier
             dossier={enDetail}
             maintenantIso={proprietes.maintenantIso}
+            client={proprietes.client}
             {...(enDetail.statut === "EN_COURS"
               ? { onCloturer: (id: string) => { setDetailId(null); setClotureId(id); } }
               : {
