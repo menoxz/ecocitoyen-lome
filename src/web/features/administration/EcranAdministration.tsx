@@ -7,6 +7,7 @@ import { EtatErreur } from "../../ui/EtatErreur.tsx";
 import { ESPACEMENT, TAILLE_TEXTE } from "../../ui/jetons.ts";
 import type { ClientApi, CompteApi, ErreurApi } from "../../api/client.ts";
 import { ListeComptes } from "./ListeComptes.tsx";
+import { FormulaireCreationCompte } from "./FormulaireCreationCompte.tsx";
 import { comptesTries } from "./logique.ts";
 
 /**
@@ -35,6 +36,8 @@ export function EcranAdministration(proprietes: ProprietesEcranAdministration): 
   const [erreur, setErreur] = useState<ErreurApi | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [enCours, setEnCours] = useState<string | null>(null);
+  /** Mot de passe temporaire affiché une seule fois, juste après la création d'un compte interne. */
+  const [identifiants, setIdentifiants] = useState<{ email: string; motDePasse: string } | null>(null);
 
   useEffect(() => {
     void (async () => {
@@ -162,6 +165,34 @@ export function EcranAdministration(proprietes: ProprietesEcranAdministration): 
           {erreur.message}
         </p>
       ) : null}
+
+      {identifiants ? (
+        <section
+          role="status"
+          className="ui-carte-etapes"
+          style={{ padding: ESPACEMENT.e3, borderColor: "var(--ui-succes)" }}
+        >
+          <h2 style={{ margin: 0, fontSize: TAILLE_TEXTE.md }}>Mot de passe temporaire — à communiquer maintenant</h2>
+          <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>
+            Il ne sera plus jamais affiché. La personne devra le changer à sa première connexion.
+          </p>
+          <p style={{ margin: 0, fontSize: TAILLE_TEXTE.md, fontWeight: 700 }}>
+            {identifiants.email} · <code>{identifiants.motDePasse}</code>
+          </p>
+          <button type="button" className="ui-bouton" onClick={() => setIdentifiants(null)}>
+            J'ai noté le mot de passe
+          </button>
+        </section>
+      ) : null}
+
+      <FormulaireCreationCompte
+        client={proprietes.client}
+        onCree={(compte, motDePasseTemporaire, libelle) => {
+          setComptes((liste) => comptesTries([...(liste ?? []), compte]));
+          setIdentifiants({ email: compte.email, motDePasse: motDePasseTemporaire });
+          setMessage(libelle);
+        }}
+      />
 
       <ListeComptes comptes={comptes} enCours={enCours} onModifier={(id, entree, libelle) => void modifier(id, entree, libelle)} />
     </section>

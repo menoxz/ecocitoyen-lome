@@ -26,6 +26,12 @@ export interface QuartierApi {
   readonly centre_lon: number;
 }
 
+export interface EquipeApi {
+  readonly id_equipe: string;
+  readonly nom: string;
+  readonly zone: string;
+}
+
 export interface DemandeSignalement {
   readonly id_categorie: string;
   readonly description: string;
@@ -106,6 +112,8 @@ export interface CompteApi {
   readonly telephone?: string | null;
   readonly id_equipe?: string | null;
   readonly actif?: boolean;
+  /** Vrai tant que la personne n'a pas remplacé le mot de passe remis par l'administrateur. */
+  readonly mot_de_passe_temporaire?: boolean;
 }
 
 export interface ClientApi {
@@ -118,6 +126,7 @@ export interface ClientApi {
   deconnexion(): Promise<Resultat<{ deconnecte: boolean }>>;
   categories(): Promise<Resultat<readonly CategorieApi[]>>;
   quartiers(): Promise<Resultat<readonly QuartierApi[]>>;
+  equipes(): Promise<Resultat<readonly EquipeApi[]>>;
   creerSignalement(demande: DemandeSignalement): Promise<Resultat<{ signalement: SignalementApi; doublons: readonly DoublonApi[] }>>;
   envoyerPhoto(idSignalement: string, octets: Blob, typeMime: string): Promise<Resultat<{ media: { chemin: string } }>>;
   /** Dossiers visibles par l'acteur ; le serveur applique déjà le périmètre d'équipe et de statut. */
@@ -146,6 +155,16 @@ export interface ClientApi {
     idUtilisateur: string,
     entree: { role?: string; actif?: boolean },
   ): Promise<Resultat<CompteApi>>;
+  /** Crée un compte interne ; le mot de passe temporaire n'est renvoyé qu'à cet instant. */
+  creerCompteInterne(entree: {
+    nom: string;
+    prenom: string;
+    email: string;
+    role: string;
+    id_equipe: string | null;
+  }): Promise<Resultat<{ compte: CompteApi; mot_de_passe_temporaire: string }>>;
+  /** Change son propre mot de passe ; l'ancien est exigé par le serveur. */
+  changerMotDePasse(entree: { ancien: string; nouveau: string }): Promise<Resultat<CompteApi>>;
   valider(
     idSignalement: string,
     entree: { id_categorie?: string; niveau_priorite?: string; commentaire?: string },
@@ -215,6 +234,7 @@ export function creerClient(base: string): ClientApi {
     deconnexion: () => appeler<{ deconnecte: boolean }>("/auth/deconnexion", { method: "POST" }),
     categories: () => appeler<readonly CategorieApi[]>("/referentiels/categories"),
     quartiers: () => appeler<readonly QuartierApi[]>("/referentiels/quartiers"),
+    equipes: () => appeler<readonly EquipeApi[]>("/referentiels/equipes"),
     creerSignalement: (demande) =>
       appeler<{ signalement: SignalementApi; doublons: readonly DoublonApi[] }>("/signalements", json("POST", demande)),
     listerInterventions: () => appeler<readonly SignalementApi[]>("/signalements?limite=100"),
@@ -237,6 +257,9 @@ export function creerClient(base: string): ClientApi {
     comptes: () => appeler<readonly CompteApi[]>("/comptes"),
     modifierCompte: (idUtilisateur, entree) =>
       appeler<CompteApi>(`/comptes/${idUtilisateur}`, json("PATCH", entree)),
+    creerCompteInterne: (entree) =>
+      appeler<{ compte: CompteApi; mot_de_passe_temporaire: string }>("/comptes", json("POST", entree)),
+    changerMotDePasse: (entree) => appeler<CompteApi>("/auth/mot-de-passe", json("POST", entree)),
     valider: (idSignalement, entree) =>
       appeler<SignalementApi>(`/signalements/${idSignalement}/valider`, json("POST", entree)),
     rejeter: (idSignalement, entree) =>

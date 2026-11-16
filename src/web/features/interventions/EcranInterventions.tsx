@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { AlertTriangle, CameraOff, ClipboardList, Wrench } from "lucide-react";
 import { FormulaireSession } from "../compte/FormulaireSession.tsx";
+import { FormulaireMotDePasse } from "../compte/FormulaireMotDePasse.tsx";
 import { EnTeteVue } from "../../ui/EnTeteVue.tsx";
 import { EtatChargement } from "../../ui/EtatChargement.tsx";
 import { EtatErreur } from "../../ui/EtatErreur.tsx";
@@ -34,13 +35,31 @@ export function EcranInterventions(proprietes: ProprietesEcranInterventions): Re
   const [erreur, setErreur] = useState<ErreurApi | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [demarrage, setDemarrage] = useState<string | null>(null);
+  /** Vrai tant que le mot de passe remis par l'administrateur n'a pas été remplacé. */
+  const [temporaire, setTemporaire] = useState(false);
 
   useEffect(() => {
     void (async () => {
       const resultat = await proprietes.client.moi();
       setSession(resultat.ok && resultat.valeur.compte ? "present" : "absent");
+      setTemporaire(resultat.ok && resultat.valeur.compte?.mot_de_passe_temporaire === true);
     })();
   }, [proprietes.client]);
+
+  useEffect(() => {
+    if (session !== "present") {
+      return;
+    }
+    // La connexion se fait sur cet écran : `session` devient « present » sans remonter le compte.
+    // Sans cette relecture, un agent invité entrait directement dans la file avec un mot de passe
+    // que l'administrateur connaissait encore.
+    void (async () => {
+      const resultat = await proprietes.client.moi();
+      if (resultat.ok) {
+        setTemporaire(resultat.valeur.compte?.mot_de_passe_temporaire === true);
+      }
+    })();
+  }, [session, proprietes.client]);
 
   const charger = useCallback(async (): Promise<void> => {
     setErreur(null);
@@ -81,6 +100,21 @@ export function EcranInterventions(proprietes: ProprietesEcranInterventions): Re
 
   if (session === "inconnu") {
     return <EtatChargement lignes={3} libelle="Vérification de votre session" />;
+  }
+
+  // Un mot de passe temporaire bloque le travail : l'administrateur le connaît, donc l'agent ne
+  // doit rien faire d'autre avant de l'avoir remplacé.
+  if (temporaire) {
+    return (
+      <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e4 }}>
+        <EnTeteVue
+          icone={Wrench}
+          titre="Mes interventions"
+          explication="Les dossiers affectés à votre équipe, avec les gestes de terrain : démarrer, clôturer avec preuve."
+        />
+        <FormulaireMotDePasse client={proprietes.client} temporaire onChange={() => setTemporaire(false)} />
+      </section>
+    );
   }
 
   if (session === "absent") {
