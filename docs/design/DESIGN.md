@@ -235,4 +235,21 @@ Un composant ajouté après coup repasse par ce document : pas de style « local
 | Modification d'une couleur | relancer `verifier-contrastes.mjs`, ratio consigné dans le tableau |
 | Contrainte non tenable | nouvel ADR ; ce document n'est pas amendé en silence |
 
+## 8. Densité et encombrement
+
+Trois règles, mesurées et non négociables, parce qu'un écran de terrain se juge au nombre de
+dossiers visibles sans défiler :
+
+| Règle | Valeur | Raison |
+|---|---|---|
+| Padding des conteneurs | 28/20 px (contenu), 18 px (carte), 10/20 px (entête), 28/20/20 px (pied) | chaque bordure mange une ligne de liste |
+| Rayon | `--ui-rayon: 10px`, `--ui-rayon-sm: 7px` | un arrondi de 16 px retire de la surface utile sans rien apporter |
+| Largeur de bouton | `fit-content`, `min-width: 132px`, `max-width: min(100%, 320px)` | lisibilité du libellé, adaptation au conteneur, jamais de bouton de 60 px |
+
+**Exception assumée : les boutons gardent leur padding.** Ce sont des cibles tactiles — les réduire
+rapetisserait la zone cliquable, ce qui coûte plus cher que l'espace gagné. La largeur est bornée,
+pas le rembourrage.
+
+Résultat mesuré sur l'accueil : 1675 px → 1420 px de hauteur de document, à contenu identique.
+
 

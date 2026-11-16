@@ -76,8 +76,8 @@ export const TAILLE_TEXTE = {
   xxl: 38,
 } as const;
 
-/** Rayons généreux : la carte arrondie est la forme de base, pas le rectangle. */
-export const RAYON = { sm: 10, md: 16, pilule: 9999 } as const;
+/** Rayons courts : la carte reste la forme de base, mais l'arrondi ne mange plus d'espace utile. */
+export const RAYON = { sm: 6, md: 10, pilule: 9999 } as const;
 
 /** 48 px : un pouce, pas un curseur. Exigence du parcours de terrain. */
 export const CIBLE_TACTILE = 48;

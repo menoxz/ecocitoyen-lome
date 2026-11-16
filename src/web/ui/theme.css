@@ -24,8 +24,8 @@
   --ui-ombre-survol: 0 3px 8px rgba(58, 44, 22, 0.12), 0 22px 44px rgba(58, 44, 22, 0.16);
   --ui-degrade-heros: radial-gradient(120% 150% at 100% 0%, #fde8c4 0%, rgba(253, 232, 196, 0) 58%),
     radial-gradient(90% 120% at 0% 100%, #dcecd6 0%, rgba(220, 236, 214, 0) 60%);
-  --ui-rayon: 16px;
-  --ui-rayon-sm: 12px;
+  --ui-rayon: 10px;
+  --ui-rayon-sm: 7px;
   --ui-largeur: 1080px;
   --ui-police: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
   --ui-duree-rapide: 130ms;
@@ -281,7 +281,7 @@ a:hover {
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
-  padding: 14px 28px;
+  padding: 10px 20px;
   background: color-mix(in srgb, var(--ui-surface) 88%, transparent);
   backdrop-filter: saturate(150%) blur(8px);
   border-bottom: 1px solid var(--ui-bordure-douce);
@@ -384,7 +384,7 @@ a:hover {
   padding: 8px;
   background: var(--ui-surface);
   border: 1px solid var(--ui-bordure-douce);
-  border-radius: 16px;
+  border-radius: 7px;
   box-shadow: 0 18px 40px rgb(0 0 0 / 18%);
 }
 
@@ -394,7 +394,7 @@ a:hover {
   gap: 10px;
   min-height: 44px;
   padding: 0 12px;
-  border-radius: 10px;
+  border-radius: 7px;
   color: var(--ui-texte);
   text-decoration: none;
   font-size: 15px;
@@ -410,6 +410,13 @@ a:hover {
    `[hidden]` : sans cette règle, le panneau resterait visible alors qu'il est fermé. */
 .ui-menu-panneau[hidden] {
   display: none;
+}
+
+/* Largeur pleine : pour une action unique dans un panneau étroit (burger, modale), où le plafond
+   de 320 px laisserait un bouton flottant au milieu du vide. */
+.ui-bouton--pleine {
+  width: 100%;
+  max-width: none;
 }
 
 /* Sortie de session : même gabarit que les entrées de navigation. Le composant ne le rend que
@@ -446,7 +453,7 @@ a:hover {
 .ui-deconnexion--pleine {
   width: 100%;
   margin-top: 8px;
-  border-radius: 10px;
+  border-radius: 7px;
   justify-content: flex-start;
 }
 
@@ -495,7 +502,7 @@ a:hover {
   padding: 12px;
   background: var(--ui-surface);
   border: 1px solid var(--ui-bordure-douce);
-  border-radius: 16px;
+  border-radius: 7px;
   box-shadow: 0 18px 40px rgb(0 0 0 / 18%);
 }
 
@@ -518,7 +525,7 @@ a:hover {
   gap: 10px;
   min-height: 44px;
   padding: 0 12px;
-  border-radius: 10px;
+  border-radius: 7px;
   color: var(--ui-texte);
   text-decoration: none;
   font-size: 15px;
@@ -600,7 +607,7 @@ a:hover {
   width: 100%;
   max-width: var(--ui-largeur);
   margin: 0 auto;
-  padding: 40px 28px 64px;
+  padding: 28px 20px 44px;
 }
 
 /* ——— Blocs de contenu ——— */
@@ -610,7 +617,7 @@ a:hover {
   border: 1px solid var(--ui-bordure-douce);
   border-radius: var(--ui-rayon);
   box-shadow: var(--ui-ombre-douce);
-  padding: 26px;
+  padding: 18px;
   transition: background-color var(--ui-duree) var(--ui-courbe), border-color var(--ui-duree) var(--ui-courbe),
     box-shadow var(--ui-duree) var(--ui-courbe);
 }
@@ -647,8 +654,8 @@ a:hover {
   display: flex;
   flex-direction: column;
   gap: 18px;
-  padding: 48px 40px;
-  border-radius: 24px;
+  padding: 28px 22px;
+  border-radius: 10px;
   background: var(--ui-degrade-heros), var(--ui-surface);
   border: 1px solid var(--ui-bordure-douce);
   box-shadow: var(--ui-ombre);
@@ -843,7 +850,7 @@ a:hover {
   width: 42px;
   height: 42px;
   border: 0;
-  border-radius: 10px;
+  border-radius: 7px;
   background: transparent;
   color: var(--ui-texte-attenue);
   cursor: pointer;
@@ -870,11 +877,11 @@ a:hover {
   display: flex;
   flex-direction: column;
   gap: 22px;
-  padding: 36px;
+  padding: 20px;
   text-align: center;
   background: var(--ui-surface);
   border: 1px solid var(--ui-bordure-douce);
-  border-radius: 22px;
+  border-radius: 10px;
   box-shadow: var(--ui-ombre);
   transition: background-color var(--ui-duree) var(--ui-courbe), border-color var(--ui-duree) var(--ui-courbe);
 }
@@ -919,7 +926,7 @@ a:hover {
   flex-direction: column;
   align-items: center;
   gap: 14px;
-  padding: 52px 28px;
+  padding: 32px 20px;
   text-align: center;
   background: var(--ui-surface);
   border: 1px solid var(--ui-bordure-douce);
@@ -998,7 +1005,7 @@ a:hover {
 
 .ui-pied {
   margin-top: auto;
-  padding: 44px 28px 28px;
+  padding: 28px 20px 20px;
   background: var(--ui-surface);
   border-top: 1px solid var(--ui-bordure-douce);
   text-align: left;

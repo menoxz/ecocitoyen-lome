@@ -22,6 +22,12 @@
   border-radius: var(--ui-rayon-sm, 8px);
   cursor: pointer;
   min-height: 44px;
+  /* Largeur précise et adaptative : le bouton prend la place de son libellé, avec un plancher
+     lisible (132 px) et un plafond qui le laisse s'adapter au conteneur sur mobile. Une largeur
+     fixe aurait cassé les libellés longs ; aucune largeur aurait donné des boutons de 60 px. */
+  width: fit-content;
+  min-width: 132px;
+  max-width: min(100%, 320px);
   padding: 0 18px;
   transition: background-color var(--ui-duree-rapide, 120ms) var(--ui-courbe, ease),
     border-color var(--ui-duree-rapide, 120ms) var(--ui-courbe, ease),
