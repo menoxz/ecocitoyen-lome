@@ -65,7 +65,7 @@ export function EcranSuivi(proprietes: ProprietesEcranSuivi): ReactNode {
     <EnTeteVue
       icone={FileSearch}
       titre="Suivi du dossier"
-      explication="L état de votre signalement et chaque décision du service, dans l ordre où elles ont été prises."
+      explication="L état de votre signalement et chaque décision du service, dans l'ordre où elles ont été prises."
     />
   );
 
@@ -114,7 +114,7 @@ export function EcranSuivi(proprietes: ProprietesEcranSuivi): ReactNode {
     return (
       <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
         {tete}
-        <EtatVide titre="Dossier introuvable" explication="Ce dossier n'existe pas ou ne vous est pas accessible." />
+        <EtatVide titre="Dossier introuvable" explication="Ce dossier n'existe pas ou ne vous'est pas accessible." />
       </section>
     );
   }
@@ -162,7 +162,7 @@ export function EcranSuivi(proprietes: ProprietesEcranSuivi): ReactNode {
       <EnTeteVue
         icone={FileSearch}
         titre="Suivi du dossier"
-        explication="L état de votre signalement et chaque décision du service, dans l ordre où elles ont été prises."
+        explication="L état de votre signalement et chaque décision du service, dans l'ordre où elles ont été prises."
         chiffres={[
           {
             icone: CircleDot,
@@ -174,7 +174,7 @@ export function EcranSuivi(proprietes: ProprietesEcranSuivi): ReactNode {
             icone: CalendarClock,
             valeur: String(lisibles.length),
             libelle: "étape(s) enregistrée(s)",
-            aide: "Chaque changement de statut est conservé dans l historique.",
+            aide: "Chaque changement de statut est conservé dans l'historique.",
           },
         ]}
       />

@@ -103,7 +103,7 @@ describe("dossiers actionnables (parcours agent §6)", () => {
 });
 
 describe("action proposée sur un dossier", () => {
-  test("démarrer tant que l intervention n a pas commencé, puis clôturer", () => {
+  test("démarrer tant que l'intervention n'a pas commencé, puis clôturer", () => {
     expect(actionPossible(dossier(), false)).toBe("demarrer");
     expect(actionPossible(dossier(), true)).toBe("cloturer");
   });

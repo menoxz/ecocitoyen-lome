@@ -10,14 +10,14 @@ const etape = (surcharge: Partial<EtapeHistoriqueApi>): EtapeHistoriqueApi => ({
   ...surcharge,
 });
 
-describe("identifiant de dossier dans l adresse", () => {
+describe("identifiant de dossier dans l'adresse", () => {
   test("lit un identifiant après dossier", () => {
     expect(idDuFragment("#/dossier/sig-42")).toBe("sig-42");
     expect(idDuFragment("#dossier/sig-42")).toBe("sig-42");
     expect(idDuFragment("#/dossier/sig-42?x=1")).toBe("sig-42");
   });
 
-  test("ne devine rien quand l adresse ne désigne pas de dossier", () => {
+  test("ne devine rien quand l'adresse ne désigne pas de dossier", () => {
     expect(idDuFragment("#/signaler")).toBeNull();
     expect(idDuFragment("#/dossier")).toBeNull();
     expect(idDuFragment("")).toBeNull();
@@ -36,18 +36,18 @@ describe("étapes lisibles", () => {
     expect(transition.titre).toBe("Nouveau → Validé");
   });
 
-  test("un commentaire absent n est pas remplacé par un texte inventé", () => {
+  test("un commentaire absent n'est pas remplacé par un texte inventé", () => {
     const [sansMotif] = etapesLisibles([etape({ commentaire: null })]);
     expect(sansMotif.detail).toBe("");
   });
 
-  test("aucune étape inventée quand l historique est vide", () => {
+  test("aucune étape inventée quand l'historique est vide", () => {
     expect(etapesLisibles([])).toEqual([]);
   });
 });
 
 describe("libellés de statut", () => {
-  test("traduit les statuts du dossier et laisse passer l inconnu", () => {
+  test("traduit les statuts du dossier et laisse passer l'inconnu", () => {
     expect(libelleStatut("EN_COURS")).toBe("En cours");
     expect(libelleStatut("REJETE")).toBe("Rejeté");
     expect(libelleStatut("INCONNU")).toBe("INCONNU");

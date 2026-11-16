@@ -67,7 +67,7 @@ export interface LigneIndicateur {
   readonly libelle: string;
   readonly valeur: string;
   readonly mesurable: boolean;
-  /** Ce que l indicateur mesure, en une phrase : c est le détail ouvert au clic. */
+  /** Ce que l indicateur mesure, en une phrase : c'est le détail ouvert au clic. */
   readonly definition: string;
 }
 

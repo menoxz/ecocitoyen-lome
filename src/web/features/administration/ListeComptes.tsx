@@ -96,7 +96,7 @@ export function ListeComptes(proprietes: ProprietesListeComptes): ReactNode {
                   ? { icone: UserX, libelle: "Désactivé", ton: "erreur", aide: "Compte désactivé : il ne peut plus se connecter." }
                   : { icone: CheckCircle2, libelle: "Actif", ton: "succes", aide: "Compte actif : il peut se connecter." },
                 ...(compte.id_equipe
-                  ? [{ icone: Users, libelle: `Équipe ${compte.id_equipe}`, ton: "neutre" as const, aide: "Équipe d intervention rattachée au compte." }]
+                  ? [{ icone: Users, libelle: `Équipe ${compte.id_equipe}`, ton: "neutre" as const, aide: "Équipe d'intervention rattachée au compte." }]
                   : []),
               ];
 

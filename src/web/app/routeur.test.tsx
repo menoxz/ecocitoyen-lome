@@ -12,7 +12,7 @@ describe("résolution de route", () => {
     expect(resoudre("#/signaler?v=1")).toBe("signaler");
   });
 
-  test("tout le reste tombe sur l accueil, sans page blanche", () => {
+  test("tout le reste tombe sur l'accueil, sans page blanche", () => {
     expect(resoudre("")).toBe("accueil");
     expect(resoudre("#/")).toBe("accueil");
     expect(resoudre("#/inconnu")).toBe("accueil");

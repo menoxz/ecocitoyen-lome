@@ -14,7 +14,7 @@ const OPTIONS = [
 describe("ChampSelect", () => {
   const base = { id: "categorie", libelle: "Catégorie", valeur: "", options: OPTIONS, onChange: () => {} };
 
-  test("n invente aucune valeur et annonce le champ obligatoire", () => {
+  test("n'invente aucune valeur et annonce le champ obligatoire", () => {
     const html = rendu(<ChampSelect {...base} requis />);
 
     // Aucune option n est preselectionnee : le declencheur affiche l invite, pas une valeur.
@@ -27,7 +27,7 @@ describe("ChampSelect", () => {
     expect(html).not.toContain("Dépôt sauvage");
   });
 
-  test("une valeur choisie s affiche dans le declencheur", () => {
+  test("une valeur choisie s'affiche dans le declencheur", () => {
     const html = rendu(<ChampSelect {...base} valeur="cat-2" />);
 
     expect(html).toContain("Caniveau bouché");
@@ -50,7 +50,7 @@ describe("ChampSelect", () => {
     expect(html).toContain('aria-describedby="categorie-erreur"');
   });
 
-  test("aide affichee quand il n y a pas d erreur", () => {
+  test("aide affichee quand il n'y a pas d'erreur", () => {
     const html = rendu(<ChampSelect {...base} aide="Cette catégorie déterminera la priorité." />);
 
     expect(html).toContain("Cette catégorie déterminera la priorité.");

@@ -114,7 +114,7 @@ export function ClotureIntervention(proprietes: ProprietesClotureIntervention): 
         </p>
       ) : (
         <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-alerte)" }}>
-          Sans photographie, la clôture sera refusée par le service : c est la preuve du travail.
+          Sans photographie, la clôture sera refusée par le service : c'est la preuve du travail.
         </p>
       )}
 

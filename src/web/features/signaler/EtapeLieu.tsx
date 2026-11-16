@@ -97,7 +97,7 @@ export function EtapeLieu(proprietes: ProprietesEtapeLieu): ReactNode {
         options={proprietes.quartiers}
         onChange={(valeur) => proprietes.onMaj({ idQuartier: valeur })}
         texteVide="Choisir un quartier…"
-        aide="Le quartier détermine l équipe qui sera envoyée."
+        aide="Le quartier détermine l'équipe qui sera envoyée."
         requis
       />
 
@@ -107,7 +107,7 @@ export function EtapeLieu(proprietes: ProprietesEtapeLieu): ReactNode {
         valeur={brouillon.repere}
         onChange={(valeur) => proprietes.onMaj({ repere: valeur })}
         exemple="Devant la pharmacie, à côté du marché"
-        aide="Un repère connu aide l équipe à trouver le problème."
+        aide="Un repère connu aide l'équipe à trouver le problème."
       />
     </div>
   );

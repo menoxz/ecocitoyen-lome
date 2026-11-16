@@ -123,7 +123,7 @@ export function GrillePhotos(proprietes: ProprietesGrillePhotos): ReactNode {
 
       {survol && libre ? (
         <p className="ui-grille-photos-depot" role="status">
-          Déposez la photo pour l ajouter
+          Déposez la photo pour l'ajouter
         </p>
       ) : null}
 

@@ -11,7 +11,7 @@ import {
 } from "./etapes.ts";
 
 /**
- * Le parcours est piloté par une logique pure (`etapes.ts`) et un composant sans effet de bord
+ * Le parcours'est piloté par une logique pure (`etapes.ts`) et un composant sans effet de bord
  * au rendu. Ces tests couvrent les deux : les décisions de progression, et le contenu de chaque
  * vue. La navigation par clic relève de la revue navigateur, elle n'est pas simulée ici — le dire
  * vaut mieux que de la faire passer pour testée.

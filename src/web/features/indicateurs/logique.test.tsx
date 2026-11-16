@@ -29,7 +29,7 @@ const synthese = (surcharge: Partial<SyntheseApi>): SyntheseApi => ({
 });
 
 describe("mise en forme des taux", () => {
-  test("un taux non mesurable n est jamais affiché zéro", () => {
+  test("un taux non mesurable n'est jamais affiché zéro", () => {
     expect(formaterPourcentage(null)).toBe(NON_MESURABLE);
     expect(formaterPourcentage(null)).not.toBe("0 %");
   });
@@ -39,13 +39,13 @@ describe("mise en forme des taux", () => {
     expect(formaterPourcentage(0)).toBe("0 %");
   });
 
-  test("un zéro mesuré reste distinct d une absence de mesure", () => {
+  test("un zéro mesuré reste distinct d'une absence de mesure", () => {
     expect(formaterPourcentage(0)).not.toBe(formaterPourcentage(null));
   });
 });
 
 describe("mise en forme des délais et des nombres", () => {
-  test("arrondit à une décimale et marque l absence de mesure", () => {
+  test("arrondit à une décimale et marque l'absence de mesure", () => {
     expect(formaterHeures(12.345)).toBe("12.3 h");
     expect(formaterHeures(null)).toBe(NON_MESURABLE);
   });
@@ -62,7 +62,7 @@ describe("libellés", () => {
     expect(libelleJalon("inconnu")).toBe("inconnu");
   });
 
-  test("traduit les statuts et laisse passer l inconnu", () => {
+  test("traduit les statuts et laisse passer l'inconnu", () => {
     expect(libelleStatutIndicateur("EN_COURS")).toBe("En cours");
     expect(libelleStatutIndicateur("X")).toBe("X");
   });
@@ -76,7 +76,7 @@ describe("lecture d une synthèse", () => {
     expect(volumes.find((v) => v.statut === "VALIDE")?.nombre).toBe(0);
   });
 
-  test("les lignes de pilotage marquent ce qui n est pas mesurable", () => {
+  test("les lignes de pilotage marquent ce qui n'est pas mesurable", () => {
     const lignes = lignesPilotage(synthese({ tauxResolution: 75 }));
     const resolution = lignes.find((l) => l.libelle === "Taux de résolution");
     const rejet = lignes.find((l) => l.libelle === "Taux de rejet");

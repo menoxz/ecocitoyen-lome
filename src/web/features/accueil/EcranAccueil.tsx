@@ -53,7 +53,7 @@ export function EcranAccueil(): ReactNode {
         <h1 className="ui-titre-page">Signaler un problème de propreté, et savoir ce qu'il devient</h1>
         <p className="ui-sous-titre">
           Dépôt sauvage, caniveau bouché, déchet dangereux : votre signalement entre dans une file de
-          décision municipale. Chaque changement de statut est enregistré et vous est notifié.
+          décision municipale. Chaque changement de statut est enregistré et vous'est notifié.
         </p>
         <div className="ui-actions-principales">
           <a href="#/signaler" className="ui-lien-bouton">

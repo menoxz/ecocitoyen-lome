@@ -4,7 +4,7 @@ import { ESPACEMENT, TAILLE_TEXTE } from "./jetons.ts";
 /**
  * Fil de parcours — états couverts : étape faite, étape courante, étape à venir.
  *
- * Trois étapes nommées au maximum : au-delà, le parcours est trop long (PARCOURS.md §3 exige
+ * Trois étapes nommées au maximum : au-delà, le parcours'est trop long (PARCOURS.md §3 exige
  * trois écrans pour signaler). L''étape courante porte `aria-current="step"` : un lecteur d''écran
  * sait où il en est sans voir la couleur.
  */

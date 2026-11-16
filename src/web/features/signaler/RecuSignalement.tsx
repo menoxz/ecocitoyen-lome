@@ -50,7 +50,7 @@ export function RecuSignalement(proprietes: ProprietesRecuSignalement): ReactNod
         ) : null}
         {proprietes.onTerminer ? (
           <Bouton variante="texte" onClick={proprietes.onTerminer}>
-            Retour à l accueil
+            Retour à l'accueil
           </Bouton>
         ) : null}
       </div>

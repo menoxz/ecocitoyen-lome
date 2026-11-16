@@ -8,7 +8,7 @@ import { CLASSES } from "./jetons.ts";
  *
  * Trois informations, jamais une seule : le nombre de pages (où suis-je), les bornes affichées
  * (« 9–16 sur 23 »), et deux gestes bornés. Les numéros de page sont des boutons de 44 px : sur
- * un téléphone, une pagination en petits chiffres est inutilisable.
+ * un téléphone, une pagination en petits chiffres'est inutilisable.
  *
  * Le composant ne calcule rien : les nombres viennent de `liste.ts` et restent cohérents avec la
  * collection réellement reçue.

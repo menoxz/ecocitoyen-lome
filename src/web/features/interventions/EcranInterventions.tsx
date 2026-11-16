@@ -79,7 +79,7 @@ export function EcranInterventions(proprietes: ProprietesEcranInterventions): Re
 
   /**
    * Démarrage depuis la carte : l action principale de la file. Le serveur décide (statut, rôle,
-   * affectation) ; la liste est rechargée ensuite pour afficher l état réel, jamais un état supposé.
+   * affectation) ; la liste est rechargée ensuite pour afficher l'état réel, jamais un état supposé.
    */
   const demarrerDossier = useCallback(
     async (id: string): Promise<void> => {
@@ -180,7 +180,7 @@ export function EcranInterventions(proprietes: ProprietesEcranInterventions): Re
       <EnTeteVue
         icone={Wrench}
         titre="Mes interventions"
-        explication="Les dossiers affectés à votre équipe, dans l ordre décidé par le service : les plus urgents et les plus anciens d abord."
+        explication="Les dossiers affectés à votre équipe, dans l'ordre décidé par le service : les plus urgents et les plus anciens d'abord."
         chiffres={[
           {
             icone: ClipboardList,

@@ -191,7 +191,7 @@ export function AssistantSignalement(proprietes: ProprietesAssistant): ReactNode
             : etape === "preuve"
               ? "Vous pouvez avancer : le service vérifiera la photo."
               : etape === "lieu"
-                ? "Le quartier détermine l équipe qui sera envoyée."
+                ? "Le quartier détermine l'équipe qui sera envoyée."
                 : "Vérifiez avant d envoyer : un signalement envoyé ne se modifie plus."}
         </div>
         <div className="ui-carte-pied-actions">

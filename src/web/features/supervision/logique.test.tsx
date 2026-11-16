@@ -32,7 +32,7 @@ describe("file de tri du superviseur", () => {
     expect(file.map((d) => d.id_signalement)).toEqual(["nouveau"]);
   });
 
-  test("l urgence passe avant l ancienneté, l ancienneté tranche à urgence égale", () => {
+  test("l'urgence passe avant l'ancienneté, l'ancienneté tranche à urgence égale", () => {
     const file = dossiersATrier([
       dossier({ id_signalement: "basse-ancienne", niveau_priorite: "BASSE", date_signalement: "2026-11-01T08:00:00.000Z" }),
       dossier({ id_signalement: "urgente-recente", niveau_priorite: "URGENTE", date_signalement: "2026-11-14T08:00:00.000Z" }),
@@ -41,7 +41,7 @@ describe("file de tri du superviseur", () => {
     expect(file.map((d) => d.id_signalement)).toEqual(["urgente-ancienne", "urgente-recente", "basse-ancienne"]);
   });
 
-  test("la liste d origine n est pas modifiée", () => {
+  test("la liste d'origine n'est pas modifiée", () => {
     const origine = [dossier({ id_signalement: "a", niveau_priorite: "BASSE" }), dossier({ id_signalement: "b", niveau_priorite: "URGENTE" })];
     dossiersATrier(origine);
     expect(origine.map((d) => d.id_signalement)).toEqual(["a", "b"]);
@@ -59,7 +59,7 @@ describe("décision de validation", () => {
     expect(peutValider("HAUTE").ok).toBe(true);
   });
 
-  test("n envoie pas de champ vide au serveur", () => {
+  test("n'envoie pas de champ vide au serveur", () => {
     expect(construireValidation("HAUTE", "   ", "cat-dechets")).toEqual({
       id_categorie: "cat-dechets",
       niveau_priorite: "HAUTE",
@@ -75,7 +75,7 @@ describe("décision de validation", () => {
 });
 
 describe("décision de rejet", () => {
-  test("refuse l absence de motif", () => {
+  test("refuse l'absence de motif", () => {
     expect(peutRejeter("", "peu importe").ok).toBe(false);
   });
 
@@ -89,7 +89,7 @@ describe("décision de rejet", () => {
     expect(peutRejeter("Doublon", "").ok).toBe(true);
   });
 
-  test("le motif part toujours, le commentaire seulement s il est renseigné", () => {
+  test("le motif part toujours, le commentaire seulement s'il est renseigné", () => {
     expect(construireRejet("Doublon", "  ")).toEqual({ motif_rejet: "Doublon" });
     expect(construireRejet("Hors zone", " Adresse hors commune. ")).toEqual({
       motif_rejet: "Hors zone",
@@ -99,7 +99,7 @@ describe("décision de rejet", () => {
 });
 
 describe("affichage des priorités", () => {
-  test("traduit les valeurs du serveur et laisse passer l inconnue", () => {
+  test("traduit les valeurs du serveur et laisse passer l'inconnue", () => {
     expect(libellePriorite("URGENTE")).toBe("Urgente");
     expect(libellePriorite("HAUTE")).toBe("Haute");
     expect(libellePriorite("INCONNUE")).toBe("INCONNUE");

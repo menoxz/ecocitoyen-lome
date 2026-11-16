@@ -7,7 +7,7 @@ import { Icone } from "./Icone.tsx";
  * État d'erreur — message du serveur en clair, jamais « une erreur est survenue ».
  *
  * `code` est le code stable du contrat (`TRANSITION_INTERDITE`, `HORS_ZONE`…) : il permet de
- * relier l'affichage au refus réel, et de constater en test que le bon refus est montré.
+ * relier l'affichage au refus réel, et de constater en test que le bon refus'est montré.
  *
  * Les couleurs viennent de `.ui-etat--erreur` : le fond d'alerte est une variable, donc il existe
  * en clair et en sombre sans que ce composant ait à le savoir.

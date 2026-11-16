@@ -47,7 +47,7 @@ describe("pagination — niveau 2, liste longue découpée", () => {
     expect(paginer(elements, 3, 8)).toEqual([17, 18, 19, 20, 21, 22, 23]);
   });
 
-  test("une page hors bornes est ramenée dans la liste, jamais une page vide", () => {
+  test("une page hors bornes'est ramenée dans la liste, jamais une page vide", () => {
     expect(paginer(elements, 9, 8)).toEqual([17, 18, 19, 20, 21, 22, 23]);
     expect(paginer(elements, 0, 8)).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
     expect(paginer([], 3, 8)).toEqual([]);

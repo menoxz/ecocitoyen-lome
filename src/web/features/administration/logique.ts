@@ -43,7 +43,7 @@ export function nomAffichable(compte: CompteApi): string {
   return complet.length > 0 ? complet : compte.email;
 }
 
-/** Charge utile d'activation : on envoie la valeur voulue, jamais un « basculer » implicite. */
+/** Charge utile d'activation : on'envoie la valeur voulue, jamais un « basculer » implicite. */
 export function basculerActivation(compte: CompteApi): { readonly actif: boolean } {
   return { actif: compte.actif !== true };
 }

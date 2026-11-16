@@ -26,7 +26,7 @@ export function EtapeProbleme(proprietes: ProprietesEtapeProbleme): ReactNode {
         options={proprietes.categories}
         onChange={(valeur) => proprietes.onMaj({ idCategorie: valeur })}
         texteVide="Choisir une catégorie…"
-        aide="Vous êtes le seul à voir le problème : c est vous qui savez de quoi il s agit."
+        aide="Vous êtes le seul à voir le problème : c'est vous qui savez de quoi il s agit."
         requis
       />
       <ChampZoneTexte

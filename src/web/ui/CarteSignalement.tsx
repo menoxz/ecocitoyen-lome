@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { AlertTriangle, CameraOff, CircleDot, Clock, Gauge, MapPin, Users } from "lucide-react";
+import { AlertTriangle, CameraOff, CircleDot, Clock, Gauge, MapPin, Users, X } from "lucide-react";
+import { Icone } from "./Icone.tsx";
 import { PucesEtat, type PuceEtat } from "./PucesEtat.tsx";
 import { CLASSES, ESPACEMENT, RAYON, STATUTS, TAILLE_TEXTE, type ClePriorite, type CleStatut } from "./jetons.ts";
 
@@ -32,7 +33,7 @@ export interface ProprietesCarteSignalement {
   /** Action principale de la file de l'agent : démarrer l'intervention depuis la carte. */
   readonly onDemarrer?: (id: string) => void;
   readonly demarrageEnCours?: boolean;
-  /** Clôture dépliée dans la carte : le geste de fin d intervention, sans écran intermédiaire. */
+  /** Clôture dépliée dans la carte : le geste de fin d'intervention, sans écran intermédiaire. */
   readonly onCloturer?: (id: string) => void;
   readonly clotureOuverte?: boolean;
 }
@@ -131,6 +132,19 @@ export function CarteSignalement(proprietes: ProprietesCarteSignalement): ReactN
 
       <PucesEtat puces={puces} etiquette={`État du dossier ${proprietes.id}`} />
 
+      {/* Fermeture du compte rendu : un « × » dans l'angle supérieur droit de la carte, là où on
+          l'attend, plutôt qu'un libellé « Fermer » glissé parmi les actions. */}
+      {proprietes.onCloturer && proprietes.clotureOuverte === true ? (
+        <button
+          type="button"
+          className="ui-carte-fermer ui-focusable"
+          aria-label={`Fermer le compte rendu du dossier ${proprietes.quartier}`}
+          onClick={() => proprietes.onCloturer?.(proprietes.id)}
+        >
+          <Icone icone={X} taille={18} />
+        </button>
+      ) : null}
+
       <p style={{ margin: 0, fontSize: TAILLE_TEXTE.md, color: "inherit" }}>{descriptionCourte}</p>
 
       {proprietes.enChargement === true ? (
@@ -156,21 +170,21 @@ export function CarteSignalement(proprietes: ProprietesCarteSignalement): ReactN
           <button
             type="button"
             className={[CLASSES.bouton, CLASSES.boutonPrimaire, CLASSES.focusable].join(" ")}
-            aria-label={`Clôturer l intervention du dossier ${proprietes.quartier}`}
+            aria-label={`Clôturer l'intervention du dossier ${proprietes.quartier}`}
             aria-expanded={proprietes.clotureOuverte === true ? "true" : "false"}
             onClick={() => proprietes.onCloturer?.(proprietes.id)}
           >
-            {proprietes.clotureOuverte === true ? "Fermer le compte rendu" : "Clôturer l intervention"}
+            Clôturer l'intervention
           </button>
         ) : proprietes.onDemarrer ? (
           <button
             type="button"
             className={[CLASSES.bouton, CLASSES.boutonPrimaire, CLASSES.focusable].join(" ")}
-            aria-label={`Démarrer l intervention du dossier ${proprietes.quartier}`}
+            aria-label={`Démarrer l'intervention du dossier ${proprietes.quartier}`}
             disabled={proprietes.demarrageEnCours === true}
             onClick={() => proprietes.onDemarrer?.(proprietes.id)}
           >
-            {proprietes.demarrageEnCours === true ? "Démarrage…" : "Démarrer l intervention"}
+            {proprietes.demarrageEnCours === true ? "Démarrage…" : "Démarrer l'intervention"}
           </button>
         ) : null}
       </div>

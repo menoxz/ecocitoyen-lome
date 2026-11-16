@@ -36,7 +36,7 @@ type EtatChargementReferentiels =
       readonly centres: Readonly<Record<string, { latitude: number; longitude: number }>>;
     };
 
-/** Centres des quartiers : seule source d'une position de repli quand la géoloc est refusée. */
+/** Centres des quartiers : seule source d'une position de repli quand la géoloc'est refusée. */
 export function versCentres(
   quartiers: readonly QuartierApi[],
 ): Readonly<Record<string, { latitude: number; longitude: number }>> {

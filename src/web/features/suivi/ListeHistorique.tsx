@@ -23,7 +23,7 @@ import { libelleStatut, type EtapeLisible } from "./logique.ts";
 const TOUTES = "TOUTES";
 
 const OPTIONS_TRI = [
-  { valeur: "chrono", libelle: "Dans l ordre du service" },
+  { valeur: "chrono", libelle: "Dans l'ordre du service" },
   { valeur: "inverse", libelle: "De la plus récente" },
   { valeur: "statut", libelle: "Par décision" },
 ] as const;

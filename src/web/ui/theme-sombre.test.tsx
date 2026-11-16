@@ -2,10 +2,10 @@ import { describe, expect, test } from "bun:test";
 import { attributTheme, choixDepuis, choixSuivant, libelleTheme } from "./theme-sombre.ts";
 
 describe("choix de thème", () => {
-  test("une valeur inconnue ou absente retombe sur l automatique", () => {
+  test("une valeur inconnue ou absente retombe sur l'automatique", () => {
     expect(choixDepuis(null)).toBe("auto");
     expect(choixDepuis(undefined)).toBe("auto");
-    expect(choixDepuis("n importe quoi")).toBe("auto");
+    expect(choixDepuis("n'importe quoi")).toBe("auto");
     expect(choixDepuis("")).toBe("auto");
   });
 
@@ -20,7 +20,7 @@ describe("choix de thème", () => {
     expect(choixSuivant("sombre")).toBe("auto");
   });
 
-  test("l automatique ne pose aucun attribut : le système décide", () => {
+  test("l'automatique ne pose aucun attribut : le système décide", () => {
     expect(attributTheme("auto")).toBeNull();
     expect(attributTheme("clair")).toBe("clair");
     expect(attributTheme("sombre")).toBe("sombre");

@@ -650,6 +650,8 @@ a:hover {
   border-radius: var(--ui-rayon);
   box-shadow: var(--ui-ombre-douce);
   padding: 26px;
+  /* Ancre du « × » de fermeture de la carte, posé dans l'angle supérieur droit. */
+  position: relative;
   transition: background-color var(--ui-duree) var(--ui-courbe), border-color var(--ui-duree) var(--ui-courbe),
     box-shadow var(--ui-duree) var(--ui-courbe);
 }
@@ -2362,6 +2364,8 @@ a:focus-visible {
   border-radius: var(--ui-rayon);
   box-shadow: var(--ui-ombre-douce);
   overflow: hidden;
+  /* Ancre du « × » de fermeture, posé dans l'angle supérieur droit de la fenêtre. */
+  position: relative;
 }
 
 .ui-modale--etroite {
@@ -2386,7 +2390,7 @@ a:focus-visible {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 14px 20px;
+  padding: 14px 52px 14px 20px;
   border-bottom: 1px solid var(--ui-bordure-douce);
   background: var(--ui-surface-douce);
 }
@@ -2397,6 +2401,53 @@ a:focus-visible {
   font-weight: 800;
   letter-spacing: -0.01em;
   color: var(--ui-texte);
+}
+
+/* Fermeture : « × » dans l'angle supérieur droit du parent, jamais un bouton texte. */
+.ui-modale-fermer {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--ui-rayon-sm);
+  background: transparent;
+  color: var(--ui-texte-attenue);
+  cursor: pointer;
+}
+
+.ui-modale-fermer:hover {
+  background: var(--ui-primaire-voile);
+  color: var(--ui-primaire);
+}
+
+.ui-carte-fermer {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--ui-rayon-sm);
+  background: transparent;
+  color: var(--ui-texte-attenue);
+  cursor: pointer;
+}
+
+.ui-carte-fermer:hover {
+  background: var(--ui-primaire-voile);
+  color: var(--ui-primaire);
 }
 
 /* Seule zone qui défile. `min-height: 0` autorise le rétrécissement dans un parent flex. */

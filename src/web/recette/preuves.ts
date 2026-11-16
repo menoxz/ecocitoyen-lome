@@ -32,7 +32,7 @@ export const PREUVES_RECETTE: readonly PreuveRecette[] = [
     critere: "Consultation publique par un visiteur",
     fichier: "tests/api/signalements.test.ts",
     test: "cache un dossier Nouveau à un autre citoyen (404, RG28)",
-    preuve: "un statut non public est refusé à un tiers et à un visiteur",
+    preuve: "un statut non public'est refusé à un tiers et à un visiteur",
   },
   {
     code: "CR3",

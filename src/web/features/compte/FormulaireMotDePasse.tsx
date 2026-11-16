@@ -13,7 +13,7 @@ import { ESPACEMENT, TAILLE_TEXTE } from "../../ui/jetons.ts";
  *
  * Trois corrections viennent d'être observées à l'usage : un second champ de confirmation (une
  * faute de frappe sur un téléphone enfermait l'agent hors de son compte), un message de réussite
- * explicite (le formulaire disparaissait sans rien dire), et la propagation du nouvel état de
+ * explicite (le formulaire disparaissait sans rien dire), et la propagation du nouvel'état de
  * session à l'en-tête.
  */
 export interface ProprietesFormulaireMotDePasse {

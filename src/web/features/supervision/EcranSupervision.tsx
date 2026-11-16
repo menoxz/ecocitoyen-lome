@@ -20,7 +20,7 @@ import { construireRejet, construireValidation, dossiersATrier, libellePriorite 
  *   3. l'état de chaque signalement, en icône + couleur + infobulle (`CarteSignalement`) ;
  *   4. la décision, au clic, dans `FormulaireDecision`.
  *
- * Les valeurs de décision (priorités, motifs) sont servies par le serveur : l'écran n'en invente
+ * Les valeurs de décision (priorités, motifs) sont servies par le serveur : l'écran n'en'invente
  * aucune. Le rejet exige un motif, parce qu'un rejet muet ne dit pas au citoyen quoi corriger.
  */
 export interface ProprietesEcranSupervision {
@@ -30,7 +30,7 @@ export interface ProprietesEcranSupervision {
 
 type Session = "inconnu" | "absent" | "present";
 
-const EXPLICATION = "Les signalements en attente de décision, les plus urgents et les plus anciens d abord.";
+const EXPLICATION = "Les signalements en attente de décision, les plus urgents et les plus anciens d'abord.";
 
 export function EcranSupervision(proprietes: ProprietesEcranSupervision): ReactNode {
   const [session, setSession] = useState<Session>("inconnu");

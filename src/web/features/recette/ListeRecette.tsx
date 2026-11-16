@@ -140,7 +140,7 @@ export function ListeRecette(): ReactNode {
           {detail ? `${detail.fichier} — « ${detail.test} »` : ""}
         </p>
         <p style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-texte-attenue)" }}>
-          Le résultat se lit en lançant bun test : cette page ne peut pas connaître l exécution.
+          Le résultat se lit en lançant bun test : cette page ne peut pas connaître l'exécution.
         </p>
       </Modale>
     </section>

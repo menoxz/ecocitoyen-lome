@@ -19,7 +19,7 @@ describe("écran de recette", () => {
     expect(html).toContain("Pagination de la liste");
   });
 
-  test("n affiche aucun verdict : ni PASSED, ni pourcentage inventé", () => {
+  test("n'affiche aucun verdict : ni PASSED, ni pourcentage inventé", () => {
     const html = rendu();
     expect(html).not.toContain("PASSED");
     expect(html).not.toContain("100 %");

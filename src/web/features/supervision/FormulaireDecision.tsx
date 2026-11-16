@@ -44,7 +44,7 @@ export function FormulaireDecision(proprietes: ProprietesFormulaireDecision): Re
         <div className="ui-decision-champs">
           <ChampSelect
             id="supervision-priorite"
-            libelle="Priorité d intervention"
+            libelle="Priorité d'intervention"
             valeur={priorite}
             options={proprietes.priorites.map((valeur) => ({ valeur, libelle: libellePriorite(valeur) }))}
             onChange={setPriorite}
@@ -61,7 +61,7 @@ export function FormulaireDecision(proprietes: ProprietesFormulaireDecision): Re
               onChange={setCommentaire}
               minimum={0}
               lignes={2}
-              aide="Ce commentaire est visible du citoyen dans l historique de son dossier."
+              aide="Ce commentaire est visible du citoyen dans l'historique de son dossier."
             />
           </div>
         </div>
@@ -106,7 +106,7 @@ export function FormulaireDecision(proprietes: ProprietesFormulaireDecision): Re
       </div>
 
       <p style={{ margin: 0, fontSize: TAILLE_TEXTE.xs, color: "var(--ui-texte-attenue)" }}>
-        Décision enregistrée au nom de votre compte ; l identité du décideur n est pas publiée.
+        Décision enregistrée au nom de votre compte ; l'identité du décideur n'est pas publiée.
       </p>
     </section>
   );
