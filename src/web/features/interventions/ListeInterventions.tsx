@@ -8,6 +8,7 @@ import { ESPACEMENT } from "../../ui/jetons.ts";
 import { compterPar, filtrerParTexte, trierPar } from "../../ui/liste.ts";
 import type { ClientApi, SignalementApi } from "../../api/client.ts";
 import { ClotureIntervention } from "./ClotureIntervention.tsx";
+import { DetailDossier } from "./DetailDossier.tsx";
 
 /**
  * Niveaux 2 et 3 de la hiérarchie de découverte pour la file de l'agent : la liste se cherche,
@@ -15,6 +16,9 @@ import { ClotureIntervention } from "./ClotureIntervention.tsx";
  *
  * L'ordre livré par le serveur reste le tri par défaut : c'est lui qui porte la règle de priorité.
  * Les autres tris sont des commodités de lecture, jamais un recalcul de l'urgence.
+ *
+ * Niveau 4 : « Ouvrir le dossier » ouvre une fiche qui réunit ce que la carte tronquait — lieu,
+ * ancienneté exacte, description entière, gestes attendus — et porte l'action « Prendre en main ».
  */
 export interface ProprietesListeInterventions {
   readonly dossiers: readonly SignalementApi[];
@@ -39,6 +43,7 @@ export function ListeInterventions(proprietes: ProprietesListeInterventions): Re
   const [tri, setTri] = useState<string>("servi");
   const [priorite, setPriorite] = useState<string>(TOUTES);
   const [clotureId, setClotureId] = useState<string | null>(null);
+  const [detailId, setDetailId] = useState<string | null>(null);
 
   const parPriorite = compterPar(proprietes.dossiers, (dossier) => dossier.niveau_priorite);
   const facettes: readonly Facette[] = [
@@ -62,6 +67,13 @@ export function ListeInterventions(proprietes: ProprietesListeInterventions): Re
       : tri === "ancien"
         ? trierPar(filtres, (dossier) => Date.parse(dossier.date_signalement), "ascendant")
         : filtres;
+
+  const enDetail = visibles.find((dossier) => dossier.id_signalement === detailId) ?? null;
+  const enCloture = visibles.find((dossier) => dossier.id_signalement === clotureId) ?? null;
+
+  /** Libellé du dossier pour les fenêtres : un titre générique fait clôturer le mauvais dossier. */
+  const libelleDossier = (dossier: SignalementApi): string =>
+    `${dossier.quartier_nom ?? dossier.id_quartier} · ${dossier.id_signalement.slice(0, 8)}…`;
 
   return (
     <section style={{ display: "flex", flexDirection: "column", gap: ESPACEMENT.e3 }}>
@@ -108,6 +120,7 @@ export function ListeInterventions(proprietes: ProprietesListeInterventions): Re
                 maintenantIso={proprietes.maintenantIso}
                 nbConfirmations={dossier.nb_confirmations}
                 sansPhoto={dossier.sans_photo}
+                onOuvrir={(id) => setDetailId(id)}
                 {...(dossier.statut === "EN_COURS"
                   ? {
                       onCloturer: (id: string) => setClotureId((precedent) => (precedent === id ? null : id)),
@@ -118,31 +131,52 @@ export function ListeInterventions(proprietes: ProprietesListeInterventions): Re
                       demarrageEnCours: proprietes.demarrageEnCours === dossier.id_signalement,
                     })}
               />
-
-              {clotureId === dossier.id_signalement ? (
-                <Modale
-                  ouverte
-                  taille="standard"
-                  titre="Clôturer l intervention"
-                  libelleFermeture="Fermer la clôture"
-                  onFermer={() => setClotureId(null)}
-                >
-                  <ClotureIntervention
-                    dossier={dossier}
-                    client={proprietes.client}
-                    onMessage={proprietes.onMessage}
-                    onFermer={() => setClotureId(null)}
-                    onRecharge={proprietes.onRecharge}
-                  />
-                </Modale>
-              ) : null}
             </li>
           ))}
         </ul>
       )}
+
+      {enDetail ? (
+        <Modale
+          ouverte
+          taille="standard"
+          titre={`Dossier — ${libelleDossier(enDetail)}`}
+          libelleFermeture="Fermer le dossier"
+          onFermer={() => setDetailId(null)}
+        >
+          <DetailDossier
+            dossier={enDetail}
+            maintenantIso={proprietes.maintenantIso}
+            {...(enDetail.statut === "EN_COURS"
+              ? { onCloturer: (id: string) => { setDetailId(null); setClotureId(id); } }
+              : {
+                  onDemarrer: (id: string) => {
+                    setDetailId(null);
+                    proprietes.onDemarrer(id);
+                  },
+                  demarrageEnCours: proprietes.demarrageEnCours === enDetail.id_signalement,
+                })}
+          />
+        </Modale>
+      ) : null}
+
+      {enCloture ? (
+        <Modale
+          ouverte
+          taille="standard"
+          titre={`Clôturer — ${libelleDossier(enCloture)}`}
+          libelleFermeture="Fermer la clôture"
+          onFermer={() => setClotureId(null)}
+        >
+          <ClotureIntervention
+            dossier={enCloture}
+            client={proprietes.client}
+            onMessage={proprietes.onMessage}
+            onFermer={() => setClotureId(null)}
+            onRecharge={proprietes.onRecharge}
+          />
+        </Modale>
+      ) : null}
     </section>
   );
 }
-
-
-

@@ -114,8 +114,8 @@
   min-height: 44px;
   font-family: inherit;
   font-size: 16px;
-  border-radius: var(--ui-rayon-sm, 8px);
-  padding: 10px 12px;
+  border-radius: var(--ui-rayon-sm, 7px);
+  padding: 4px 6px;
   color: var(--ui-texte, #111827);
   background-color: var(--ui-surface, #ffffff);
   border: 1px solid var(--ui-bordure, #d1d5db);
@@ -160,7 +160,7 @@
   font-weight: 600;
   line-height: 1;
   padding: 6px 10px;
-  border-radius: 9999px;
+  border-radius: var(--ui-rayon-sm, 7px);
   border: 1px solid var(--ui-bordure, #d1d5db);
   color: var(--ui-texte, #111827);
   background-color: var(--ui-surface-douce, #f6f7f9);

@@ -137,36 +137,43 @@ export function CarteSignalement(proprietes: ProprietesCarteSignalement): ReactN
         <p style={{ margin: 0, fontSize: TAILLE_TEXTE.xs, color: "var(--ui-texte-attenue)" }}>chargement…</p>
       ) : null}
 
-      {proprietes.onCloturer ? (
-        <button
-          type="button"
-          className={[CLASSES.bouton, CLASSES.boutonPrimaire, CLASSES.focusable].join(" ")}
-          aria-label={`Clôturer l intervention du dossier ${proprietes.quartier}`}
-          aria-expanded={proprietes.clotureOuverte === true ? "true" : "false"}
-          onClick={() => proprietes.onCloturer?.(proprietes.id)}
-        >
-          {proprietes.clotureOuverte === true ? "Fermer le compte rendu" : "Clôturer l intervention"}
-        </button>
-      ) : proprietes.onDemarrer ? (
-        <button
-          type="button"
-          className={[CLASSES.bouton, CLASSES.boutonPrimaire, CLASSES.focusable].join(" ")}
-          aria-label={`Démarrer l intervention du dossier ${proprietes.quartier}`}
-          disabled={proprietes.demarrageEnCours === true}
-          onClick={() => proprietes.onDemarrer?.(proprietes.id)}
-        >
-          {proprietes.demarrageEnCours === true ? "Démarrage…" : "Démarrer l intervention"}
-        </button>
-      ) : proprietes.onOuvrir ? (
-        <button
-          type="button"
-          className={[CLASSES.bouton, "ui-bouton--texte", CLASSES.focusable].join(" ")}
-          aria-label={`Ouvrir le dossier ${proprietes.quartier}`}
-          onClick={() => proprietes.onOuvrir?.(proprietes.id)}
-        >
-          Ouvrir le dossier
-        </button>
-      ) : null}
+      {/* « Ouvrir le dossier » n'est plus l'alternative d'une autre action : c'est le seul moyen
+          de lire le lieu, l'ancienneté et la description entière. L'action de travail (clôturer,
+          démarrer) vient à côté, pas à la place. */}
+      <div className="ui-carte-actions">
+        {proprietes.onOuvrir ? (
+          <button
+            type="button"
+            className={["ui-bouton", "ui-bouton--texte", CLASSES.focusable].join(" ")}
+            aria-label={`Ouvrir le dossier ${proprietes.quartier}`}
+            onClick={() => proprietes.onOuvrir?.(proprietes.id)}
+          >
+            Ouvrir le dossier
+          </button>
+        ) : null}
+
+        {proprietes.onCloturer ? (
+          <button
+            type="button"
+            className={[CLASSES.bouton, CLASSES.boutonPrimaire, CLASSES.focusable].join(" ")}
+            aria-label={`Clôturer l intervention du dossier ${proprietes.quartier}`}
+            aria-expanded={proprietes.clotureOuverte === true ? "true" : "false"}
+            onClick={() => proprietes.onCloturer?.(proprietes.id)}
+          >
+            {proprietes.clotureOuverte === true ? "Fermer le compte rendu" : "Clôturer l intervention"}
+          </button>
+        ) : proprietes.onDemarrer ? (
+          <button
+            type="button"
+            className={[CLASSES.bouton, CLASSES.boutonPrimaire, CLASSES.focusable].join(" ")}
+            aria-label={`Démarrer l intervention du dossier ${proprietes.quartier}`}
+            disabled={proprietes.demarrageEnCours === true}
+            onClick={() => proprietes.onDemarrer?.(proprietes.id)}
+          >
+            {proprietes.demarrageEnCours === true ? "Démarrage…" : "Démarrer l intervention"}
+          </button>
+        ) : null}
+      </div>
     </article>
   );
 }
