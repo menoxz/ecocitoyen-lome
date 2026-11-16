@@ -4,13 +4,15 @@ import type { ClientApi } from "../api/client.ts";
 import { Icone } from "./Icone.tsx";
 
 /**
- * Sortie de session.
+ * Identité affichée et sortie de session.
  *
- * Le bouton n'apparaît que si une session existe : l'afficher à un visiteur non connecté
- * promettrait une action sans effet. L'état vient de `/auth/moi`, la même source que les écrans
- * protégés, donc il ne peut pas mentir sur qui est connecté. Après déconnexion, la page repart de
- * l'accueil : rester sur un écran d'administration avec une session fermée n'afficherait que des
- * refus.
+ * Les deux manquaient, et le défaut était le même : l'état de session n'était lu qu'au montage.
+ * Après une connexion faite sur l'écran courant, l'en-tête ne changeait pas — un agent ne savait
+ * donc ni sous quel compte il travaillait, ni comment sortir. Le composant se remet à jour sur
+ * l'événement `eco:session`, émis par les formulaires de connexion et de mot de passe.
+ *
+ * Rien n'est rendu tant qu'aucune session n'existe : un bouton « Se déconnecter » pour un visiteur
+ * anonyme promettrait une action sans effet.
  */
 export interface ProprietesBoutonDeconnexion {
   readonly client?: ClientApi;
@@ -19,7 +21,7 @@ export interface ProprietesBoutonDeconnexion {
 }
 
 export function BoutonDeconnexion(proprietes: ProprietesBoutonDeconnexion): ReactNode {
-  const [connecte, setConnecte] = useState(false);
+  const [identite, setIdentite] = useState<string | null>(null);
   const { client } = proprietes;
 
   useEffect(() => {
@@ -27,17 +29,31 @@ export function BoutonDeconnexion(proprietes: ProprietesBoutonDeconnexion): Reac
       return;
     }
     let actif = true;
-    void client.moi().then((resultat) => {
-      if (actif && resultat.ok) {
-        setConnecte(resultat.valeur.compte !== null);
-      }
-    });
+
+    const relire = (): void => {
+      void client.moi().then((resultat) => {
+        if (!actif || !resultat.ok) {
+          return;
+        }
+        const compte = resultat.valeur.compte;
+        if (!compte) {
+          setIdentite(null);
+          return;
+        }
+        const nom = `${compte.prenom ?? ""} ${compte.nom ?? ""}`.trim();
+        setIdentite(nom.length > 0 ? nom : compte.email);
+      });
+    };
+
+    relire();
+    window.addEventListener("eco:session", relire);
     return () => {
       actif = false;
+      window.removeEventListener("eco:session", relire);
     };
   }, [client]);
 
-  if (!client || !connecte) {
+  if (!client || identite === null) {
     return null;
   }
 
@@ -48,14 +64,17 @@ export function BoutonDeconnexion(proprietes: ProprietesBoutonDeconnexion): Reac
     });
   };
 
+  const classe = proprietes.pleineLargeur === true ? "ui-deconnexion ui-deconnexion--pleine" : "ui-deconnexion";
+
   return (
-    <button
-      type="button"
-      className={proprietes.pleineLargeur === true ? "ui-deconnexion ui-deconnexion--pleine" : "ui-deconnexion"}
-      onClick={sortir}
-    >
-      <Icone icone={LogOut} taille={18} />
-      <span>Se déconnecter</span>
-    </button>
+    <div className={proprietes.pleineLargeur === true ? "ui-session-identite ui-session-identite--pleine" : "ui-session-identite"}>
+      <span className="ui-session-nom" title="Compte connecté sur cet appareil">
+        {identite}
+      </span>
+      <button type="button" className={classe} onClick={sortir}>
+        <Icone icone={LogOut} taille={18} />
+        <span>Se déconnecter</span>
+      </button>
+    </div>
   );
 }

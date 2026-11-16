@@ -179,6 +179,17 @@ export function EcranAdministration(proprietes: ProprietesEcranAdministration): 
           <p style={{ margin: 0, fontSize: TAILLE_TEXTE.md, fontWeight: 700 }}>
             {identifiants.email} · <code>{identifiants.motDePasse}</code>
           </p>
+          {/* Copier, parce que le secret n'est affiché qu'une fois : le sélectionner à la souris
+              dans une phrase, sur un téléphone, est le meilleur moyen de le perdre. */}
+          <button
+            type="button"
+            className="ui-bouton"
+            onClick={() => {
+              void navigator.clipboard?.writeText(`${identifiants.email} / ${identifiants.motDePasse}`);
+            }}
+          >
+            Copier l'identifiant et le mot de passe
+          </button>
           <button type="button" className="ui-bouton" onClick={() => setIdentifiants(null)}>
             J'ai noté le mot de passe
           </button>

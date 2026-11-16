@@ -63,6 +63,9 @@ export function FormulaireSession(proprietes: ProprietesFormulaireSession): Reac
         return;
       }
       proprietes.onSession({ id_utilisateur: resultat.valeur.compte.id_utilisateur });
+      // L'en-tête (identité + sortie de session) ne se met à jour qu'à ce signal : sans lui, il
+      // fallait recharger la page pour voir qu'on était connecté.
+      window.dispatchEvent(new Event("eco:session"));
     } finally {
       setEnCours(false);
     }
@@ -137,7 +140,7 @@ export function FormulaireSession(proprietes: ProprietesFormulaireSession): Reac
           pleineLargeur
           onClick={() => setMode(mode === "connexion" ? "inscription" : "connexion")}
         >
-          {mode === "connexion" ? "Je n ai pas de compte" : "J ai déjà un compte"}
+          {mode === "connexion" ? "Je n'ai pas de compte" : "J'ai déjà un compte"}
         </Bouton>
       </div>
       </section>

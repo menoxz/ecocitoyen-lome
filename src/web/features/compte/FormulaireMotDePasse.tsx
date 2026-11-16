@@ -9,9 +9,12 @@ import { ESPACEMENT, TAILLE_TEXTE } from "../../ui/jetons.ts";
  * Changement de son propre mot de passe.
  *
  * Affiché à la place de l'écran de travail quand `mot_de_passe_temporaire` est vrai : un agent
- * invité ne doit pas garder le secret que l'administrateur connaît. L'ancien est demandé, et le
- * serveur le vérifie — l'interface ne fait que transmettre. Les deux champs sont `secret`, donc
- * rendus en `password` avec la bascule afficher/masquer du composant.
+ * invité ne doit pas garder le secret que l'administrateur connaît.
+ *
+ * Trois corrections viennent d'être observées à l'usage : un second champ de confirmation (une
+ * faute de frappe sur un téléphone enfermait l'agent hors de son compte), un message de réussite
+ * explicite (le formulaire disparaissait sans rien dire), et la propagation du nouvel état de
+ * session à l'en-tête.
  */
 export interface ProprietesFormulaireMotDePasse {
   readonly client: ClientApi;
@@ -22,20 +25,29 @@ export interface ProprietesFormulaireMotDePasse {
 export function FormulaireMotDePasse(proprietes: ProprietesFormulaireMotDePasse): ReactNode {
   const [ancien, setAncien] = useState("");
   const [nouveau, setNouveau] = useState("");
-  const [erreur, setErreur] = useState<ErreurApi | null>(null);
+  const [confirmation, setConfirmation] = useState("");
+  const [erreur, setErreur] = useState<ErreurApi | { message: string; code?: string } | null>(null);
+  const [reussi, setReussi] = useState(false);
   const [envoi, setEnvoi] = useState(false);
 
   const envoyer = (): void => {
-    setEnvoi(true);
     setErreur(null);
+    if (nouveau !== confirmation) {
+      setErreur({ message: "Les deux saisies du nouveau mot de passe diffèrent.", code: "CONFIRMATION_DIFFERENTE" });
+      return;
+    }
+    setEnvoi(true);
     void proprietes.client.changerMotDePasse({ ancien, nouveau }).then((resultat) => {
       setEnvoi(false);
       if (!resultat.ok) {
         setErreur(resultat.erreur);
         return;
       }
+      setReussi(true);
       setAncien("");
       setNouveau("");
+      setConfirmation("");
+      window.dispatchEvent(new Event("eco:session"));
       proprietes.onChange();
     });
   };
@@ -51,6 +63,12 @@ export function FormulaireMotDePasse(proprietes: ProprietesFormulaireMotDePasse)
           ? "Votre compte a été créé par un administrateur. Remplacez le mot de passe temporaire qu'il vous a remis avant de continuer."
           : "Huit caractères minimum. L'ancien mot de passe est exigé."}
       </p>
+
+      {reussi ? (
+        <p role="status" style={{ margin: 0, fontSize: TAILLE_TEXTE.sm, color: "var(--ui-succes)" }}>
+          Mot de passe enregistré. Vous pouvez maintenant travailler normalement.
+        </p>
+      ) : null}
 
       <div className="ui-grille-formulaire">
         <ChampTexte
@@ -70,6 +88,16 @@ export function FormulaireMotDePasse(proprietes: ProprietesFormulaireMotDePasse)
           secret
           requis
           aide="8 caractères minimum."
+          autoComplete="new-password"
+        />
+        <ChampTexte
+          id="mot-de-passe-confirmation"
+          libelle="Confirmer le nouveau mot de passe"
+          valeur={confirmation}
+          onChange={setConfirmation}
+          secret
+          requis
+          erreur={confirmation.length > 0 && confirmation !== nouveau ? "La saisie diffère du nouveau mot de passe." : null}
           autoComplete="new-password"
         />
       </div>
