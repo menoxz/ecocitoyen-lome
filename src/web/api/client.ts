@@ -114,6 +114,8 @@ export interface ClientApi {
   moi(): Promise<Resultat<{ compte: CompteApi | null; role: string }>>;
   connexion(identifiant: string, motDePasse: string): Promise<Resultat<{ compte: CompteApi }>>;
   inscription(entree: { nom: string; prenom: string; email: string; motDePasse: string }): Promise<Resultat<{ compte: CompteApi }>>;
+  /** Ferme la session côté serveur ; le cookie `httpOnly` est effacé par la réponse. */
+  deconnexion(): Promise<Resultat<{ deconnecte: boolean }>>;
   categories(): Promise<Resultat<readonly CategorieApi[]>>;
   quartiers(): Promise<Resultat<readonly QuartierApi[]>>;
   creerSignalement(demande: DemandeSignalement): Promise<Resultat<{ signalement: SignalementApi; doublons: readonly DoublonApi[] }>>;
@@ -210,6 +212,7 @@ export function creerClient(base: string): ClientApi {
           consentement: true,
         }),
       ),
+    deconnexion: () => appeler<{ deconnecte: boolean }>("/auth/deconnexion", { method: "POST" }),
     categories: () => appeler<readonly CategorieApi[]>("/referentiels/categories"),
     quartiers: () => appeler<readonly QuartierApi[]>("/referentiels/quartiers"),
     creerSignalement: (demande) =>

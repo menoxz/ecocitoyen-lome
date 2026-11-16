@@ -36,7 +36,7 @@ function Application(): React.ReactNode {
   }, []);
 
   return (
-    <MiseEnPage>
+    <MiseEnPage client={client}>
       <Routeur
         fragment={fragment}
         rendu={{

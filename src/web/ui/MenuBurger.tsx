@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Menu, X } from "lucide-react";
+import type { ClientApi } from "../api/client.ts";
+import { BoutonDeconnexion } from "./BoutonDeconnexion.tsx";
 import { BoutonTheme } from "./BoutonTheme.tsx";
 import { Icone } from "./Icone.tsx";
 import { ACCES_SERVICE, LIENS_NAV } from "./navigation.ts";
@@ -12,7 +14,7 @@ import { ACCES_SERVICE, LIENS_NAV } from "./navigation.ts";
  * l'ordre de lecture : parcours citoyen, accès de service, réglage du thème. Les mêmes entrées que
  * la barre de bureau viennent de `navigation.ts`, donc rien ne peut diverger.
  */
-export function MenuBurger(): ReactNode {
+export function MenuBurger(proprietes: { readonly client?: ClientApi }): ReactNode {
   const [ouvert, setOuvert] = useState(false);
   const conteneur = useRef<HTMLDivElement | null>(null);
   const fermer = (): void => setOuvert(false);
@@ -80,6 +82,8 @@ export function MenuBurger(): ReactNode {
         <div className="ui-burger-reglage">
           <BoutonTheme />
         </div>
+
+        <BoutonDeconnexion client={proprietes.client} pleineLargeur />
       </div>
     </div>
   );

@@ -21,6 +21,7 @@ function clientFactice(): ClientApi {
     moi: jamais,
     connexion: jamais,
     inscription: jamais,
+    deconnexion: jamais,
     categories: jamais,
     quartiers: jamais,
     creerSignalement: jamais,

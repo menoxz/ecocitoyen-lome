@@ -412,6 +412,44 @@ a:hover {
   display: none;
 }
 
+/* Sortie de session : même gabarit que les entrées de navigation. Le composant ne le rend que
+   si `/auth/moi` a renvoyé un compte, donc il n'apparaît jamais à un visiteur anonyme. */
+.ui-deconnexion {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--ui-texte-attenue);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--ui-duree-rapide) var(--ui-courbe),
+    color var(--ui-duree-rapide) var(--ui-courbe);
+}
+
+.ui-deconnexion:hover {
+  background: var(--ui-primaire-voile);
+  color: var(--ui-primaire);
+}
+
+.ui-deconnexion:focus-visible {
+  outline: 2px solid var(--ui-primaire);
+  outline-offset: 2px;
+}
+
+/* Dans le panneau burger, l'entrée occupe la largeur comme les autres. */
+.ui-deconnexion--pleine {
+  width: 100%;
+  margin-top: 8px;
+  border-radius: 10px;
+  justify-content: flex-start;
+}
+
 /* Menu burger — sous 760 px, il est le seul chemin vers les parcours, les accès de service et le
    réglage du thème. Masqué au-dessus par `display: none` ; la requête média le rouvre. Le panneau
    est ancré au bouton et borné à la largeur de l'écran, jamais plus. */

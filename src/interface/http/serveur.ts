@@ -132,7 +132,11 @@ async function demarrer(): Promise<void> {
   });
 }
 
-if (process.env.NODE_ENV !== "test") {
+// Démarrage réservé au point d'entrée : un script d'exploitation peut importer `assembler` sans
+// lancer le serveur HTTP. Tester `NODE_ENV` ne suffisait pas — un script lancé hors test démarrait
+// un serveur fantôme.
+const pointEntree = process.argv[1] ?? "";
+if (pointEntree.includes("serveur")) {
   void demarrer();
 }
 

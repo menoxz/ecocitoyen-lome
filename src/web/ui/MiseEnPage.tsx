@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import { Settings, ShieldCheck, Wrench } from "lucide-react";
+import type { ClientApi } from "../api/client.ts";
+import { BoutonDeconnexion } from "./BoutonDeconnexion.tsx";
 import { BoutonTheme } from "./BoutonTheme.tsx";
 import { Icone } from "./Icone.tsx";
 import { Logo } from "./Logo.tsx";
@@ -22,6 +24,8 @@ export interface ProprietesMiseEnPage {
   readonly children: ReactNode;
   /** Contenu resserré : pages de décision (session, détail d'un dossier). */
   readonly etroite?: boolean;
+  /** Client HTTP : sert uniquement à savoir si une session est ouverte, pour proposer la sortie. */
+  readonly client?: ClientApi;
 }
 
 const PARCOURS = [
@@ -54,9 +58,10 @@ export function MiseEnPage(proprietes: ProprietesMiseEnPage): ReactNode {
           ))}
           <MenuService />
           <BoutonTheme />
+          <BoutonDeconnexion client={proprietes.client} />
         </nav>
 
-        <MenuBurger />
+        <MenuBurger client={proprietes.client} />
       </header>
 
       <main className="ui-contenu">{proprietes.children}</main>
