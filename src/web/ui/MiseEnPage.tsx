@@ -1,8 +1,11 @@
 import type { ReactNode } from "react";
-import { ChartColumn, FileSearch, Megaphone, Settings, ShieldCheck, Wrench } from "lucide-react";
+import { Settings, ShieldCheck, Wrench } from "lucide-react";
 import { BoutonTheme } from "./BoutonTheme.tsx";
 import { Icone } from "./Icone.tsx";
 import { Logo } from "./Logo.tsx";
+import { MenuBurger } from "./MenuBurger.tsx";
+import { MenuService } from "./MenuService.tsx";
+import { LIENS_NAV } from "./navigation.ts";
 
 /**
  * Ossature commune des écrans : en-tête de marque, contenu borné, pied de page complet.
@@ -11,20 +14,15 @@ import { Logo } from "./Logo.tsx";
  * lecture, aucun repère de navigation. Ce composant ne porte aucune règle métier — seulement la
  * forme. Les styles vivent dans `theme.css` ; les icônes, dans `Icone.tsx`.
  *
- * Disposition : en-tête maintenu en haut, contenu centré sur une largeur de lecture, pied de page
- * en trois colonnes qui rappelle l'identité, les parcours usager et les accès de service.
+ * Deux formes pour la même navigation : une barre horizontale au-dessus de 760 px, un seul bouton
+ * burger en dessous, qui rassemble parcours, accès de service et réglage du thème. Sous 360 px,
+ * l'empilement précédent occupait deux lignes et poussait le contenu sous la ligne de flottaison.
  */
 export interface ProprietesMiseEnPage {
   readonly children: ReactNode;
   /** Contenu resserré : pages de décision (session, détail d'un dossier). */
   readonly etroite?: boolean;
 }
-
-const LIENS_SERVICE = [
-  { href: "#/signaler", libelle: "Signaler", icone: Megaphone },
-  { href: "#/dossier", libelle: "Suivre", icone: FileSearch },
-  { href: "#/indicateurs", libelle: "Indicateurs", icone: ChartColumn },
-] as const;
 
 const PARCOURS = [
   { href: "#/signaler", libelle: "Signaler un problème" },
@@ -46,15 +44,19 @@ export function MiseEnPage(proprietes: ProprietesMiseEnPage): ReactNode {
           <Logo taille={34} />
           EcoCitoyen Lomé
         </a>
-        <nav className="ui-nav" aria-label="Accès rapides">
-          {LIENS_SERVICE.map((lien) => (
-            <a key={lien.href} href={lien.href}>
+
+        <nav className="ui-nav ui-nav--bureau" aria-label="Navigation principale">
+          {LIENS_NAV.map((lien) => (
+            <a key={lien.href} href={lien.href} aria-label={lien.libelle}>
               <Icone icone={lien.icone} taille={18} />
-              {lien.libelle}
+              <span className="ui-nav-libelle">{lien.libelle}</span>
             </a>
           ))}
+          <MenuService />
           <BoutonTheme />
         </nav>
+
+        <MenuBurger />
       </header>
 
       <main className="ui-contenu">{proprietes.children}</main>
@@ -105,6 +107,3 @@ export function MiseEnPage(proprietes: ProprietesMiseEnPage): ReactNode {
     </div>
   );
 }
-
-
-
