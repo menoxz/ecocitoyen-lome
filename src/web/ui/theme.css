@@ -1574,6 +1574,10 @@ a:hover {
   justify-content: center;
   gap: 6px;
   margin: 0;
+  /* La case suit la piste de la grille, jamais son contenu : sans ces deux lignes, un texte long
+     ou un ratio imposé peut élargir la case au-delà de son tiers de largeur. */
+  width: 100%;
+  min-width: 0;
   /* Le format de l'emplacement est décidé ici, une fois : une case vide et une case remplie ont
      exactement le même espace. La photo l'occupe, elle ne le redimensionne pas. */
   aspect-ratio: 4 / 3;
@@ -1655,6 +1659,10 @@ a:hover {
   font-size: 13px;
   font-weight: 700;
   color: var(--ui-texte);
+  max-width: 100%;
+  text-align: center;
+  /* « Ajouter une photo » tient sur deux lignes plutôt que d'élargir sa case. */
+  overflow-wrap: anywhere;
 }
 
 .ui-photo-case-aide {
@@ -1711,9 +1719,19 @@ a:hover {
 /* Trois colonnes tenues jusqu à 360 px : trois vignettes côte à côte disent « trois photos »,
    deux colonnes laisseraient une case orpheline sur la deuxième ligne. */
 @media (max-width: 520px) {
+  /* `aspect-ratio: 4/3` et `min-height` se combinent en largeur minimale (92 × 4/3 ≈ 122 px), plus
+     large que le tiers disponible à 360 px : la troisième case sortait de la carte. Sur mobile, la
+     hauteur est donc tenue seule, sans ratio qui impose une largeur. */
   .ui-photo-case {
-    min-height: 92px;
+    aspect-ratio: auto;
+    min-width: 0;
+    min-height: 96px;
     padding: 6px;
+  }
+
+  .ui-grille-photos {
+    gap: 6px;
+    padding: 4px;
   }
 
   .ui-photo-case-titre {
